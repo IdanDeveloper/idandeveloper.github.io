@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="h-full w-full overflow-hidden select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ParkNav iOS - ניווט ודיווח חנייה בזמן אמת</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ios: {
+                            blue: '#007AFF',
+                            green: '#34C759',
+                            yellow: '#FFCC00',
+                            orange: '#FF9500',
+                            red: '#FF3B30',
+                            purple: '#AF52DE',
+                            gray: '#8E8E93',
+                            bg: '#F2F2F7',
+                            card: 'rgba(255, 255, 255, 0.85)',
+                            darkCard: 'rgba(28, 28, 30, 0.85)'
+                        }
+                    },
+                    fontFamily: {
+                        rubik: ['Rubik', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'ios': '0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 0 1px 1px rgba(0,0,0,0.05)',
+                        'ios-dock': '0 -5px 25px rgba(0, 0, 0, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Map styling fix: Fill entire viewport without layout breaks */
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-color: #e5e7eb;
+        }
+
+        .leaflet-container {
+            font-family: 'Rubik', sans-serif !important;
+            z-index: 1 !important;
+        }
+
+        /* Clean Leaflet Popups */
+        .leaflet-popup-content-wrapper {
+            background: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2) !important;
+            padding: 0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .leaflet-popup-content {
+            margin: 0 !important;
+            min-width: 240px;
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(255, 255, 255, 0.92) !important;
+        }
+
+        /* Hide Leaflet default attribution on mobile for clean UI */
+        .leaflet-control-attribution {
+            font-size: 8px !important;
+            background: rgba(255,255,255,0.6) !important;
+            backdrop-filter: blur(4px);
+            border-radius: 6px;
+            margin: 4px !important;
+        }
+
+        /* Glassmorphism Classes */
+        .ios-glass {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .ios-glass-dark {
+            background: rgba(28, 28, 30, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        /* Custom Pulse Animations for Pins */
+        @keyframes pulse-green {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 16px rgba(52, 199, 89, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+        }
+
+        @keyframes pulse-yellow {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 16px rgba(255, 204, 0, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 16px rgba(255, 59, 48, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+        }
+
+        .pulse-green { animation: pulse-green 2s infinite; }
+        .pulse-yellow { animation: pulse-yellow 2s infinite; }
+        .pulse-red { animation: pulse-red 2s infinite; }
+
+        /* Crosshair Cursor in Pick Mode */
+        .pick-cursor {
+            cursor: crosshair !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.15);
+            border-radius: 10px;
+        }
+
+        /* Safe Area Padding for iOS Devices */
+        .pb-safe {
+            padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+        }
+        .pt-safe {
+            padding-top: max(0.75rem, env(safe-area-inset-top));
+        }
+    </style>
+</head>
+<body class="h-full w-full bg-slate-900 text-slate-900 overflow-hidden relative font-rubik flex flex-col">
+
+    <!-- Leaflet Map Container -->
+    <div id="map"></div>
+
+    <!-- Top Floating Header Container -->
+    <header class="absolute top-0 inset-x-0 z-20 pt-safe px-4 flex flex-col gap-2.5 pointer-events-none">
+        
+        <!-- Fake iOS Status Bar -->
+        <div class="flex items-center justify-between text-xs font-semibold px-2 pt-1 text-slate-800 pointer-events-auto">
+            <span id="ios-time-clock">09:41</span>
+            <div class="flex items-center gap-2">
+                <span id="app-version-badge" class="bg-blue-600/10 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/20">ParkNav 3.0</span>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Floating iOS Search Bar -->
+        <div class="ios-glass rounded-2xl p-2 shadow-ios flex items-center justify-between gap-2 pointer-events-auto transition-all duration-300">
+            <div class="flex items-center gap-2.5 px-1.5 shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/30">
+                    <i class="fa-solid fa-location-arrow text-base"></i>
+                </div>
+            </div>
+
+            <!-- Search Input Box -->
+            <div class="relative flex-1">
+                <input type="text" id="search-input" placeholder="חפש כתובת, רחוב או עיר..." 
+                    onkeydown="if(event.key==='Enter') searchAddress()"
+                    class="w-full py-2 pr-9 pl-8 rounded-xl bg-slate-100/90 text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute right-3 top-2.5 text-slate-400 text-xs"></i>
+                <button onclick="searchAddress()" class="absolute left-2.5 top-2 text-slate-400 hover:text-blue-600">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                </button>
+            </div>
+
+            <button onclick="locateUser(true)" class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm shrink-0 transition">
+                <i class="fa-solid fa-crosshairs text-base"></i>
+            </button>
+        </div>
+
+        <!-- Address Search Results Dropdown -->
+        <div id="search-results-box" class="hidden ios-glass rounded-2xl shadow-ios overflow-hidden pointer-events-auto max-h-52 overflow-y-auto border border-white/80"></div>
+
+        <!-- Filter Chips Bar -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5 scrollbar-none pointer-events-auto">
+            <button onclick="setFilterStatus('all')" id="filter-btn-all" class="px-3 py-1.5 rounded-full ios-glass shadow-sm text-xs font-bold text-white bg-blue-600 border border-blue-600 flex items-center gap-1 shrink-0 transition-all">
+                <i class="fa-solid fa-layer-group text-[10px]"></i> הכל
+            </button>
+            <button onclick="setFilterStatus('high')" id="filter-btn-high" class="px-3 py-1.5 rounded-full ios-glass shadow-sm text-xs font-bold text-emerald-700 hover:bg-emerald-50 border border-emerald-300 flex items-center gap-1.5 shrink-0 transition-all">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> הרבה פנוי
+            </button>
+            <button onclick="setFilterStatus('medium')" id="filter-btn-medium" class="px-3 py-1.5 rounded-full ios-glass shadow-sm text-xs font-bold text-amber-700 hover:bg-amber-50 border border-amber-300 flex items-center gap-1.5 shrink-0 transition-all">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span> בינוני
+            </button>
+            <button onclick="setFilterStatus('low')" id="filter-btn-low" class="px-3 py-1.5 rounded-full ios-glass shadow-sm text-xs font-bold text-rose-700 hover:bg-rose-50 border border-rose-300 flex items-center gap-1.5 shrink-0 transition-all">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span> בודדים בלבד
+            </button>
+        </div>
+    </header>
+
+    <!-- Active GPS Navigation Banner (Hidden by default) -->
+    <div id="nav-banner" class="hidden absolute top-14 inset-x-4 z-30 ios-glass-dark text-white rounded-3xl p-4 shadow-2xl border border-white/20 animate-bounce-short">
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/40">
+                    <i id="nav-turn-icon" class="fa-solid fa-turn-up text-lg"></i>
+                </div>
+                <div>
+                    <span id="nav-dist-text" class="text-xs font-bold text-blue-400">בעוד 200 מטר</span>
+                    <h3 id="nav-instruction" class="text-sm font-extrabold leading-tight">פנה ימינה לחנייה היעד</h3>
+                    <div class="flex items-center gap-3 mt-1 text-[11px] text-slate-300 font-semibold">
+                        <span><i class="fa-solid fa-clock text-amber-400"></i> זמן נותר: <span id="nav-eta-text">3 דק'</span></span>
+                        <span><i class="fa-solid fa-gauge-high text-cyan-400"></i> במהירות: <span id="nav-speed-text">35 קמ"ש</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="stopNavigation()" class="w-9 h-9 rounded-full bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white flex items-center justify-center transition border border-red-500/30">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Pick Location Banner Mode -->
+    <div id="pick-mode-banner" class="hidden absolute top-28 inset-x-6 z-20 ios-glass border-2 border-blue-500 rounded-2xl p-3 shadow-ios flex items-center justify-between text-slate-800">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-base">
+                <i class="fa-solid fa-location-crosshairs"></i>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold">לחץ על המפה לבחירת החנייה</h4>
+                <p class="text-[10px] text-slate-500">לחץ במיקום המדויק ברחוב</p>
+            </div>
+        </div>
+        <button onclick="cancelPickMode()" class="px-3 py-1 rounded-xl bg-slate-200 text-xs font-bold">ביטול</button>
+    </div>
+
+    <!-- Bottom Sheet: Selected Parking Detail View -->
+    <div id="parking-detail-card" class="hidden fixed bottom-20 inset-x-3 sm:max-w-md sm:mx-auto z-30 ios-glass rounded-3xl p-5 shadow-ios border border-white/80 space-y-4 animate-slide-up">
+        <div class="flex items-start justify-between">
+            <div class="space-y-1">
+                <div id="detail-status-badge" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold text-white bg-emerald-500">
+                    הרבה פנוי 🟢
+                </div>
+                <h2 id="detail-title" class="text-lg font-black text-slate-800">חנייה ברחוב אבן גבירול</h2>
+                <p id="detail-note" class="text-xs font-medium text-slate-600">מול בניין 42, חנייה פתוחה</p>
+            </div>
+            <button onclick="closeParkingDetail()" class="w-7 h-7 rounded-full bg-slate-200/80 text-slate-600 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 py-2 border-y border-slate-200/80 text-center">
+            <div class="p-2 rounded-2xl bg-white/60">
+                <span class="block text-[10px] font-bold text-slate-400">מרחק</span>
+                <span id="detail-distance" class="text-xs font-black text-slate-800">1.2 ק"מ</span>
+            </div>
+            <div class="p-2 rounded-2xl bg-white/60">
+                <span class="block text-[10px] font-bold text-slate-400">זמן נסיעה</span>
+                <span id="detail-time" class="text-xs font-black text-slate-800">4 דקות</span>
+            </div>
+            <div class="p-2 rounded-2xl bg-white/60">
+                <span class="block text-[10px] font-bold text-slate-400">סוג</span>
+                <span id="detail-type" class="text-xs font-black text-slate-800">כחול-לבן</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="detail-nav-btn" onclick="startNavigationToSelected()" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-sm shadow-xl shadow-blue-500/30 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-location-arrow text-base"></i>
+                <span>נווט לחניה עכשיו</span>
+            </button>
+            <button id="detail-confirm-btn" onclick="confirmSelectedParking()" class="px-4 py-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-thumbs-up"></i>
+                <span>עדיין פנוי</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating iOS Dock Bottom Navigation Bar -->
+    <nav class="fixed bottom-3 inset-x-4 max-w-lg mx-auto z-30 ios-glass rounded-full shadow-ios-dock p-1.5 border border-white/70 flex items-center justify-around">
+        
+        <!-- Tab 1: Map -->
+        <button onclick="switchTab('map')" id="tab-btn-map" class="flex flex-col items-center justify-center py-1.5 px-4 rounded-full text-blue-600 font-bold transition">
+            <i class="fa-solid fa-map text-lg"></i>
+            <span class="text-[10px] mt-0.5">מפה</span>
+        </button>
+
+        <!-- Tab 2: Live Report (Center Glowing Action) -->
+        <button onclick="openReportModal()" class="relative -top-3 px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 text-white font-black shadow-xl shadow-blue-500/50 hover:scale-105 active:scale-95 transition flex items-center gap-2 border-2 border-white">
+            <i class="fa-solid fa-circle-plus text-xl"></i>
+            <span class="text-xs tracking-tight">דיווח מהיר</span>
+        </button>
+
+        <!-- Tab 3: Parking List -->
+        <button onclick="toggleListDrawer()" id="tab-btn-list" class="flex flex-col items-center justify-center py-1.5 px-4 rounded-full text-slate-500 font-bold hover:text-slate-800 transition">
+            <i class="fa-solid fa-list-ul text-lg"></i>
+            <span class="text-[10px] mt-0.5">רשימה</span>
+        </button>
+
+        <!-- Tab 4: Settings -->
+        <button onclick="toggleSettingsModal()" id="tab-btn-settings" class="flex flex-col items-center justify-center py-1.5 px-4 rounded-full text-slate-500 font-bold hover:text-slate-800 transition">
+            <i class="fa-solid fa-gear text-lg"></i>
+            <span class="text-[10px] mt-0.5">הגדרות</span>
+        </button>
+    </nav>
+
+    <!-- iOS Report Modal Sheet -->
+    <div id="report-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4 transition-opacity">
+        <div class="ios-glass w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border border-white/80 space-y-5 animate-slide-up max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-square-parking"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-800">דיווח חנייה בלייב</h3>
+                        <p class="text-xs text-slate-500">שתף את הנהגים בסביבתך בסטטוס</p>
+                    </div>
+                </div>
+                <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Location Picker Selection -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-700 block">1. איפה החנייה נמצאת?</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="setReportLocType('gps')" id="loc-btn-gps" class="p-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-location-arrow"></i>
+                        <span>במיקום GPS נוכחי</span>
+                    </button>
+                    <button type="button" onclick="setReportLocType('pick')" id="loc-btn-pick" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 text-xs font-bold flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-map-pin"></i>
+                        <span>בחירה על המפה</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3 Level Availability Buttons -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-700 block">2. רמת זמינות החנייה</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="setReportStatus('high')" id="status-btn-high" class="p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center gap-1.5 transition">
+                        <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-md">
+                            <i class="fa-solid fa-face-smile"></i>
+                        </div>
+                        <span>הרבה פנוי</span>
+                    </button>
+                    <button type="button" onclick="setReportStatus('medium')" id="status-btn-medium" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 text-xs font-bold flex flex-col items-center gap-1.5 transition">
+                        <div class="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs shadow-md">
+                            <i class="fa-solid fa-face-meh"></i>
+                        </div>
+                        <span>בינוני</span>
+                    </button>
+                    <button type="button" onclick="setReportStatus('low')" id="status-btn-low" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 text-xs font-bold flex flex-col items-center gap-1.5 transition">
+                        <div class="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs shadow-md">
+                            <i class="fa-solid fa-face-frown"></i>
+                        </div>
+                        <span>בודדים בלבד</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Parking Type & Note Inputs -->
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1">סוג החנייה</label>
+                    <select id="report-type-select" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="כחול-לבן">כחול-לבן (תו / פנגו)</option>
+                        <option value="אפור">אפור (חינם)</option>
+                        <option value="חניון ציבורי">חניון ציבורי מסודר</option>
+                        <option value="חניון עפר">חניון עפר פתוח</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1">הערת מיקום / רחוב</label>
+                    <input type="text" id="report-note-input" placeholder="לדוגמה: מול בית ספר, ליד הקניון..." class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <button onclick="submitReport()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-blue-500/30 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>פרסם דיווח במפה בלייב</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Parking List Drawer -->
+    <div id="list-drawer" class="hidden fixed inset-y-0 right-0 z-40 w-full sm:w-96 ios-glass border-l border-white/80 shadow-2xl p-4 flex flex-col">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200/80">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-list"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 text-base">רשימת חניות באזור</h3>
+            </div>
+            <button onclick="toggleListDrawer()" class="p-1.5 rounded-full hover:bg-slate-200 text-slate-500">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <div class="py-2 flex items-center justify-between text-xs text-slate-500 font-semibold">
+            <span id="drawer-counter">0 חניות מדווחות</span>
+            <span class="text-blue-600"><i class="fa-solid fa-rotate text-[10px]"></i> בלייב</span>
+        </div>
+        <div id="drawer-cards-container" class="flex-1 overflow-y-auto space-y-2 pr-0.5"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="ios-glass w-full max-w-sm rounded-3xl p-5 shadow-2xl border border-white/80 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <h3 class="font-black text-slate-800 text-base">הגדרות ParkNav</h3>
+                <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/60">
+                    <span class="font-bold text-slate-700">הנחיות קוליות בעברית (Voice)</span>
+                    <input type="checkbox" id="setting-voice" checked class="w-4 h-4 accent-blue-600 rounded">
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/60">
+                    <span class="font-bold text-slate-700">סאונד התראות</span>
+                    <input type="checkbox" id="setting-sound" checked class="w-4 h-4 accent-blue-600 rounded">
+                </div>
+                <button onclick="resetSeedData()" class="w-full py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 font-bold text-slate-700">
+                    טען מחדש חניות דוגמה
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS Notification Toast -->
+    <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-50 transform -translate-y-16 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="ios-glass-dark px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 text-xs font-black text-white border border-white/20">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+            <span id="toast-msg">הודעה</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase Configuration
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'parknav-ios-app';
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                apiKey: "demo-key",
+                authDomain: "demo.firebaseapp.com",
+                projectId: "demo-project",
+                storageBucket: "demo.appspot.com",
+                messagingSenderId: "123456",
+                appId: "1:123456:web:1234"
+            };
+        } catch(e) { console.warn("Firebase config fallback", e); }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let isAuthReady = false;
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const userCred = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = userCred.user;
+                } else {
+                    const userCred = await signInAnonymously(auth);
+                    currentUser = userCred.user;
+                }
+            } catch(e) {
+                console.warn("Auth error", e);
+            } finally {
+                isAuthReady = true;
+                listenToParkingReports();
+            }
+        }
+
+        // Global Application State
+        window.map = null;
+        window.markersMap = {};
+        window.reportsData = [];
+        window.userLocation = { lat: 32.0853, lng: 34.7818 }; // Tel Aviv Default
+        window.userMarker = null;
+
+        window.activeStatusFilter = 'all';
+        window.selectedReportStatus = 'high';
+        window.selectedLocType = 'gps';
+        window.pickedCoordinates = null;
+        window.isPickMode = false;
+        window.selectedParking = null;
+
+        // Navigation Simulation State
+        window.isNavigating = false;
+        window.navPolyline = null;
+        window.navAnimInterval = null;
+
+        function initMap() {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) return;
+
+            // Initialize Map with Tel Aviv Center
+            window.map = L.map('map', {
+                zoomControl: false,
+                attributionControl: true
+            }).setView([window.userLocation.lat, window.userLocation.lng], 14);
+
+            // High-quality CartoDB Voyager tile layer
+            const voyagerTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19,
+                subdomains: 'abcd',
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            });
+
+            // Backup OpenStreetMap tile layer
+            const osmTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            });
+
+            voyagerTiles.addTo(window.map);
+
+            // Handle Tile errors gracefully
+            voyagerTiles.on('tileerror', function() {
+                if (window.map.hasLayer(voyagerTiles)) {
+                    window.map.removeLayer(voyagerTiles);
+                    osmTiles.addTo(window.map);
+                }
+            });
+
+            // CRITICAL FIX: Ensure full container rendering without layout breaks
+            setTimeout(() => {
+                window.map.invalidateSize();
+            }, 200);
+
+            window.addEventListener('resize', () => {
+                if (window.map) window.map.invalidateSize();
+            });
+
+            // Map click for location selection
+            window.map.on('click', function(e) {
+                if (window.isPickMode) {
+                    window.pickedCoordinates = { lat: e.latlng.lat, lng: e.latlng.lng };
+                    window.isPickMode = false;
+                    document.getElementById('pick-mode-banner').classList.add('hidden');
+                    document.getElementById('map').classList.remove('pick-cursor');
+                    document.getElementById('report-modal').classList.remove('hidden');
+                    showToast('מיקום החנייה נבחר במפה!');
+                }
+            });
+
+            // Auto locate user position
+            locateUser(false);
+        }
+
+        function listenToParkingReports() {
+            const reportsCol = collection(db, 'artifacts', appId, 'public', 'data', 'parking_reports');
+
+            onSnapshot(reportsCol, (snapshot) => {
+                const fetched = [];
+                snapshot.forEach(docSnap => {
+                    fetched.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                if (fetched.length === 0 && isAuthReady) {
+                    seedInitialData();
+                    return;
+                }
+
+                window.reportsData = fetched;
+                renderMarkers();
+                renderDrawerList();
+            }, (err) => {
+                console.error("Firestore error:", err);
+            });
+        }
+
+        async function seedInitialData() {
+            const reportsCol = collection(db, 'artifacts', appId, 'public', 'data', 'parking_reports');
+            const samples = [
+                { lat: 32.0853, lng: 34.7818, status: 'high', type: 'כחול-לבן', note: 'רחוב אבן גבירול, מול עיריית ת"א', confirmations: 5, createdAt: Date.now() - 1000*60*10 },
+                { lat: 32.0782, lng: 34.7741, status: 'medium', type: 'אפור', note: 'שדרות רוטשילד פינת אלנבי', confirmations: 3, createdAt: Date.now() - 1000*60*20 },
+                { lat: 32.0735, lng: 34.7788, status: 'low', type: 'חניון ציבורי', note: 'ליד מגדל עזריאלי - כמעט מלא', confirmations: 1, createdAt: Date.now() - 1000*60*45 },
+                { lat: 32.0811, lng: 34.7895, status: 'high', type: 'חניון עפר', note: 'חניון עפר פתוח מאחורי תחנת רכבת', confirmations: 8, createdAt: Date.now() - 1000*60*5 },
+                { lat: 31.7683, lng: 35.2137, status: 'high', type: 'אפור', note: 'מרכז ירושלים, רחוב יפו', confirmations: 4, createdAt: Date.now() - 1000*60*15 },
+                { lat: 32.7940, lng: 34.9896, status: 'medium', type: 'כחול-לבן', note: 'חיפה מרכז הכרמל', confirmations: 2, createdAt: Date.now() - 1000*60*30 }
+            ];
+
+            for (const s of samples) {
+                try { await addDoc(reportsCol, s); } catch(e) {}
+            }
+        }
+
+        window.resetSeedData = function() {
+            seedInitialData();
+            showToast('נתוני דוגמה נטענו מחדש!');
+            toggleSettingsModal();
+        };
+
+        function createWazeMarkerIcon(status) {
+            let color = '#34C759'; // Emerald Green
+            let pulseClass = 'pulse-green';
+
+            if (status === 'medium') {
+                color = '#FFCC00'; // Yellow
+                pulseClass = 'pulse-yellow';
+            } else if (status === 'low') {
+                color = '#FF3B30'; // Red
+                pulseClass = 'pulse-red';
+            }
+
+            const html = `
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute w-9 h-9 rounded-full ${pulseClass}"></div>
+                    <div class="w-8 h-8 rounded-2xl flex items-center justify-center text-white font-extrabold text-xs shadow-ios border-2 border-white transform hover:scale-110 transition" style="background-color: ${color};">
+                        <i class="fa-solid fa-square-parking text-sm"></i>
+                    </div>
+                </div>
+            `;
+
+            return L.divIcon({
+                className: 'custom-ios-pin',
+                html: html,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+        }
+
+        function renderMarkers() {
+            if (!window.map) return;
+
+            Object.values(window.markersMap).forEach(m => window.map.removeLayer(m));
+            window.markersMap = {};
+
+            const filtered = window.reportsData.filter(r => {
+                if (window.activeStatusFilter !== 'all' && r.status !== window.activeStatusFilter) return false;
+                return true;
+            });
+
+            filtered.forEach(report => {
+                const icon = createWazeMarkerIcon(report.status);
+                const marker = L.marker([report.lat, report.lng], { icon: icon }).addTo(window.map);
+
+                marker.on('click', () => {
+                    openParkingDetailCard(report);
+                });
+
+                window.markersMap[report.id] = marker;
+            });
+
+            document.getElementById('drawer-counter').textContent = `${filtered.length} חניות מדווחות`;
+        }
+
+        function renderDrawerList() {
+            const container = document.getElementById('drawer-cards-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            window.reportsData.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'p-3 rounded-2xl bg-white/70 shadow-sm hover:shadow-md cursor-pointer transition border border-white flex items-center justify-between';
+                card.onclick = () => {
+                    window.map.flyTo([r.lat, r.lng], 16);
+                    openParkingDetailCard(r);
+                    toggleListDrawer();
+                };
+
+                const statusColor = r.status === 'high' ? 'text-emerald-600 bg-emerald-50' : (r.status === 'medium' ? 'text-amber-600 bg-amber-50' : 'text-rose-600 bg-rose-50');
+                const statusText = r.status === 'high' ? 'הרבה פנוי' : (r.status === 'medium' ? 'בינוני' : 'בודדים');
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor}">${statusText}</span>
+                            <span class="text-xs font-black text-slate-800">${r.type || 'חנייה'}</span>
+                        </div>
+                        <p class="text-xs text-slate-600 font-medium">${escapeHtml(r.note || 'ללא תיאור')}</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-slate-300 text-xs"></i>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.locateUser = function(toastNotice = true) {
+            if (!navigator.geolocation) return;
+
+            if (toastNotice) showToast('מאתר מיקום GPS...');
+
+            navigator.geolocation.getCurrentPosition((pos) => {
+                window.userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                
+                if (window.map) {
+                    window.map.flyTo([window.userLocation.lat, window.userLocation.lng], 15);
+
+                    if (window.userMarker) window.map.removeLayer(window.userMarker);
+
+                    const userIcon = L.divIcon({
+                        className: 'user-pulse-icon',
+                        html: `
+                            <div class="relative flex items-center justify-center">
+                                <div class="absolute w-8 h-8 rounded-full bg-blue-500/30 animate-ping"></div>
+                                <div class="w-5 h-5 rounded-full bg-blue-600 border-2 border-white shadow-lg"></div>
+                            </div>
+                        `,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+
+                    window.userMarker = L.marker([window.userLocation.lat, window.userLocation.lng], { icon: userIcon }).addTo(window.map);
+                }
+                if (toastNotice) showToast('מיקום נמצא!');
+            }, () => {
+                if (toastNotice) showToast('לא ניתן לקבל מיקום נוכחי');
+            });
+        };
+
+        function openParkingDetailCard(report) {
+            window.selectedParking = report;
+
+            const card = document.getElementById('parking-detail-card');
+            const badge = document.getElementById('detail-status-badge');
+            
+            if (report.status === 'high') {
+                badge.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold text-white bg-emerald-500';
+                badge.textContent = 'הרבה פנוי 🟢';
+            } else if (report.status === 'medium') {
+                badge.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold text-white bg-amber-500';
+                badge.textContent = 'זמינות בינונית 🟡';
+            } else {
+                badge.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold text-white bg-rose-500';
+                badge.textContent = 'בודדים בלבד 🔴';
+            }
+
+            document.getElementById('detail-title').textContent = report.note || 'חנייה באזור';
+            document.getElementById('detail-note').textContent = `מדווח ע"י משתמש • ${report.confirmations || 1} אישורים`;
+            document.getElementById('detail-type').textContent = report.type || 'כחול-לבן';
+
+            // Calculate distance & ETA
+            const distKm = calculateDistance(window.userLocation.lat, window.userLocation.lng, report.lat, report.lng);
+            const timeMins = Math.max(1, Math.round(distKm * 3)); // ~20km/h avg city speed
+            
+            document.getElementById('detail-distance').textContent = `${distKm.toFixed(1)} ק"מ`;
+            document.getElementById('detail-time').textContent = `${timeMins} דקות`;
+
+            card.classList.remove('hidden');
+        }
+
+        window.closeParkingDetail = function() {
+            document.getElementById('parking-detail-card').classList.add('hidden');
+        };
+
+        window.confirmSelectedParking = async function() {
+            if (!window.selectedParking) return;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'parking_reports', window.selectedParking.id);
+                await updateDoc(docRef, { confirmations: increment(1) });
+                showToast('אישור החנייה נרשם בהצלחה!');
+                closeParkingDetail();
+            } catch(e) {
+                showToast('אירעה שגיאה בעידכון');
+            }
+        };
+
+        window.startNavigationToSelected = function() {
+            if (!window.selectedParking) return;
+
+            closeParkingDetail();
+            window.isNavigating = true;
+
+            const start = [window.userLocation.lat, window.userLocation.lng];
+            const target = [window.selectedParking.lat, window.selectedParking.lng];
+
+            // Show active navigation banner
+            document.getElementById('nav-banner').classList.remove('hidden');
+
+            // Draw polyline route
+            if (window.navPolyline) window.map.removeLayer(window.navPolyline);
+
+            // Generate intermediate simulated route curve points
+            const routePoints = generateIntermediatePoints(start, target, 25);
+            window.navPolyline = L.polyline(routePoints, {
+                color: '#007AFF',
+                weight: 6,
+                opacity: 0.8,
+                lineCap: 'round'
+            }).addTo(window.map);
+
+            window.map.fitBounds(window.navPolyline.getBounds(), { padding: [80, 80] });
+
+            // Speech Prompt
+            speakHebrew('מתחיל ניווט לחנייה שנבחרה. בעוד מאתיים מטר פנה ימינה');
+
+            // Animate User Position along route
+            let step = 0;
+            if (window.navAnimInterval) clearInterval(window.navAnimInterval);
+
+            window.navAnimInterval = setInterval(() => {
+                if (step >= routePoints.length) {
+                    stopNavigation();
+                    showToast('🎉 הגעת ליעד! החנייה נמצאת מימינך');
+                    speakHebrew('הגעת ליעד. החנייה מימינך');
+                    return;
+                }
+
+                const currentPt = routePoints[step];
+                if (window.userMarker) window.userMarker.setLatLng(currentPt);
+                window.map.panTo(currentPt, { animate: true });
+
+                // Dynamic Turn Updates
+                const remainingSteps = routePoints.length - step;
+                const distRemainingMeters = Math.round(remainingSteps * 50);
+
+                if (distRemainingMeters > 300) {
+                    document.getElementById('nav-turn-icon').className = 'fa-solid fa-arrow-up';
+                    document.getElementById('nav-instruction').textContent = 'המשך ישר לכיוון רחוב היעד';
+                    document.getElementById('nav-dist-text').textContent = `בעוד ${distRemainingMeters} מטר`;
+                } else if (distRemainingMeters > 100) {
+                    document.getElementById('nav-turn-icon').className = 'fa-solid fa-turn-up text-amber-300';
+                    document.getElementById('nav-instruction').textContent = 'פנה ימינה ברחוב הבא';
+                    document.getElementById('nav-dist-text').textContent = `בעוד ${distRemainingMeters} מטר`;
+                } else {
+                    document.getElementById('nav-turn-icon').className = 'fa-solid fa-flag-checkered text-emerald-400';
+                    document.getElementById('nav-instruction').textContent = 'הגעת ליעד - חנייה מימין';
+                    document.getElementById('nav-dist-text').textContent = 'הגעת!';
+                }
+
+                document.getElementById('nav-eta-text').textContent = `${Math.ceil(distRemainingMeters / 150)} דק'`;
+                document.getElementById('nav-speed-text').textContent = `${30 + Math.floor(Math.random()*10)} קמ"ש`;
+
+                step++;
+            }, 1200);
+        };
+
+        window.stopNavigation = function() {
+            window.isNavigating = false;
+            if (window.navAnimInterval) clearInterval(window.navAnimInterval);
+            if (window.navPolyline) window.map.removeLayer(window.navPolyline);
+            document.getElementById('nav-banner').classList.add('hidden');
+            showToast('הניווט הופסק');
+        };
+
+        function speakHebrew(text) {
+            const voiceEnabled = document.getElementById('setting-voice').checked;
+            if (!voiceEnabled || !('speechSynthesis' in window)) return;
+
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'he-IL';
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function generateIntermediatePoints(start, end, steps) {
+            const pts = [];
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                // Add slight curve jitter for realistic road effect
+                const jitterLat = Math.sin(t * Math.PI) * 0.0008;
+                const jitterLng = Math.cos(t * Math.PI) * 0.0008;
+                pts.push([
+                    start[0] + (end[0] - start[0]) * t + jitterLat,
+                    start[1] + (end[1] - start[1]) * t + jitterLng
+                ]);
+            }
+            return pts;
+        }
+
+        window.searchAddress = async function() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) return;
+
+            showToast('מחפש כתובת...');
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=il&limit=4`);
+                const data = await res.json();
+
+                const box = document.getElementById('search-results-box');
+                box.innerHTML = '';
+
+                if (data.length === 0) {
+                    showToast('לא נמצאו תוצאות');
+                    box.classList.add('hidden');
+                    return;
+                }
+
+                box.classList.remove('hidden');
+                data.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-right p-2.5 border-b border-slate-100 hover:bg-white/80 text-xs font-bold text-slate-800 flex items-center gap-2';
+                    btn.innerHTML = `<i class="fa-solid fa-location-dot text-blue-600"></i> ${escapeHtml(item.display_name)}`;
+                    btn.onclick = () => {
+                        const lat = parseFloat(item.lat);
+                        const lon = parseFloat(item.lon);
+                        window.map.flyTo([lat, lon], 16);
+                        box.classList.add('hidden');
+                        showToast(`עבר אל: ${item.display_name.split(',')[0]}`);
+                    };
+                    box.appendChild(btn);
+                });
+            } catch(e) {
+                showToast('שגיאה בחיפוש');
+            }
+        };
+
+        window.submitReport = async function() {
+            const type = document.getElementById('report-type-select').value;
+            const note = document.getElementById('report-note-input').value.trim();
+
+            let lat, lng;
+
+            if (window.selectedLocType === 'gps') {
+                lat = window.userLocation.lat;
+                lng = window.userLocation.lng;
+            } else {
+                if (!window.pickedCoordinates) {
+                    showToast('אנא בחר מיקום במפה');
+                    return;
+                }
+                lat = window.pickedCoordinates.lat;
+                lng = window.pickedCoordinates.lng;
+            }
+
+            try {
+                const reportsCol = collection(db, 'artifacts', appId, 'public', 'data', 'parking_reports');
+                await addDoc(reportsCol, {
+                    lat: lat,
+                    lng: lng,
+                    status: window.selectedReportStatus,
+                    type: type,
+                    note: note,
+                    confirmations: 1,
+                    createdAt: Date.now()
+                });
+
+                closeReportModal();
+                document.getElementById('report-note-input').value = '';
+                showToast('הדיווח פורסם בהצלחה!');
+                window.map.flyTo([lat, lng], 16);
+            } catch(e) {
+                showToast('שגיאה בשמירת הדיווח');
+            }
+        };
+
+        window.setFilterStatus = function(status) {
+            window.activeStatusFilter = status;
+            ['all', 'high', 'medium', 'low'].forEach(s => {
+                const btn = document.getElementById(`filter-btn-${s}`);
+                if (!btn) return;
+                if (s === status) {
+                    btn.className = 'px-3 py-1.5 rounded-full ios-glass shadow-sm text-xs font-bold text-white bg-blue-600 border border-blue-600 flex items-center gap-1 shrink-0 transition-all';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-full ios-glass shadow-sm text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center gap-1.5 shrink-0 transition-all';
+                }
+            });
+            renderMarkers();
+        };
+
+        window.openReportModal = function() { document.getElementById('report-modal').classList.remove('hidden'); };
+        window.closeReportModal = function() { document.getElementById('report-modal').classList.add('hidden'); };
+        window.toggleListDrawer = function() { document.getElementById('list-drawer').classList.toggle('hidden'); };
+        window.toggleSettingsModal = function() { document.getElementById('settings-modal').classList.toggle('hidden'); };
+
+        window.setReportLocType = function(type) {
+            window.selectedLocType = type;
+            const btnGps = document.getElementById('loc-btn-gps');
+            const btnPick = document.getElementById('loc-btn-pick');
+
+            if (type === 'gps') {
+                btnGps.className = 'p-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center gap-2 transition';
+                btnPick.className = 'p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 text-xs font-bold flex items-center justify-center gap-2 transition';
+            } else {
+                btnPick.className = 'p-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center gap-2 transition';
+                btnGps.className = 'p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 text-xs font-bold flex items-center justify-center gap-2 transition';
+
+                closeReportModal();
+                window.isPickMode = true;
+                document.getElementById('pick-mode-banner').classList.remove('hidden');
+                document.getElementById('map').classList.add('pick-cursor');
+            }
+        };
+
+        window.cancelPickMode = function() {
+            window.isPickMode = false;
+            document.getElementById('pick-mode-banner').classList.add('hidden');
+            document.getElementById('map').classList.remove('pick-cursor');
+        };
+
+        window.setReportStatus = function(status) {
+            window.selectedReportStatus = status;
+            ['high', 'medium', 'low'].forEach(s => {
+                const btn = document.getElementById(`status-btn-${s}`);
+                if (!btn) return;
+                if (s === status) {
+                    btn.classList.add('border-emerald-500', 'bg-emerald-50');
+                    btn.classList.remove('border-slate-200', 'bg-white');
+                } else {
+                    btn.classList.remove('border-emerald-500', 'bg-emerald-50');
+                    btn.classList.add('border-slate-200', 'bg-white');
+                }
+            });
+        };
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            toast.classList.remove('-translate-y-16', 'opacity-0');
+            setTimeout(() => toast.classList.add('-translate-y-16', 'opacity-0'), 3000);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+        }
+
+        // Live Clock
+        setInterval(() => {
+            const d = new Date();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const mins = String(d.getMinutes()).padStart(2, '0');
+            document.getElementById('ios-time-clock').textContent = `${hours}:${mins}`;
+        }, 1000);
+
+        window.onload = function() {
+            initMap();
+            initAuth();
+        };
+    </script>
+</body>
+</html>
