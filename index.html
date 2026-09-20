@@ -34,7 +34,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000;
+            background-color: #f5f5f7;
         }
 
         #app-container {
@@ -52,6 +52,12 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            background: #f8f9fa;
+        }
+
+        /* 🎨 פילטר CSS מודרני שהופך את מפת Esri ללבנה, רכה ויוקרתית תוך שמירה מלאה על העברית */
+        .leaflet-tile-pane {
+            filter: grayscale(0.85) brightness(1.08) contrast(0.95);
         }
 
         /* Splash Screen */
@@ -162,7 +168,7 @@
             padding: 10px 18px;
             display: flex;
             align-items: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             border: 2px solid var(--pearl-black);
         }
 
@@ -199,7 +205,7 @@
             justify-content: center;
             color: var(--pearl-black);
             font-size: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -233,7 +239,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -265,7 +271,7 @@
             padding: 25px 20px 40px 20px;
             z-index: 2000;
             transition: bottom 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
             border-top: 3px solid var(--pearl-black);
         }
 
@@ -329,9 +335,7 @@
             object-fit: contain;
         }
 
-        /* ========================================================
-           📍 Clean Marker Wrapper & Pulsing Aura
-           ======================================================== */
+        /* Map Pin Wrapper & Pulse Ring */
         .pearl-pin-wrapper {
             position: relative;
             width: 44px;
@@ -343,7 +347,6 @@
             border: none;
         }
 
-        /* הילה פועמת נקייה שיוצאת מאחורי האייקון ללא שום קו מתאר */
         .pearl-pulse-ring {
             position: absolute;
             top: 0;
@@ -378,7 +381,7 @@
             background: transparent;
         }
 
-        /* Keyframes להילה פועמת חלקה ללא קו מתאר כפול */
+        /* Pulse Keyframes */
         @keyframes pulseCyanAura {
             0% { box-shadow: 0 0 0 0 rgba(32, 226, 200, 0.85); }
             70% { box-shadow: 0 0 0 18px rgba(32, 226, 200, 0); }
@@ -482,13 +485,13 @@
             pointer-events: auto;
         }
 
-        /* GPS Status */
+        /* GPS Status Badge */
         .gps-status {
             position: absolute;
             top: 80px;
             left: 15px;
             z-index: 1000;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
             border: 2px solid var(--pearl-black);
             padding: 6px 14px;
             border-radius: 20px;
@@ -497,6 +500,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         }
         .gps-dot {
             width: 8px;
@@ -654,7 +658,7 @@
 </div>
 
 <script>
-    // מחרוזות SVG נקיות למנגנון הגיבוי למקרה שאין קבצים בתיקייה (ללא מעטפת כפולה)
+    // מחרוזות SVG נקיות למנגנון הגיבוי
     const fallbackSvgStrings = {
         empty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="#20E2C8" stroke="#111111" stroke-width="3.5"/><text x="22" y="29" text-anchor="middle" font-weight="900" font-size="22" fill="#111111" font-family="Rubik, sans-serif">P</text></svg>`,
         medium: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="#FFB700" stroke="#111111" stroke-width="3.5"/><text x="22" y="29" text-anchor="middle" font-weight="900" font-size="22" fill="#111111" font-family="Rubik, sans-serif">P</text></svg>`,
@@ -670,9 +674,10 @@
         imgElem.replaceWith(container);
     }
 
-    // Esri Map Tile
+    // 🗺️ Esri World Street Map עם תמיכה בעברית מלאה וזום חלק עד רמה 20
     const esriStreetTile = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 18,
+        maxNativeZoom: 18,
+        maxZoom: 20,
         attribution: 'Tiles &copy; Esri'
     });
 
@@ -683,14 +688,12 @@
         layers: [esriStreetTile]
     });
 
-    // בדיקה האם הדיווח נמסר ב-10 הדקות האחרונות
     function isRecentReport(timestamp) {
         if (!timestamp) return true;
         const tenMinutesInMs = 10 * 60 * 1000;
         return (Date.now() - timestamp) < tenMinutesInMs;
     }
 
-    // יצירת סמן Leaflet נקי לחלוטין ללא מעטפת כפולה
     function createPearlIcon(level, timestamp) {
         const isRecent = isRecentReport(timestamp);
         const pulseClass = isRecent ? `pulse-${level}` : '';
