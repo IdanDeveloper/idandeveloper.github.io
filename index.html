@@ -1,927 +1,696 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pearl. - חיפוש חניה בקליק!</title>
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts - Rubik -->
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Solo Courier Advanced Manager</title>
+  <style>
+    :root {
+      --bg-main: #0b1329;
+      --card-bg: #1c2541;
+      --card-inner: #0b1329;
+      --accent-blue: #3a86ff;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-orange: #f59e0b;
+      --text-primary: #ffffff;
+      --text-secondary: #94a3b8;
+      --border-color: #2a365c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .app-container {
+      max-width: 430px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Header & Fuel Bar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 2px;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+
+    .backup-btn {
+      background: #2a365c;
+      color: var(--text-primary);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Fuel Status Banner */
+    .fuel-banner {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--accent-green);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fuel-status-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    .fuel-status-tag.invalid {
+      color: var(--accent-red);
+    }
+
+    .fuel-price-val {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Summary Grid */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat-box {
+      background: var(--card-inner);
+      padding: 10px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+    }
+
+    .stat-value.green { color: var(--accent-green); }
+    .stat-value.red { color: var(--accent-red); }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Calendar Grid */
+    .cal-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .cal-nav button {
+      background: #2a365c;
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .cal-month-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .day-header {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding-bottom: 2px;
+    }
+
+    .day-cell {
+      background: var(--card-inner);
+      min-height: 52px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px;
+      font-size: 0.85rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .day-cell.today { border-color: var(--accent-blue); }
+    .day-cell.empty { background: transparent; cursor: default; }
+
+    .day-net {
+      font-size: 0.65rem;
+      color: var(--accent-green);
+      font-weight: 800;
+    }
+
+    .day-location {
+      font-size: 0.55rem;
+      color: var(--text-secondary);
+    }
+
+    /* Modal Form Sheet */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      display: none;
+      justify-content: flex-end;
+      flex-direction: column;
+      z-index: 999;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-sheet {
+      background: var(--card-bg);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 18px 16px max(18px, env(safe-area-inset-bottom)) 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 92vh;
+      overflow-y: auto;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sheet-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    /* Form Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    input, select {
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 16px; /* מונע זום ב-iOS */
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-blue);
+    }
+
+    /* Summary Breakdown Card Inside Modal */
+    .breakdown-box {
+      background: var(--card-inner);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .b-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .b-row.expense { color: var(--accent-red); }
+    .b-row.gross { color: var(--accent-blue); font-weight: 600; }
     
-    <style>
-        :root {
-            --pearl-pink: #FF2B68;
-            --pearl-black: #111111;
-            --pearl-gray: #F2F2F7;
-            --pearl-red: #FF3B30;
-            --pearl-cyan: #20E2C8;
-            --pearl-yellow: #FFB700;
-        }
+    .b-row.net-main {
+      border-top: 1px dashed var(--border-color);
+      padding-top: 6px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+    .sheet-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #f5f5f7;
-        }
+    .btn-save {
+      flex: 2;
+      background: var(--accent-green);
+      color: #000;
+      border: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
 
-        #app-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            background: #fff;
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        }
+    .btn-delete {
+      flex: 1;
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+      border: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
 
-        #map {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            background: #f8f9fa;
-        }
-
-        /* 🎨 פילטר CSS מודרני שהופך את מפת Esri ללבנה, רכה ויוקרתית תוך שמירה מלאה על העברית */
-        .leaflet-tile-pane {
-            filter: grayscale(0.85) brightness(1.08) contrast(0.95);
-        }
-
-        /* Splash Screen */
-        .splash-screen {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--pearl-pink);
-            z-index: 3000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 60px 30px 40px 30px;
-            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-
-        .splash-screen.hidden {
-            transform: translateY(-100%);
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-        }
-
-        .brand-logo-icon {
-            width: 65px;
-            height: 65px;
-            border: 5px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .brand-logo-icon::after {
-            content: '';
-            width: 14px;
-            height: 14px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 8px;
-            left: 8px;
-        }
-
-        .brand-title {
-            font-size: 54px;
-            font-weight: 900;
-            color: white;
-        }
-
-        .splash-hero {
-            text-align: center;
-            color: white;
-        }
-
-        .splash-hero h1 {
-            font-size: 38px;
-            font-weight: 900;
-            line-height: 1.15;
-            margin-bottom: 10px;
-        }
-
-        .btn-start-swipe {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.6);
-            color: white;
-            width: 100%;
-            padding: 18px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-        }
-
-        .btn-start-swipe:active {
-            transform: scale(0.96);
-            background: white;
-            color: var(--pearl-pink);
-        }
-
-        /* Top Header */
-        .ios-header {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-box {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 10px 18px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            border: 2px solid var(--pearl-black);
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            padding: 4px 8px;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--pearl-black);
-        }
-
-        /* Side Controls */
-        .floating-controls {
-            position: absolute;
-            right: 15px;
-            top: 80px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .btn-circle {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: white;
-            border: 2.5px solid var(--pearl-black);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--pearl-black);
-            font-size: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn-circle:active {
-            transform: scale(0.9);
-        }
-
-        /* Bottom Action Buttons */
-        .action-buttons-container {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-action {
-            width: 100%;
-            border: 3px solid var(--pearl-black);
-            padding: 16px;
-            border-radius: 25px;
-            font-size: 17px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn-action:active {
-            transform: scale(0.96);
-        }
-
-        .btn-nearest {
-            background: var(--pearl-pink);
-            color: white;
-        }
-
-        .btn-report-main {
-            background: white;
-            color: var(--pearl-black);
-        }
-
-        /* Bottom Sheets */
-        .bottom-sheet {
-            position: absolute;
-            bottom: -100%;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(25px);
-            border-top-left-radius: 35px;
-            border-top-right-radius: 35px;
-            padding: 25px 20px 40px 20px;
-            z-index: 2000;
-            transition: bottom 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
-            border-top: 3px solid var(--pearl-black);
-        }
-
-        .bottom-sheet.active {
-            bottom: 0;
-        }
-
-        .sheet-drag-handle {
-            width: 45px;
-            height: 6px;
-            background: #d1d1d6;
-            border-radius: 3px;
-            margin: 0 auto 15px auto;
-        }
-
-        .sheet-title {
-            font-size: 26px;
-            font-weight: 900;
-            color: var(--pearl-black);
-            margin-bottom: 6px;
-            text-align: center;
-        }
-
-        .sheet-subtitle {
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-            margin-bottom: 22px;
-            line-height: 1.4;
-        }
-
-        .level-options {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .level-btn {
-            background: var(--pearl-gray);
-            border: 3px solid transparent;
-            border-radius: 20px;
-            padding: 12px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .level-btn.selected {
-            background: white;
-            border-color: var(--pearl-black);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .svg-icon-img {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-        }
-
-        /* Map Pin Wrapper & Pulse Ring */
-        .pearl-pin-wrapper {
-            position: relative;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-        }
-
-        .pearl-pulse-ring {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-            background: transparent;
-            border: none;
-        }
-
-        .pearl-pin-img-holder {
-            position: relative;
-            width: 44px;
-            height: 44px;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-        }
-
-        .pearl-svg-map-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-            border: none;
-            background: transparent;
-        }
-
-        /* Pulse Keyframes */
-        @keyframes pulseCyanAura {
-            0% { box-shadow: 0 0 0 0 rgba(32, 226, 200, 0.85); }
-            70% { box-shadow: 0 0 0 18px rgba(32, 226, 200, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(32, 226, 200, 0); }
-        }
-
-        @keyframes pulseYellowAura {
-            0% { box-shadow: 0 0 0 0 rgba(255, 183, 0, 0.85); }
-            70% { box-shadow: 0 0 0 18px rgba(255, 183, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 183, 0, 0); }
-        }
-
-        @keyframes pulsePinkAura {
-            0% { box-shadow: 0 0 0 0 rgba(255, 43, 104, 0.85); }
-            70% { box-shadow: 0 0 0 18px rgba(255, 43, 104, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 43, 104, 0); }
-        }
-
-        @keyframes pulseRedAura {
-            0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.85); }
-            70% { box-shadow: 0 0 0 18px rgba(255, 59, 48, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
-        }
-
-        .pearl-pulse-ring.pulse-empty { animation: pulseCyanAura 1.6s infinite ease-in-out; }
-        .pearl-pulse-ring.pulse-medium { animation: pulseYellowAura 1.6s infinite ease-in-out; }
-        .pearl-pulse-ring.pulse-busy { animation: pulsePinkAura 1.6s infinite ease-in-out; }
-        .pearl-pulse-ring.pulse-full { animation: pulseRedAura 1.6s infinite ease-in-out; }
-
-        .level-btn span {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--pearl-black);
-        }
-
-        .input-street {
-            width: 100%;
-            padding: 16px;
-            background: var(--pearl-gray);
-            border: 2px solid transparent;
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            outline: none;
-        }
-
-        .input-street:focus {
-            border-color: var(--pearl-black);
-            background: white;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--pearl-pink);
-            color: white;
-            border: 3px solid var(--pearl-black);
-            padding: 16px;
-            border-radius: 22px;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        /* Nav App Links */
-        .nav-apps-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .nav-app-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 16px;
-            color: white;
-            border: 2.5px solid var(--pearl-black);
-        }
-
-        .nav-app-btn.waze { background: #33ccff; color: var(--pearl-black); }
-        .nav-app-btn.google { background: #4285f4; }
-        .nav-app-btn.apple { background: var(--pearl-black); }
-
-        .overlay-bg {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1500;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        .overlay-bg.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* GPS Status Badge */
-        .gps-status {
-            position: absolute;
-            top: 80px;
-            left: 15px;
-            z-index: 1000;
-            background: rgba(255,255,255,0.95);
-            border: 2px solid var(--pearl-black);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        }
-        .gps-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--pearl-red);
-        }
-        .gps-dot.active {
-            background: #34c759;
-            box-shadow: 0 0 8px #34c759;
-        }
-    </style>
+    .warning-msg {
+      color: var(--accent-red);
+      font-size: 0.75rem;
+      text-align: center;
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-<div id="app-container">
+<div class="app-container">
+  <header>
+    <h1>🛵 Solo Delivery Manager</h1>
+    <button class="backup-btn" onclick="exportData()">💾 גיבוי</button>
+  </header>
 
-    <!-- Splash Screen -->
-    <div class="splash-screen" id="splashScreen">
-        <div class="brand-logo">
-            <div class="brand-logo-icon">
-                <span style="font-size: 32px; font-weight: 900; margin-left: 12px; margin-top: 10px;">P</span>
-            </div>
-            <div class="brand-title">Pearl.</div>
-        </div>
+  <!-- Live Verified Fuel Price Banner -->
+  <div class="fuel-banner">
+    <div class="fuel-status-tag" id="fuelStatusTag">
+      <span id="fuelDot">🟢</span>
+      <span id="fuelStatusText">מחיר דלק 95 מעודכן (רשמי)</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:4px;">
+      <input type="number" step="0.01" id="fuelPriceInput" value="8.25" oninput="validateFuelPrice()" style="width:70px; padding:4px 8px; font-weight:bold; text-align:center;">
+      <span style="font-size:0.8rem; color:var(--text-secondary);">₪/ל'</span>
+    </div>
+  </div>
 
-        <div class="splash-hero">
-            <h1>חיפוש חניה<br>בקליק!</h1>
-        </div>
+  <!-- Monthly Summary Stats -->
+  <div class="card">
+    <div class="card-title">סיכום חודשי נקי</div>
+    <div class="summary-grid">
+      <div class="summary-stat stat-box">
+        <div class="stat-value" id="mTotalGross">0 ₪</div>
+        <div class="stat-label">הרווחתי (ברוטו)</div>
+      </div>
+      <div class="summary-stat stat-box">
+        <div class="stat-value red" id="mTotalFuel">0 ₪</div>
+        <div class="stat-label">בזבזתי (דלק)</div>
+      </div>
+      <div class="summary-stat stat-box">
+        <div class="stat-value green" id="mTotalNet">0 ₪</div>
+        <div class="stat-label">נשאר לי (נטו)</div>
+      </div>
+    </div>
+  </div>
 
-        <button class="btn-start-swipe" onclick="closeSplashScreen()">
-            התחל עכשיו <i class="fa-solid fa-chevron-left"></i>
-        </button>
+  <!-- Calendar Card -->
+  <div class="card">
+    <div class="cal-nav">
+      <button onclick="changeMonth(-1)">&lt;</button>
+      <span class="cal-month-title" id="calTitle">--</span>
+      <button onclick="changeMonth(1)">&gt;</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+</div>
+
+<!-- Modal Form Sheet -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title" id="modalDateLabel">דיווח יום עבודה</span>
+      <button class="close-btn" onclick="closeModal()">✕</button>
     </div>
 
-    <!-- Map Canvas -->
-    <div id="map"></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>1. שעת התחלה</label>
+        <input type="time" id="startTimeInput" onchange="calculateShift()">
+      </div>
 
-    <!-- Search Header -->
-    <div class="ios-header">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass" style="color: #8e8e93;"></i>
-            <input type="text" id="searchInput" placeholder="חפש רחוב, עיר או אזור..." onkeypress="handleSearch(event)">
-        </div>
+      <div class="form-group">
+        <label>2. שעת סיום</label>
+        <input type="time" id="endTimeInput" onchange="calculateShift()">
+      </div>
+
+      <div class="form-group">
+        <label>3. טיפים במזומן (₪)</label>
+        <input type="number" id="cashTipsInput" placeholder="0" oninput="calculateShift()">
+      </div>
+
+      <div class="form-group">
+        <label>4. טיפים באשראי (₪)</label>
+        <input type="number" id="creditTipsInput" placeholder="0" oninput="calculateShift()">
+      </div>
+
+      <div class="form-group">
+        <label>5. כמות ק"מ</label>
+        <input type="number" id="kmInput" placeholder="0" oninput="calculateShift()">
+      </div>
+
+      <div class="form-group">
+        <label>6. מיקום עבודה</label>
+        <select id="locationSelect">
+          <option value="כרמיאל">כרמיאל</option>
+          <option value="חיפה">חיפה</option>
+        </select>
+      </div>
     </div>
 
-    <!-- GPS Status Badge -->
-    <div class="gps-status">
-        <div class="gps-dot" id="gpsDot"></div>
-        <span id="gpsStatusText">מאתר GPS...</span>
+    <!-- Calculations Breakdown Box -->
+    <div class="breakdown-box">
+      <div class="b-row">
+        <span>שעות עבודה מדויקות:</span>
+        <span id="resHoursDisplay" style="color:#fff;">0.00 שעות</span>
+      </div>
+      <div class="b-row gross">
+        <span>כמה הרווחתי (ברוטו):</span>
+        <span id="resGrossDisplay">0.00 ₪</span>
+      </div>
+      <div class="b-row expense">
+        <span>כמה בזבזתי (דלק לפי 11.65 ק"מ/ל'):</span>
+        <span id="resFuelExpenseDisplay">- 0.00 ₪</span>
+      </div>
+      <div class="b-row">
+        <span>רווח שעתי נקי אפקטיבי:</span>
+        <span id="resHourlyNetDisplay" style="color:var(--accent-orange); font-weight:700;">0.00 ₪ / שעה</span>
+      </div>
+      <div class="b-row net-main">
+        <span>כמה נשאר לי (רווח נקי):</span>
+        <span id="resNetDisplay">0.00 ₪</span>
+      </div>
     </div>
 
-    <!-- Right Controls -->
-    <div class="floating-controls">
-        <div class="btn-circle" onclick="locateUser(true)" title="המיקום שלי">
-            <i class="fa-solid fa-location-crosshairs"></i>
-        </div>
-        <div class="btn-circle" onclick="openHowToModal()" title="איך מתחילים?">
-            <i class="fa-solid fa-circle-info"></i>
-        </div>
+    <div class="warning-msg" id="fuelWarning">⚠️ חובה להזין מחיר דלק תקין (בירוק) כדי לחשב ולשמור.</div>
+
+    <div class="sheet-actions">
+      <button class="btn-save" id="saveBtn" onclick="saveShiftData()">שמור יום עבודה</button>
+      <button class="btn-delete" onclick="deleteShiftData()">מחק</button>
     </div>
-
-    <!-- Bottom Action Buttons -->
-    <div class="action-buttons-container">
-        <button class="btn-action btn-nearest" onclick="navigateToNearestParking()">
-            <i class="fa-solid fa-bolt"></i>
-            קח אותי לחנייה הקרובה ביותר
-        </button>
-        <button class="btn-action btn-report-main" onclick="openReportModal()">
-            <i class="fa-solid fa-plus"></i>
-            דווח על חנייה במיקומי
-        </button>
-    </div>
-
-    <div class="overlay-bg" id="overlay" onclick="closeAllSheets()"></div>
-
-    <!-- Sheet 1: Report Modal -->
-    <div class="bottom-sheet" id="reportSheet">
-        <div class="sheet-drag-handle"></div>
-        <div class="sheet-title">מה מצב החנייה?</div>
-        <div class="sheet-subtitle" id="reportLocationSubtitle">דיווח עבור מיקום ה-GPS המדויק שלך</div>
-
-        <div class="level-options">
-            <div class="level-btn selected" onclick="selectLevel('empty', this)">
-                <img src="empty.svg" alt="ריק" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'empty')">
-                <span>ריק</span>
-            </div>
-            <div class="level-btn" onclick="selectLevel('medium', this)">
-                <img src="medium.svg" alt="בינוני" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'medium')">
-                <span>בינוני</span>
-            </div>
-            <div class="level-btn" onclick="selectLevel('busy', this)">
-                <img src="busy.svg" alt="עמוס" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'busy')">
-                <span>עמוס</span>
-            </div>
-            <div class="level-btn" onclick="selectLevel('full', this)">
-                <img src="full.svg" alt="מלא" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'full')">
-                <span>מלא</span>
-            </div>
-        </div>
-
-        <input type="text" id="streetInput" class="input-street" placeholder="שם הרחוב / הערה (אופציונלי)">
-
-        <button class="btn-submit" onclick="submitReport()">פרסם דיווח ב-Pearl</button>
-    </div>
-
-    <!-- Sheet 2: How To / Legend Modal -->
-    <div class="bottom-sheet" id="howtoSheet">
-        <div class="sheet-drag-handle"></div>
-        <div class="sheet-title">איך מתחילים?</div>
-        <div class="sheet-subtitle">ניתן לקבל דיווח או לדווח על כמות חניה פנויה באיזור המבוקש. ובנוסף, ניתן לנווט לחניה הקרובה ביותר.</div>
-
-        <div class="level-options" style="grid-template-columns: repeat(2, 1fr); gap: 15px;">
-            <div style="display: flex; align-items: center; gap: 12px; background: var(--pearl-gray); padding: 12px; border-radius: 16px;">
-                <img src="empty.svg" alt="ריק" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'empty')">
-                <span style="font-weight: 800;">ריק</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; background: var(--pearl-gray); padding: 12px; border-radius: 16px;">
-                <img src="medium.svg" alt="בינוני" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'medium')">
-                <span style="font-weight: 800;">בינוני</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; background: var(--pearl-gray); padding: 12px; border-radius: 16px;">
-                <img src="busy.svg" alt="עמוס" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'busy')">
-                <span style="font-weight: 800;">עמוס</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; background: var(--pearl-gray); padding: 12px; border-radius: 16px;">
-                <img src="full.svg" alt="מלא" class="svg-icon-img" onerror="replaceWithFallbackSvg(this, 'full')">
-                <span style="font-weight: 800;">מלא</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sheet 3: Navigation Apps Modal -->
-    <div class="bottom-sheet" id="navSheet">
-        <div class="sheet-drag-handle"></div>
-        <div class="sheet-title" id="navSheetTitle">פרטי חנייה</div>
-        <div class="sheet-subtitle" id="navSheetSubtitle">בחר אפליקציה לנסיעה ליעד</div>
-
-        <div class="nav-apps-grid">
-            <a id="wazeLink" href="#" target="_blank" class="nav-app-btn waze">
-                <span><i class="fa-solid fa-diamond-turn-right"></i> נווט ב-Waze</span>
-                <i class="fa-solid fa-chevron-left"></i>
-            </a>
-            <a id="googleLink" href="#" target="_blank" class="nav-app-btn google">
-                <span><i class="fa-solid fa-map-location-dot"></i> נווט ב-Google Maps</span>
-                <i class="fa-solid fa-chevron-left"></i>
-            </a>
-            <a id="appleLink" href="#" target="_blank" class="nav-app-btn apple">
-                <span><i class="fa-solid fa-apple-pay"></i> נווט ב-Apple Maps</span>
-                <i class="fa-solid fa-chevron-left"></i>
-            </a>
-        </div>
-    </div>
-
+  </div>
 </div>
 
 <script>
-    // מחרוזות SVG נקיות למנגנון הגיבוי
-    const fallbackSvgStrings = {
-        empty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="#20E2C8" stroke="#111111" stroke-width="3.5"/><text x="22" y="29" text-anchor="middle" font-weight="900" font-size="22" fill="#111111" font-family="Rubik, sans-serif">P</text></svg>`,
-        medium: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="#FFB700" stroke="#111111" stroke-width="3.5"/><text x="22" y="29" text-anchor="middle" font-weight="900" font-size="22" fill="#111111" font-family="Rubik, sans-serif">P</text></svg>`,
-        busy: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="#FF2B68" stroke="#111111" stroke-width="3.5"/><text x="22" y="29" text-anchor="middle" font-weight="900" font-size="22" fill="#FFFFFF" font-family="Rubik, sans-serif">P</text></svg>`,
-        full: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="#FF3B30" stroke="#111111" stroke-width="3.5"/><text x="22" y="30" text-anchor="middle" font-weight="900" font-size="24" fill="#FFFFFF" font-family="Rubik, sans-serif">!</text></svg>`
+  const HOURLY_RATE = 50;
+  const KM_PER_LITER = 11.65; // צריכת דלק
+  const VAT_RATE = 0.18; // 18% מע"מ מטיפ אשראי
+
+  let shiftsData = JSON.parse(localStorage.getItem('solo_shifts_data')) || {};
+  let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
+  let viewDate = new Date();
+  let selectedDateKey = null;
+
+  function init() {
+    document.getElementById('fuelPriceInput').value = currentFuelPrice;
+    validateFuelPrice();
+    renderCalendar();
+  }
+
+  function validateFuelPrice() {
+    const val = parseFloat(document.getElementById('fuelPriceInput').value);
+    const statusTag = document.getElementById('fuelStatusTag');
+    const dot = document.getElementById('fuelDot');
+    const txt = document.getElementById('fuelStatusText');
+    const warning = document.getElementById('fuelWarning');
+    const saveBtn = document.getElementById('saveBtn');
+
+    if (val && val > 0) {
+      currentFuelPrice = val;
+      localStorage.setItem('solo_fuel_price', currentFuelPrice);
+      statusTag.classList.remove('invalid');
+      dot.innerText = '🟢';
+      txt.innerText = 'מחיר דלק 95 מעודכן';
+      warning.style.display = 'none';
+      saveBtn.style.opacity = '1';
+      saveBtn.style.pointerEvents = 'auto';
+      calculateShift();
+    } else {
+      statusTag.classList.add('invalid');
+      dot.innerText = '🔴';
+      txt.innerText = 'מחיר דלק לא תקין!';
+      warning.style.display = 'block';
+      saveBtn.style.opacity = '0.4';
+      saveBtn.style.pointerEvents = 'none';
+    }
+  }
+
+  function renderCalendar() {
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+
+    document.getElementById('calTitle').innerText = 
+      new Date(year, month).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+
+    ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].forEach(dh => {
+      grid.innerHTML += `<div class="day-header">${dh}</div>`;
+    });
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayKey = new Date().toISOString().split('T')[0];
+
+    let monthlyGross = 0;
+    let monthlyFuel = 0;
+    let monthlyNet = 0;
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      grid.innerHTML += `<div class="day-cell empty"></div>`;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const shift = shiftsData[dateKey];
+      const isToday = dateKey === todayKey;
+
+      if (shift) {
+        monthlyGross += shift.grossEarnings || 0;
+        monthlyFuel += shift.fuelExpense || 0;
+        monthlyNet += shift.netProfit || 0;
+      }
+
+      const cell = document.createElement('div');
+      cell.className = `day-cell ${isToday ? 'today' : ''}`;
+      cell.innerHTML = `
+        <span>${day}</span>
+        ${shift ? `<span class="day-net">${Math.round(shift.netProfit)}₪</span>` : ''}
+        ${shift && shift.location ? `<span class="day-location">${shift.location}</span>` : ''}
+      `;
+      cell.onclick = () => openShiftModal(dateKey);
+      grid.appendChild(cell);
+    }
+
+    document.getElementById('mTotalGross').innerText = `${monthlyGross.toFixed(0)} ₪`;
+    document.getElementById('mTotalFuel').innerText = `${monthlyFuel.toFixed(0)} ₪`;
+    document.getElementById('mTotalNet').innerText = `${monthlyNet.toFixed(0)} ₪`;
+  }
+
+  function changeMonth(delta) {
+    viewDate.setMonth(viewDate.getMonth() + delta);
+    renderCalendar();
+  }
+
+  function openShiftModal(dateKey) {
+    selectedDateKey = dateKey;
+    const existing = shiftsData[dateKey] || {};
+
+    document.getElementById('modalDateLabel').innerText = `דיווח לתאריך: ${dateKey}`;
+    document.getElementById('startTimeInput').value = existing.startTime || '';
+    document.getElementById('endTimeInput').value = existing.endTime || '';
+    document.getElementById('cashTipsInput').value = existing.cashTips !== undefined ? existing.cashTips : '';
+    document.getElementById('creditTipsInput').value = existing.creditTips !== undefined ? existing.creditTips : '';
+    document.getElementById('kmInput').value = existing.km !== undefined ? existing.km : '';
+    document.getElementById('locationSelect').value = existing.location || 'כרמיאל';
+
+    calculateShift();
+    document.getElementById('formModal').classList.add('active');
+  }
+
+  function calculateShift() {
+    const startVal = document.getElementById('startTimeInput').value;
+    const endVal = document.getElementById('endTimeInput').value;
+    const cashTips = parseFloat(document.getElementById('cashTipsInput').value) || 0;
+    const creditTips = parseFloat(document.getElementById('creditTipsInput').value) || 0;
+    const km = parseFloat(document.getElementById('kmInput').value) || 0;
+
+    let totalHours = 0;
+    if (startVal && endVal) {
+      const [sh, sm] = startVal.split(':').map(Number);
+      const [eh, em] = endVal.split(':').map(Number);
+      let startMins = sh * 60 + sm;
+      let endMins = eh * 60 + em;
+      if (endMins < startMins) endMins += 24 * 60; // חציית חצות
+      totalHours = (endMins - startMins) / 60;
+    }
+
+    const baseSalary = totalHours * HOURLY_RATE;
+    const creditTipsNet = creditTips * (1 - VAT_RATE); // 18% מע"מ
+    const grossEarnings = baseSalary + cashTips + creditTipsNet;
+
+    // חישוב דלק לפי 11.65 ק"מ לליטר
+    const litersUsed = km / KM_PER_LITER;
+    const fuelExpense = litersUsed * currentFuelPrice;
+
+    const netProfit = grossEarnings - fuelExpense;
+    const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
+
+    document.getElementById('resHoursDisplay').innerText = `${totalHours.toFixed(2)} שעות`;
+    document.getElementById('resGrossDisplay').innerText = `${grossEarnings.toFixed(2)} ₪`;
+    document.getElementById('resFuelExpenseDisplay').innerText = `- ${fuelExpense.toFixed(2)} ₪`;
+    document.getElementById('resHourlyNetDisplay').innerText = `${effectiveHourlyNet.toFixed(2)} ₪ / שעה`;
+    document.getElementById('resNetDisplay').innerText = `${netProfit.toFixed(2)} ₪`;
+
+    return {
+      startTime: startVal,
+      endTime: endVal,
+      totalHours: parseFloat(totalHours.toFixed(2)),
+      baseSalary: parseFloat(baseSalary.toFixed(2)),
+      cashTips,
+      creditTips,
+      creditTipsNet: parseFloat(creditTipsNet.toFixed(2)),
+      km,
+      fuelExpense: parseFloat(fuelExpense.toFixed(2)),
+      grossEarnings: parseFloat(grossEarnings.toFixed(2)),
+      netProfit: parseFloat(netProfit.toFixed(2)),
+      effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2))
+    };
+  }
+
+  function saveShiftData() {
+    if (!currentFuelPrice || currentFuelPrice <= 0) {
+      alert("מחיר הדלק אינו תקין. אנא וודא שהתג ירוק.");
+      return;
+    }
+
+    const calc = calculateShift();
+    const location = document.getElementById('locationSelect').value;
+
+    shiftsData[selectedDateKey] = {
+      ...calc,
+      location,
+      fuelPriceUsed: currentFuelPrice
     };
 
-    function replaceWithFallbackSvg(imgElem, level) {
-        imgElem.onerror = null;
-        const container = document.createElement('div');
-        container.className = 'svg-icon-img';
-        container.innerHTML = fallbackSvgStrings[level] || fallbackSvgStrings.empty;
-        imgElem.replaceWith(container);
-    }
+    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    closeModal();
+    renderCalendar();
+  }
 
-    // 🗺️ Esri World Street Map עם תמיכה בעברית מלאה וזום חלק עד רמה 20
-    const esriStreetTile = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-        maxNativeZoom: 18,
-        maxZoom: 20,
-        attribution: 'Tiles &copy; Esri'
-    });
+  function deleteShiftData() {
+    delete shiftsData[selectedDateKey];
+    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    closeModal();
+    renderCalendar();
+  }
 
-    let map = L.map('map', {
-        center: [32.0853, 34.7818],
-        zoom: 15,
-        zoomControl: false,
-        layers: [esriStreetTile]
-    });
+  function closeModal() {
+    document.getElementById('formModal').classList.remove('active');
+  }
 
-    function isRecentReport(timestamp) {
-        if (!timestamp) return true;
-        const tenMinutesInMs = 10 * 60 * 1000;
-        return (Date.now() - timestamp) < tenMinutesInMs;
-    }
+  function exportData() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shiftsData, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", `solo_shifts_backup.json`);
+    dlAnchor.click();
+  }
 
-    function createPearlIcon(level, timestamp) {
-        const isRecent = isRecentReport(timestamp);
-        const pulseClass = isRecent ? `pulse-${level}` : '';
-
-        const wrapper = document.createElement('div');
-        wrapper.className = 'pearl-pin-wrapper';
-
-        const pulseRing = document.createElement('div');
-        pulseRing.className = `pearl-pulse-ring ${pulseClass}`;
-
-        const pinHolder = document.createElement('div');
-        pinHolder.className = 'pearl-pin-img-holder';
-
-        const img = document.createElement('img');
-        img.src = `${level}.svg`;
-        img.className = 'pearl-svg-map-img';
-        img.onerror = function() {
-            pinHolder.innerHTML = fallbackSvgStrings[level] || fallbackSvgStrings.empty;
-        };
-
-        pinHolder.appendChild(img);
-        wrapper.appendChild(pulseRing);
-        wrapper.appendChild(pinHolder);
-
-        return L.divIcon({
-            html: wrapper.outerHTML,
-            className: '',
-            iconSize: [44, 44],
-            iconAnchor: [22, 22]
-        });
-    }
-
-    let currentGPSLocation = null;
-    let userMarker = null;
-    let selectedLevel = 'empty';
-    let activeReports = [];
-
-    function startGPSTracking() {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    currentGPSLocation = { lat, lng };
-
-                    document.getElementById('gpsDot').classList.add('active');
-                    document.getElementById('gpsStatusText').innerText = `GPS מחובר`;
-
-                    if (!userMarker) {
-                        const userIcon = L.divIcon({
-                            html: `<div style="width:22px;height:22px;background:#FF2B68;border:3px solid white;border-radius:50%;box-shadow:0 0 15px rgba(255,43,104,0.8);"></div>`,
-                            className: '',
-                            iconSize: [22, 22],
-                            iconAnchor: [11, 11]
-                        });
-                        userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
-                        map.flyTo([lat, lng], 16);
-                    } else {
-                        userMarker.setLatLng([lat, lng]);
-                    }
-                },
-                (error) => {
-                    document.getElementById('gpsDot').classList.remove('active');
-                    document.getElementById('gpsStatusText').innerText = "נדרשת הרשאת GPS";
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        }
-    }
-
-    function closeSplashScreen() {
-        document.getElementById('splashScreen').classList.add('hidden');
-    }
-
-    function locateUser(flyTo = true) {
-        if (currentGPSLocation && flyTo) {
-            map.flyTo([currentGPSLocation.lat, currentGPSLocation.lng], 16, { animate: true });
-        } else {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                currentGPSLocation = { lat, lng };
-                map.flyTo([lat, lng], 16);
-            });
-        }
-    }
-
-    function navigateToNearestParking() {
-        if (!currentGPSLocation) {
-            alert("נדרש GPS פעיל כדי למצוא חנייה קרובה.");
-            locateUser(false);
-            return;
-        }
-
-        const availableParkings = activeReports.filter(rep => rep.level !== 'full');
-
-        if (availableParkings.length === 0) {
-            alert("לא נמצאו דיווחי חנייה פנויים בסביבתך כעת.");
-            return;
-        }
-
-        let nearest = null;
-        let minDistance = Infinity;
-
-        availableParkings.forEach(rep => {
-            const dist = map.distance([currentGPSLocation.lat, currentGPSLocation.lng], [rep.lat, rep.lng]);
-            if (dist < minDistance) {
-                minDistance = dist;
-                nearest = rep;
-            }
-        });
-
-        if (nearest) {
-            map.flyTo([nearest.lat, nearest.lng], 17, { animate: true });
-            openNavSheet(nearest, Math.round(minDistance));
-        }
-    }
-
-    function openReportModal() {
-        if (!currentGPSLocation) {
-            alert("אנא וודא שה-GPS מופעל במכשירך כדי לדווח.");
-            locateUser(false);
-            return;
-        }
-
-        document.getElementById('reportLocationSubtitle').innerText = 
-            `מיקום GPS מעודכן: ${currentGPSLocation.lat.toFixed(4)}, ${currentGPSLocation.lng.toFixed(4)}`;
-
-        document.getElementById('overlay').classList.add('active');
-        document.getElementById('reportSheet').classList.add('active');
-    }
-
-    function openHowToModal() {
-        document.getElementById('overlay').classList.add('active');
-        document.getElementById('howtoSheet').classList.add('active');
-    }
-
-    function submitReport() {
-        if (!currentGPSLocation) return;
-
-        const street = document.getElementById('streetInput').value || 'חנייה במיקום שלי';
-
-        const newReport = {
-            id: Date.now(),
-            lat: currentGPSLocation.lat,
-            lng: currentGPSLocation.lng,
-            level: selectedLevel,
-            street: street,
-            timestamp: Date.now(),
-            time: 'עכשיו'
-        };
-
-        activeReports.push(newReport);
-        addMarkerToMap(newReport);
-        closeAllSheets();
-        document.getElementById('streetInput').value = '';
-
-        alert('🎉 הדיווח פורסם בהצלחה ב-Pearl!');
-    }
-
-    function addMarkerToMap(data) {
-        const markerIcon = createPearlIcon(data.level, data.timestamp);
-        let marker = L.marker([data.lat, data.lng], { icon: markerIcon }).addTo(map);
-        
-        marker.on('click', () => {
-            const dist = currentGPSLocation 
-                ? Math.round(map.distance([currentGPSLocation.lat, currentGPSLocation.lng], [data.lat, data.lng])) 
-                : null;
-            openNavSheet(data, dist);
-        });
-    }
-
-    function openNavSheet(data, distanceMeters = null) {
-        document.getElementById('navSheetTitle').innerText = data.street || 'פרטי חנייה';
-        
-        const levelNames = { 
-            empty: 'ריק (זמינות גבוהה)', 
-            medium: 'תפוסה בינונית', 
-            busy: 'עמוס (חניות בודדות)',
-            full: 'מלא (ללא חנייה)'
-        };
-
-        let subText = `מצב: ${levelNames[data.level]} • עודכן ${data.time}`;
-        if (distanceMeters !== null) {
-            subText += ` (${distanceMeters} מטר ממך)`;
-        }
-
-        document.getElementById('navSheetSubtitle').innerText = subText;
-
-        document.getElementById('wazeLink').href = `https://waze.com/ul?ll=${data.lat},${data.lng}&navigate=yes`;
-        document.getElementById('googleLink').href = `https://www.google.com/maps/dir/?api=1&destination=${data.lat},${data.lng}`;
-        document.getElementById('appleLink').href = `https://maps.apple.com/?daddr=${data.lat},${data.lng}`;
-
-        document.getElementById('overlay').classList.add('active');
-        document.getElementById('navSheet').classList.add('active');
-    }
-
-    function closeAllSheets() {
-        document.getElementById('overlay').classList.remove('active');
-        document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
-    }
-
-    function selectLevel(level, elem) {
-        selectedLevel = level;
-        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('selected'));
-        elem.classList.add('selected');
-    }
-
-    function handleSearch(e) {
-        if (e.key === 'Enter') {
-            const query = document.getElementById('searchInput').value;
-            if (!query) return;
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
-                        map.flyTo([lat, lon], 16, { animate: true });
-                    } else {
-                        alert('כתובת לא נמצאה.');
-                    }
-                });
-        }
-    }
-
-    startGPSTracking();
+  window.onload = init;
 </script>
 </body>
 </html>
