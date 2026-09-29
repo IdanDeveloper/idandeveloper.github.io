@@ -406,7 +406,7 @@
         </div>
 
         <div class="summary-item">
-          <span class="title">🛣️️ סה"כ קילומטראז' נסיעה:</span>
+          <span class="title">🛣️ סה"כ קילומטראז' נסיעה:</span>
           <span class="val" id="mTotalKm">0 ק"מ</span>
         </div>
       </div>
@@ -616,6 +616,25 @@
   </div>
 </div>
 
+<!-- Modal Custom Dialog (Design Replace for Browser Alert & Confirm) -->
+<div class="modal-overlay" id="customDialogModal">
+  <div class="modal-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title" id="customDialogTitle" style="color:var(--accent-orange);">🔔 הודעת מערכת</span>
+      <button class="close-btn" onclick="closeModal('customDialogModal')">✕</button>
+    </div>
+
+    <div id="customDialogMessage" style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5; margin:8px 0;">
+      תוכן ההודעה...
+    </div>
+
+    <div class="sheet-actions" style="margin-top:8px;">
+      <button class="btn-save" id="customDialogConfirmBtn">אישור</button>
+      <button class="btn-delete" id="customDialogCancelBtn" style="background:#2a365c; color:#fff;" onclick="closeModal('customDialogModal')">ביטול</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const HOURLY_RATE = 50;
   const KM_PER_LITER = 11.65;
@@ -635,6 +654,54 @@
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  /* Custom Designed Confirm Dialog */
+  function showCustomConfirm(title, message, onConfirm, confirmText = "אישור", isDanger = true) {
+    document.getElementById('customDialogTitle').innerText = title;
+    document.getElementById('customDialogTitle').style.color = isDanger ? 'var(--accent-red)' : 'var(--accent-orange)';
+    document.getElementById('customDialogMessage').innerText = message;
+    
+    const confirmBtn = document.getElementById('customDialogConfirmBtn');
+    const cancelBtn = document.getElementById('customDialogCancelBtn');
+    
+    confirmBtn.innerText = confirmText;
+    confirmBtn.className = isDanger ? 'btn-delete' : 'btn-save';
+    confirmBtn.style.display = 'block';
+    confirmBtn.style.flex = '2';
+    
+    cancelBtn.style.display = 'block';
+    cancelBtn.style.flex = '1';
+    
+    confirmBtn.onclick = () => {
+      closeModal('customDialogModal');
+      if (onConfirm) onConfirm();
+    };
+    
+    document.getElementById('customDialogModal').classList.add('active');
+  }
+
+  /* Custom Designed Alert Dialog */
+  function showCustomAlert(title, message) {
+    document.getElementById('customDialogTitle').innerText = title;
+    document.getElementById('customDialogTitle').style.color = 'var(--accent-blue)';
+    document.getElementById('customDialogMessage').innerText = message;
+    
+    const confirmBtn = document.getElementById('customDialogConfirmBtn');
+    const cancelBtn = document.getElementById('customDialogCancelBtn');
+    
+    confirmBtn.innerText = "הבנתי";
+    confirmBtn.className = 'btn-save';
+    confirmBtn.style.display = 'block';
+    confirmBtn.style.flex = '1';
+    
+    cancelBtn.style.display = 'none';
+    
+    confirmBtn.onclick = () => {
+      closeModal('customDialogModal');
+    };
+    
+    document.getElementById('customDialogModal').classList.add('active');
   }
 
   /* IndexedDB Setup for Receipts & Drop-off Photos */
@@ -730,7 +797,7 @@
 
     if (parsedConfig && (parsedConfig.apiKey || parsedConfig.projectId)) {
       localStorage.setItem('solo_firebase_config', JSON.stringify(parsedConfig));
-      alert("🎉 הענן חובק בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
+      showCustomAlert("🎉 חיבור ענן", "הענן חובר בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
       closeModal('cloudModal');
       initFirebaseIfAvailable();
     } else if (!val.trim()) {
@@ -739,7 +806,7 @@
       document.getElementById('cloudStatusBtn').innerHTML = "☁️ ענן";
       closeModal('cloudModal');
     } else {
-      alert("קוד ה-Firebase אינו תקין. אנא העתק והדבק את ההגדרות מחדש.");
+      showCustomAlert("❌ שגיאת הגדרה", "קוד ה-Firebase אינו תקין. אנא העתק והדבק את ההגדרות מחדש.");
     }
   }
 
@@ -923,16 +990,21 @@
     renderCalendar();
   }
 
-  /* Delete Shift Data with Confirmation Prompt */
+  /* Delete Shift Data with Custom Confirmation Modal */
   function deleteShiftData() {
-    const isConfirmed = confirm(`האם אתה בטוח שברצונך למחוק את המשמרת בתאריך ${selectedDateKey}?`);
-    if (!isConfirmed) return;
-
-    delete shiftsData[selectedDateKey];
-    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
-    syncWithCloud();
-    closeModal('formModal');
-    renderCalendar();
+    showCustomConfirm(
+      "🗑️ מחיקת משמרת",
+      `האם אתה בטוח שברצונך למחוק את המשמרת בתאריך ${selectedDateKey}?`,
+      () => {
+        delete shiftsData[selectedDateKey];
+        localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+        syncWithCloud();
+        closeModal('formModal');
+        renderCalendar();
+      },
+      "מחק משמרת",
+      true
+    );
   }
 
   function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -994,12 +1066,17 @@
   }
 
   function deleteReceipt(id) {
-    const isConfirmed = confirm("האם אתה בטוח שאתה רוצה למחוק את הקבלה הזו?");
-    if (!isConfirmed) return;
-
-    const tx = db.transaction("receipts", "readwrite");
-    tx.objectStore("receipts").delete(id);
-    tx.oncomplete = () => loadMonthReceipts();
+    showCustomConfirm(
+      "🗑️ מחיקת קבלה",
+      "האם אתה בטוח שברצונך למחוק קבלה זו?",
+      () => {
+        const tx = db.transaction("receipts", "readwrite");
+        tx.objectStore("receipts").delete(id);
+        tx.oncomplete = () => loadMonthReceipts();
+      },
+      "מחק קבלה",
+      true
+    );
   }
 
   /* Door Drop-off Photos Logic */
@@ -1068,12 +1145,17 @@
   }
 
   function deleteDropoff(id) {
-    const isConfirmed = confirm("האם אתה בטוח שברצונך למחוק תמונת מסירה זו?");
-    if (!isConfirmed) return;
-
-    const tx = db.transaction("dropoffs", "readwrite");
-    tx.objectStore("dropoffs").delete(id);
-    tx.oncomplete = () => loadMonthDropoffs();
+    showCustomConfirm(
+      "🗑️ מחיקת תמונת מסירה",
+      "האם אתה בטוח שברצונך למחוק תמונת מסירה זו?",
+      () => {
+        const tx = db.transaction("dropoffs", "readwrite");
+        tx.objectStore("dropoffs").delete(id);
+        tx.oncomplete = () => loadMonthDropoffs();
+      },
+      "מחק תמונה",
+      true
+    );
   }
 
   function previewImage(src) {
@@ -1094,7 +1176,7 @@
       const monthReceipts = (req.result || []).filter(r => r.date.startsWith(monthPrefix));
 
       if (monthReceipts.length === 0) {
-        alert("אין קבלות שמורות בחודש זה לשליחה.");
+        showCustomAlert("📸 קבלות אשראי", "אין קבלות שמורות בחודש זה לשליחה.");
         return;
       }
 
@@ -1114,7 +1196,7 @@
           });
         } catch (err) { console.log("Share error", err); }
       } else {
-        alert(`נמצאו ${files.length} קבלות. המכשיר מוריד אותן כעת למכשירך.`);
+        showCustomAlert("📲 הורדת קבלות", `נמצאו ${files.length} קבלות. המכשיר מוריד אותן כעת למכשירך.`);
         files.forEach((f) => {
           const a = document.createElement('a');
           a.href = URL.createObjectURL(f);
@@ -1157,37 +1239,41 @@
     const [y, m] = mKey.split('-');
     const monthName = new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
 
-    const isConfirmed = confirm(`⚠️ האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים, הקבלות ותמונות המסירה של חודש ${monthName}?`);
+    showCustomConfirm(
+      "⚠️ מחיקת חודש לצמיתות",
+      `האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים, הקבלות ותמונות המסירה של חודש ${monthName}?`,
+      () => {
+        Object.keys(shiftsData).forEach(k => {
+          if (k.startsWith(mKey)) delete shiftsData[k];
+        });
+        localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
 
-    if (isConfirmed) {
-      Object.keys(shiftsData).forEach(k => {
-        if (k.startsWith(mKey)) delete shiftsData[k];
-      });
-      localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+        if (db) {
+          const tx1 = db.transaction("receipts", "readwrite");
+          const store1 = tx1.objectStore("receipts");
+          store1.getAll().onsuccess = (e) => {
+            (e.target.result || []).forEach(r => { if (r.date && r.date.startsWith(mKey)) store1.delete(r.id); });
+          };
 
-      if (db) {
-        const tx1 = db.transaction("receipts", "readwrite");
-        const store1 = tx1.objectStore("receipts");
-        store1.getAll().onsuccess = (e) => {
-          (e.target.result || []).forEach(r => { if (r.date && r.date.startsWith(mKey)) store1.delete(r.id); });
-        };
+          const tx2 = db.transaction("dropoffs", "readwrite");
+          const store2 = tx2.objectStore("dropoffs");
+          store2.getAll().onsuccess = (e) => {
+            (e.target.result || []).forEach(d => { if (d.date && d.date.startsWith(mKey)) store2.delete(d.id); });
+          };
+        }
 
-        const tx2 = db.transaction("dropoffs", "readwrite");
-        const store2 = tx2.objectStore("dropoffs");
-        store2.getAll().onsuccess = (e) => {
-          (e.target.result || []).forEach(d => { if (d.date && d.date.startsWith(mKey)) store2.delete(d.id); });
-        };
-      }
-
-      alert(`הנתונים והתמונות של חודש ${monthName} נמחקו בהצלחה.`);
-      closeModal('purgeModal');
-      renderCalendar();
-    }
+        closeModal('purgeModal');
+        showCustomAlert("✨ ניקוי הושלם", `הנתונים והתמונות של חודש ${monthName} נמחקו בהצלחה.`);
+        renderCalendar();
+      },
+      "מחק חודש זה",
+      true
+    );
   }
 
   async function exportFullData() {
     if (!db) {
-      alert("מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
+      showCustomAlert("💾 גיבוי", "מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
       return;
     }
 
@@ -1217,10 +1303,10 @@
       };
 
       tx.onerror = (err) => {
-        alert("שגיאה ביצירת קובץ הגיבוי: " + err.target.error);
+        showCustomAlert("❌ שגיאה", "שגיאה ביצירת קובץ הגיבוי: " + err.target.error);
       };
     } catch(e) {
-      alert("שגיאה ביצירת הגיבוי: " + e.message);
+      showCustomAlert("❌ שגיאה", "שגיאה ביצירת הגיבוי: " + e.message);
     }
   }
 
@@ -1236,45 +1322,50 @@
         const backupObj = JSON.parse(event.target.result);
         if (!backupObj) return;
 
-        const isConfirmed = confirm("האם אתה בטוח שברצונך לשחזר נתונים מקובץ גיבוי זה?");
-        if (!isConfirmed) return;
+        showCustomConfirm(
+          "📂 שחזור נתונים",
+          "האם אתה בטוח שברצונך לשחזר נתונים מקובץ גיבוי זה?",
+          () => {
+            if (backupObj.shiftsData) {
+              shiftsData = backupObj.shiftsData;
+              localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+            }
 
-        if (backupObj.shiftsData) {
-          shiftsData = backupObj.shiftsData;
-          localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
-        }
+            if (backupObj.fuelPrice) {
+              currentFuelPrice = backupObj.fuelPrice;
+              localStorage.setItem('solo_fuel_price', currentFuelPrice);
+            }
 
-        if (backupObj.fuelPrice) {
-          currentFuelPrice = backupObj.fuelPrice;
-          localStorage.setItem('solo_fuel_price', currentFuelPrice);
-        }
+            if (db) {
+              const tx = db.transaction(["receipts", "dropoffs"], "readwrite");
+              const receiptsStore = tx.objectStore("receipts");
+              const dropoffsStore = tx.objectStore("dropoffs");
 
-        if (db) {
-          const tx = db.transaction(["receipts", "dropoffs"], "readwrite");
-          const receiptsStore = tx.objectStore("receipts");
-          const dropoffsStore = tx.objectStore("dropoffs");
+              if (backupObj.receipts && Array.isArray(backupObj.receipts)) {
+                receiptsStore.clear();
+                backupObj.receipts.forEach(r => { delete r.id; receiptsStore.add(r); });
+              }
 
-          if (backupObj.receipts && Array.isArray(backupObj.receipts)) {
-            receiptsStore.clear();
-            backupObj.receipts.forEach(r => { delete r.id; receiptsStore.add(r); });
-          }
+              if (backupObj.dropoffs && Array.isArray(backupObj.dropoffs)) {
+                dropoffsStore.clear();
+                backupObj.dropoffs.forEach(d => { delete d.id; dropoffsStore.add(d); });
+              }
 
-          if (backupObj.dropoffs && Array.isArray(backupObj.dropoffs)) {
-            dropoffsStore.clear();
-            backupObj.dropoffs.forEach(d => { delete d.id; dropoffsStore.add(d); });
-          }
-
-          tx.oncomplete = () => {
-            alert("🎉 השחזור המלא הושלם בהצלחה!");
-            init();
-          };
-        } else {
-          alert("🎉 השחזור הושלם בהצלחה!");
-          init();
-        }
+              tx.oncomplete = () => {
+                showCustomAlert("🎉 שחזור מוצלח", "השחזור המלא הושלם בהצלחה!");
+                init();
+              };
+            } else {
+              showCustomAlert("🎉 שחזור מוצלח", "השחזור הושלם בהצלחה!");
+              init();
+            }
+          },
+          "שחזר נתונים",
+          false
+        );
 
       } catch (err) {
-        alert("שגיאה בקריאת קובץ הגיבוי.");
+        showCustomAlert("❌ שגיאה", "שגיאה בקריאת קובץ הגיבוי.");
       }
     };
     reader.readAsText(file);
