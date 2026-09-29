@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Solo Courier Advanced Manager</title>
+
+  <!-- Firebase Scripts for Auto Cloud Sync -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --bg-main: #0b1329;
@@ -59,25 +64,31 @@
     }
 
     header h1 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--accent-blue);
     }
 
     .header-btn-group {
       display: flex;
-      gap: 6px;
+      gap: 4px;
     }
 
     .top-btn {
       background: #2a365c;
       color: var(--text-primary);
       border: none;
-      padding: 6px 10px;
-      border-radius: 16px;
-      font-size: 0.78rem;
+      padding: 5px 8px;
+      border-radius: 12px;
+      font-size: 0.72rem;
       font-weight: 600;
       cursor: pointer;
+    }
+
+    .top-btn.cloud {
+      background: rgba(58, 134, 255, 0.2);
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue);
     }
 
     .top-btn.danger {
@@ -208,8 +219,9 @@
     .summary-item .title { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
     .summary-item .val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
 
-    /* Receipts Tab */
+    /* Media Upload & Photo Grids */
     .upload-btn-box { display: flex; flex-direction: column; gap: 8px; }
+    
     .btn-camera-upload {
       background: var(--accent-blue);
       color: #fff;
@@ -225,8 +237,13 @@
       cursor: pointer;
     }
 
-    .receipts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-    .receipt-card {
+    .btn-camera-upload.orange {
+      background: var(--accent-orange);
+      color: #000;
+    }
+
+    .photos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+    .photo-card {
       background: var(--card-inner);
       border-radius: 14px;
       padding: 8px;
@@ -236,9 +253,11 @@
       gap: 6px;
       position: relative;
     }
-    .receipt-img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
-    .receipt-date-tag { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; text-align: center; }
-    .btn-del-receipt {
+    .photo-img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
+    .photo-time-tag { font-size: 0.72rem; color: var(--text-secondary); font-weight: 600; text-align: center; }
+    .photo-note-tag { font-size: 0.72rem; color: var(--accent-blue); font-weight: 700; text-align: center; word-break: break-all; }
+
+    .btn-del-photo {
       position: absolute; top: 12px; left: 12px;
       background: rgba(239, 68, 68, 0.85); color: #fff;
       border: none; width: 26px; height: 26px; border-radius: 50%;
@@ -261,7 +280,7 @@
       margin-top: 10px;
     }
 
-    /* Bottom Nav Bar */
+    /* Bottom Nav Bar (3 Tabs) */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: var(--card-bg);
@@ -272,11 +291,11 @@
     }
     .nav-item {
       display: flex; flex-direction: column; align-items: center; gap: 3px;
-      color: var(--text-secondary); font-size: 0.75rem; font-weight: 600;
+      color: var(--text-secondary); font-size: 0.7rem; font-weight: 600;
       background: none; border: none; cursor: pointer; flex: 1;
     }
     .nav-item.active { color: var(--accent-blue); }
-    .nav-icon { font-size: 1.3rem; }
+    .nav-icon { font-size: 1.25rem; }
 
     /* Modals */
     .modal-overlay {
@@ -305,33 +324,14 @@
     .form-group { display: flex; flex-direction: column; gap: 3px; }
     label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
 
-    /* Input Add Group */
-    .input-add-group {
-      display: flex;
-      gap: 6px;
-    }
-
+    .input-add-group { display: flex; gap: 6px; }
     .btn-add-tip {
-      background: var(--accent-green);
-      color: #000;
-      border: none;
-      width: 40px;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      font-weight: 900;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      background: var(--accent-green); color: #000; border: none; width: 40px;
+      border-radius: 12px; font-size: 1.2rem; font-weight: 900; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
 
-    .btn-add-tip:active {
-      opacity: 0.8;
-      transform: scale(0.95);
-    }
-
-    input, select {
+    input, select, textarea {
       background: var(--card-inner); border: 1px solid var(--border-color);
       color: #fff; padding: 10px; border-radius: 12px; font-size: 16px;
       outline: none; width: 100%;
@@ -355,16 +355,18 @@
 
 <div class="app-container">
   <header>
-    <h1>🛵 Solo Courier Manager</h1>
+    <h1>🛵 Solo Courier</h1>
     <div class="header-btn-group">
-      <button class="top-btn" onclick="exportData()">💾 גיבוי</button>
+      <button class="top-btn cloud" onclick="openCloudModal()" id="cloudStatusBtn">☁️ ענן</button>
+      <button class="top-btn" onclick="exportFullData()">💾 גיבוי</button>
+      <button class="top-btn" onclick="triggerImport()">📂 שחזור</button>
       <button class="top-btn danger" onclick="openPurgeModal()">🗑️ ניקוי</button>
+      <input type="file" id="importFileInput" accept=".json" onchange="handleFileImport(event)" style="display:none;">
     </div>
   </header>
 
   <!-- TAB 1: HOME & CALENDAR -->
   <div id="tabHome" class="tab-view active">
-    <!-- Fuel Banner -->
     <div class="fuel-banner">
       <div class="fuel-status-tag">
         <span>🟢</span>
@@ -376,7 +378,6 @@
       </div>
     </div>
 
-    <!-- Calendar Card -->
     <div class="card">
       <div class="cal-nav">
         <button onclick="changeMonth(-1)">&lt;</button>
@@ -386,7 +387,6 @@
       <div class="cal-grid" id="calGrid"></div>
     </div>
 
-    <!-- Bottom Monthly Summary Card -->
     <div class="card">
       <div class="card-title" id="monthlySummaryHeaderTitle">סיכום חודשי נקי</div>
       <div class="big-net-box">
@@ -435,16 +435,45 @@
         <span id="receiptCountBadge" style="font-size:0.8rem; color:var(--accent-blue); font-weight:bold;">0 קבלות</span>
       </div>
 
-      <div class="receipts-grid" id="receiptsGrid"></div>
+      <div class="photos-grid" id="receiptsGrid"></div>
 
       <button class="btn-share-whatsapp" onclick="shareMonthReceiptsWhatsApp()">
         📲 שתף קבלות חודשיות לוואטסאפ
       </button>
     </div>
   </div>
+
+  <!-- TAB 3: DOOR DROP-OFF PHOTOS -->
+  <div id="tabDropoffs" class="tab-view">
+    <div class="card">
+      <div class="card-title">תיעוד השארה מחוץ לדלת (הוכחת מסירה)</div>
+      <div class="upload-btn-box">
+        <label class="btn-camera-upload orange">
+          🚪 צלם תמונת מסירה בדלת
+          <input type="file" accept="image/*" capture="environment" id="dropoffFileInput" onchange="handleDropoffCapture(event)" style="display:none;">
+        </label>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+          <input type="text" id="dropoffNoteInput" placeholder="מספר דירה / שם לקוח (רשות)" style="padding:8px; font-size:0.85rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.8rem; color:var(--text-secondary);">תאריך המסירה:</label>
+            <input type="date" id="dropoffTargetDate" style="width:160px; padding:6px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div class="card-title" style="margin:0;">הוכחות מסירה לחודש הנבחר</div>
+        <span id="dropoffCountBadge" style="font-size:0.8rem; color:var(--accent-orange); font-weight:bold;">0 תמונות</span>
+      </div>
+
+      <div class="photos-grid" id="dropoffsGrid"></div>
+    </div>
+  </div>
 </div>
 
-<!-- Bottom Navigation Bar -->
+<!-- Bottom Navigation Bar (3 Tabs) -->
 <div class="bottom-nav">
   <button class="nav-item active" id="navHomeBtn" onclick="switchTab('home')">
     <span class="nav-icon">🏠</span>
@@ -452,7 +481,11 @@
   </button>
   <button class="nav-item" id="navReceiptsBtn" onclick="switchTab('receipts')">
     <span class="nav-icon">📸</span>
-    <span>קבלות ותמונות</span>
+    <span>קבלות אשראי</span>
+  </button>
+  <button class="nav-item" id="navDropoffsBtn" onclick="switchTab('dropoffs')">
+    <span class="nav-icon">🚪</span>
+    <span>תמונות מסירה</span>
   </button>
 </div>
 
@@ -474,7 +507,6 @@
         <input type="time" id="endTimeInput" onchange="calculateShift()">
       </div>
 
-      <!-- Cash Tips Input + Green Plus Button -->
       <div class="form-group">
         <label>3. טיפים במזומן (₪)</label>
         <div class="input-add-group">
@@ -483,7 +515,6 @@
         </div>
       </div>
 
-      <!-- Credit Tips Input + Green Plus Button -->
       <div class="form-group">
         <label>4. טיפים באשראי (₪)</label>
         <div class="input-add-group">
@@ -539,6 +570,29 @@
   </div>
 </div>
 
+<!-- Modal Cloud Setup -->
+<div class="modal-overlay" id="cloudModal">
+  <div class="modal-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title" style="color:var(--accent-blue);">☁️ סנכרון אוטומטי לענן Firebase</span>
+      <button class="close-btn" onclick="closeModal('cloudModal')">✕</button>
+    </div>
+
+    <div style="font-size:0.8rem; color:var(--text-secondary); line-height:1.4;">
+      הדבק את הגדרות פרויקט ה-Firebase החינמי שלך כדי לאפשר סנכרון וגיבוי אוטומטי ברקע בכל שינוי.
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>הגדרות Firebase Config (קוד JSON):</label>
+      <textarea id="firebaseConfigInput" rows="5" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "..."}' style="font-family:monospace; font-size:0.75rem;"></textarea>
+    </div>
+
+    <div class="sheet-actions" style="margin-top:6px;">
+      <button class="btn-save" style="padding:14px;" onclick="saveFirebaseConfig()">חבר ענן ושמור</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Purge / Month Delete -->
 <div class="modal-overlay" id="purgeModal">
   <div class="modal-sheet">
@@ -571,32 +625,99 @@
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
   let viewDate = new Date();
   let selectedDateKey = null;
-  let activeQuickAddType = null; // 'cash' or 'credit'
+  let activeQuickAddType = null;
+  let firebaseDB = null;
 
-  /* IndexedDB Setup */
+  /* IndexedDB Setup for Receipts & Drop-off Photos */
   let db;
-  const dbReq = indexedDB.open("SoloReceiptsDB", 1);
+  const dbReq = indexedDB.open("SoloAppDB", 2);
   dbReq.onupgradeneeded = (e) => {
     db = e.target.result;
     if (!db.objectStoreNames.contains("receipts")) {
       db.createObjectStore("receipts", { keyPath: "id", autoIncrement: true });
     }
+    if (!db.objectStoreNames.contains("dropoffs")) {
+      db.createObjectStore("dropoffs", { keyPath: "id", autoIncrement: true });
+    }
   };
-  dbReq.onsuccess = (e) => { db = e.target.result; loadMonthReceipts(); };
+  dbReq.onsuccess = (e) => { 
+    db = e.target.result; 
+    loadMonthReceipts(); 
+    loadMonthDropoffs(); 
+  };
 
   function init() {
     document.getElementById('fuelPriceInput').value = currentFuelPrice;
-    document.getElementById('receiptTargetDate').value = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('receiptTargetDate').value = todayStr;
+    document.getElementById('dropoffTargetDate').value = todayStr;
+
+    initFirebaseIfAvailable();
     validateFuelPrice();
     renderCalendar();
+  }
+
+  /* Firebase Cloud Auto-Sync Initialization */
+  function initFirebaseIfAvailable() {
+    const storedCfg = localStorage.getItem('solo_firebase_config');
+    if (storedCfg) {
+      try {
+        const cfg = JSON.parse(storedCfg);
+        if (!firebase.apps.length) {
+          firebase.initializeApp(cfg);
+        }
+        firebaseDB = firebase.firestore();
+        document.getElementById('cloudStatusBtn').innerHTML = "🟢 ענן פעיל";
+        syncWithCloud();
+      } catch(e) {
+        console.error("Firebase init error", e);
+        document.getElementById('cloudStatusBtn').innerHTML = "🔴 שגיאת ענן";
+      }
+    }
+  }
+
+  function openCloudModal() {
+    const storedCfg = localStorage.getItem('solo_firebase_config') || "";
+    document.getElementById('firebaseConfigInput').value = storedCfg;
+    document.getElementById('cloudModal').classList.add('active');
+  }
+
+  function saveFirebaseConfig() {
+    const val = document.getElementById('firebaseConfigInput').value.trim();
+    if (val) {
+      try {
+        JSON.parse(val);
+        localStorage.setItem('solo_firebase_config', val);
+        alert("הגדרות ענן נשמרו בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
+        closeModal('cloudModal');
+        initFirebaseIfAvailable();
+      } catch(e) {
+        alert("קוד ה-JSON אינו תקין. אנא העתק את הגדרות ה-Firebase המדויקות.");
+      }
+    } else {
+      localStorage.removeItem('solo_firebase_config');
+      firebaseDB = null;
+      document.getElementById('cloudStatusBtn').innerHTML = "☁️ ענן";
+      closeModal('cloudModal');
+    }
+  }
+
+  function syncWithCloud() {
+    if (!firebaseDB) return;
+    // Auto-save shifts to Firebase doc
+    firebaseDB.collection("solo_courier").doc("shifts").set({ data: JSON.stringify(shiftsData) }, { merge: true });
   }
 
   function switchTab(tab) {
     document.getElementById('tabHome').classList.toggle('active', tab === 'home');
     document.getElementById('tabReceipts').classList.toggle('active', tab === 'receipts');
+    document.getElementById('tabDropoffs').classList.toggle('active', tab === 'dropoffs');
     document.getElementById('navHomeBtn').classList.toggle('active', tab === 'home');
     document.getElementById('navReceiptsBtn').classList.toggle('active', tab === 'receipts');
+    document.getElementById('navDropoffsBtn').classList.toggle('active', tab === 'dropoffs');
+
     if (tab === 'receipts') loadMonthReceipts();
+    if (tab === 'dropoffs') loadMonthDropoffs();
   }
 
   function validateFuelPrice() {
@@ -661,7 +782,10 @@
     document.getElementById('mCreditTips').innerHTML = `${monthlyCreditTipsNet.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyCreditTipsGross.toFixed(2)} ₪ לפני מע"מ)</small>`;
     document.getElementById('mTotalKm').innerText = `${monthlyKm} ק"מ`;
 
-    if (db) loadMonthReceipts();
+    if (db) {
+      loadMonthReceipts();
+      loadMonthDropoffs();
+    }
   }
 
   function changeMonth(delta) {
@@ -727,12 +851,10 @@
     };
   }
 
-  /* Quick Tip Add Logic */
   function openQuickAddModal(type) {
     activeQuickAddType = type;
     const labelStr = type === 'cash' ? 'הוספת טיפ במזומן (₪)' : 'הוספת טיפ באשראי (₪)';
     document.getElementById('quickAddModalTitle').innerText = `🟢 ${labelStr}`;
-    document.getElementById('quickAddModalLabel').innerText = `הכנס סכום להוספה:`;
     document.getElementById('quickAddAmountInput').value = '';
     document.getElementById('quickAddModal').classList.add('active');
     setTimeout(() => document.getElementById('quickAddAmountInput').focus(), 300);
@@ -756,6 +878,7 @@
     const calc = calculateShift();
     shiftsData[selectedDateKey] = { ...calc, location: document.getElementById('locationSelect').value, fuelPriceUsed: currentFuelPrice };
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    syncWithCloud();
     closeModal('formModal');
     renderCalendar();
   }
@@ -763,13 +886,14 @@
   function deleteShiftData() {
     delete shiftsData[selectedDateKey];
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    syncWithCloud();
     closeModal('formModal');
     renderCalendar();
   }
 
   function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-  /* Photo Receipts & IndexedDB Logic */
+  /* Tab 2: Photo Receipts Logic */
   function handlePhotoCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -797,8 +921,7 @@
     const monthPrefix = `${year}-${month}`;
 
     const tx = db.transaction("receipts", "readonly");
-    const store = tx.objectStore("receipts");
-    const req = store.getAll();
+    const req = tx.objectStore("receipts").getAll();
 
     req.onsuccess = () => {
       const allReceipts = req.result || [];
@@ -815,11 +938,11 @@
 
       monthReceipts.forEach(r => {
         const item = document.createElement('div');
-        item.className = 'receipt-card';
+        item.className = 'photo-card';
         item.innerHTML = `
-          <button class="btn-del-receipt" onclick="deleteReceipt(${r.id})">✕</button>
-          <img src="${r.imageData}" class="receipt-img" onclick="previewImage('${r.imageData}')">
-          <div class="receipt-date-tag">תאריך: ${r.date}</div>
+          <button class="btn-del-photo" onclick="deleteReceipt(${r.id})">✕</button>
+          <img src="${r.imageData}" class="photo-img" onclick="previewImage('${r.imageData}')">
+          <div class="photo-time-tag">תאריך: ${r.date}</div>
         `;
         grid.appendChild(item);
       });
@@ -827,9 +950,86 @@
   }
 
   function deleteReceipt(id) {
+    const isConfirmed = confirm("האם אתה בטוח שאתה רוצה למחוק את הקבלה הזו?");
+    if (!isConfirmed) return;
+
     const tx = db.transaction("receipts", "readwrite");
     tx.objectStore("receipts").delete(id);
     tx.oncomplete = () => loadMonthReceipts();
+  }
+
+  /* Tab 3: Door Drop-off Photos Logic */
+  function handleDropoffCapture(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const targetDate = document.getElementById('dropoffTargetDate').value || new Date().toISOString().split('T')[0];
+    const noteVal = document.getElementById('dropoffNoteInput').value.trim();
+    const now = new Date();
+    const timeStr = now.toTimeString().substring(0, 5);
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const base64Img = event.target.result;
+      const tx = db.transaction("dropoffs", "readwrite");
+      tx.objectStore("dropoffs").add({
+        date: targetDate,
+        time: timeStr,
+        note: noteVal,
+        imageData: base64Img,
+        createdAt: now.toISOString()
+      });
+      tx.oncomplete = () => {
+        document.getElementById('dropoffNoteInput').value = '';
+        loadMonthDropoffs();
+      };
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function loadMonthDropoffs() {
+    if (!db) return;
+    const year = viewDate.getFullYear();
+    const month = String(viewDate.getMonth() + 1).padStart(2, '0');
+    const monthPrefix = `${year}-${month}`;
+
+    const tx = db.transaction("dropoffs", "readonly");
+    const req = tx.objectStore("dropoffs").getAll();
+
+    req.onsuccess = () => {
+      const allDropoffs = req.result || [];
+      const monthDropoffs = allDropoffs.filter(d => d.date.startsWith(monthPrefix));
+
+      document.getElementById('dropoffCountBadge').innerText = `${monthDropoffs.length} תמונות`;
+      const grid = document.getElementById('dropoffsGrid');
+      grid.innerHTML = '';
+
+      if (monthDropoffs.length === 0) {
+        grid.innerHTML = `<div style="grid-column:span 2; text-align:center; color:var(--text-secondary); padding:20px; font-size:0.85rem;">אין הוכחות מסירה שמורות לחודש זה</div>`;
+        return;
+      }
+
+      monthDropoffs.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'photo-card';
+        item.innerHTML = `
+          <button class="btn-del-photo" onclick="deleteDropoff(${d.id})">✕</button>
+          <img src="${d.imageData}" class="photo-img" onclick="previewImage('${d.imageData}')">
+          <div class="photo-time-tag">📅 ${d.date} | ⏰ ${d.time || ''}</div>
+          ${d.note ? `<div class="photo-note-tag">📍 ${d.note}</div>` : ''}
+        `;
+        grid.appendChild(item);
+      });
+    };
+  }
+
+  function deleteDropoff(id) {
+    const isConfirmed = confirm("האם אתה בטוח שברצונך למחוק תמונת מסירה זו?");
+    if (!isConfirmed) return;
+
+    const tx = db.transaction("dropoffs", "readwrite");
+    tx.objectStore("dropoffs").delete(id);
+    tx.oncomplete = () => loadMonthDropoffs();
   }
 
   function previewImage(src) {
@@ -837,7 +1037,6 @@
     w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
   }
 
-  /* Batch WhatsApp Receipt Share */
   async function shareMonthReceiptsWhatsApp() {
     if (!db) return;
     const year = viewDate.getFullYear();
@@ -869,11 +1068,9 @@
             text: `מצורפות ${files.length} קבלות טיפים באשראי לחודש ${monthPrefix}`,
             files: files
           });
-        } catch (err) {
-          console.log("Share cancelled/failed", err);
-        }
+        } catch (err) { console.log("Share error", err); }
       } else {
-        alert(`נמצאו ${files.length} קבלות. מכשירך מוריד כעת את הקבלות למכשיר לצורך שליחה בוואטסאפ.`);
+        alert(`נמצאו ${files.length} קבלות. המכשיר מוריד אותן כעת למכשירך.`);
         files.forEach((f) => {
           const a = document.createElement('a');
           a.href = URL.createObjectURL(f);
@@ -884,7 +1081,6 @@
     };
   }
 
-  /* Month Purge Modal & Execution Logic */
   function openPurgeModal() {
     const select = document.getElementById('purgeMonthSelect');
     select.innerHTML = '';
@@ -917,43 +1113,115 @@
     const [y, m] = mKey.split('-');
     const monthName = new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
 
-    const isConfirmed = confirm(`⚠️ האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים והקבלות של חודש ${monthName}?\n\nפעולה זו תמחק את הנתונים לצמיתות ולא ניתן יהיה לשזרם!`);
+    const isConfirmed = confirm(`⚠️ האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים, הקבלות ותמונות המסירה של חודש ${monthName}?`);
 
     if (isConfirmed) {
       Object.keys(shiftsData).forEach(k => {
-        if (k.startsWith(mKey)) {
-          delete shiftsData[k];
-        }
+        if (k.startsWith(mKey)) delete shiftsData[k];
       });
       localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
 
       if (db) {
-        const tx = db.transaction("receipts", "readwrite");
-        const store = tx.objectStore("receipts");
-        const req = store.getAll();
+        const tx1 = db.transaction("receipts", "readwrite");
+        const store1 = tx1.objectStore("receipts");
+        store1.getAll().onsuccess = (e) => {
+          (e.target.result || []).forEach(r => { if (r.date && r.date.startsWith(mKey)) store1.delete(r.id); });
+        };
 
-        req.onsuccess = () => {
-          const allReceipts = req.result || [];
-          allReceipts.forEach(r => {
-            if (r.date && r.date.startsWith(mKey)) {
-              store.delete(r.id);
-            }
-          });
+        const tx2 = db.transaction("dropoffs", "readwrite");
+        const store2 = tx2.objectStore("dropoffs");
+        store2.getAll().onsuccess = (e) => {
+          (e.target.result || []).forEach(d => { if (d.date && d.date.startsWith(mKey)) store2.delete(d.id); });
         };
       }
 
-      alert(`הנתונים והקבלות של חודש ${monthName} נמחקו בהצלחה.`);
+      alert(`הנתונים והתמונות של חודש ${monthName} נמחקו בהצלחה.`);
       closeModal('purgeModal');
       renderCalendar();
     }
   }
 
-  function exportData() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shiftsData, null, 2));
-    const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `solo_shifts_backup.json`);
-    dlAnchor.click();
+  /* Full Export / Backup */
+  async function exportFullData() {
+    if (!db) return;
+
+    const tx1 = db.transaction("receipts", "readonly").objectStore("receipts").getAll();
+    const tx2 = db.transaction("dropoffs", "readonly").objectStore("dropoffs").getAll();
+
+    tx1.onsuccess = () => {
+      const receiptsList = tx1.result || [];
+      tx2.onsuccess = () => {
+        const dropoffsList = tx2.result || [];
+
+        const backupObject = {
+          version: 2,
+          exportDate: new Date().toISOString(),
+          fuelPrice: currentFuelPrice,
+          shiftsData: shiftsData,
+          receipts: receiptsList,
+          dropoffs: dropoffsList
+        };
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObject, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        const dateStr = new Date().toISOString().split('T')[0];
+        dlAnchor.setAttribute("download", `solo_full_backup_${dateStr}.json`);
+        dlAnchor.click();
+      };
+    };
+  }
+
+  /* Full Import / Restore */
+  function triggerImport() { document.getElementById('importFileInput').click(); }
+
+  function handleFileImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+      try {
+        const backupObj = JSON.parse(event.target.result);
+        if (!backupObj) return;
+
+        const isConfirmed = confirm("האם אתה בטוח שברצונך לשחזר נתונים מקובץ גיבוי זה?");
+        if (!isConfirmed) return;
+
+        if (backupObj.shiftsData) {
+          shiftsData = backupObj.shiftsData;
+          localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+        }
+
+        if (backupObj.fuelPrice) {
+          currentFuelPrice = backupObj.fuelPrice;
+          localStorage.setItem('solo_fuel_price', currentFuelPrice);
+        }
+
+        if (db) {
+          if (backupObj.receipts && Array.isArray(backupObj.receipts)) {
+            const tx = db.transaction("receipts", "readwrite");
+            const store = tx.objectStore("receipts");
+            store.clear();
+            backupObj.receipts.forEach(r => { delete r.id; store.add(r); });
+          }
+
+          if (backupObj.dropoffs && Array.isArray(backupObj.dropoffs)) {
+            const tx = db.transaction("dropoffs", "readwrite");
+            const store = tx.objectStore("dropoffs");
+            store.clear();
+            backupObj.dropoffs.forEach(d => { delete d.id; store.add(d); });
+          }
+        }
+
+        alert("🎉 השחזור הושלם בהצלחה!");
+        init();
+      } catch (err) {
+        alert("שגיאה בקריאת קובץ הגיבוי.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   }
 
   window.onload = init;
