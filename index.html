@@ -33,7 +33,7 @@
       display: flex;
       flex-direction: column;
       padding-top: max(12px, env(safe-area-inset-top));
-      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      padding-bottom: max(75px, env(safe-area-inset-bottom));
       padding-left: 12px;
       padding-right: 12px;
     }
@@ -47,6 +47,9 @@
       gap: 12px;
     }
 
+    .tab-view { display: none; flex-direction: column; gap: 12px; }
+    .tab-view.active { display: flex; }
+
     /* Header */
     header {
       display: flex;
@@ -56,23 +59,33 @@
     }
 
     header h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--accent-blue);
     }
 
-    .backup-btn {
+    .header-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .top-btn {
       background: #2a365c;
       color: var(--text-primary);
       border: none;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
+      padding: 6px 10px;
+      border-radius: 16px;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
     }
 
-    /* Fuel Status Banner */
+    .top-btn.danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+    }
+
+    /* Fuel Banner */
     .fuel-banner {
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid var(--accent-green);
@@ -90,10 +103,6 @@
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--accent-green);
-    }
-
-    .fuel-status-tag.invalid {
-      color: var(--accent-red);
     }
 
     /* Cards */
@@ -162,37 +171,19 @@
       cursor: pointer;
     }
 
-    /* היום הנוכחי בצבע ירוק בולט */
     .day-cell.today {
       background: rgba(16, 185, 129, 0.2) !important;
       border: 2px solid var(--accent-green) !important;
       font-weight: 800;
     }
 
-    .day-cell.today > span:first-child {
-      color: var(--accent-green);
-    }
-
+    .day-cell.today > span:first-child { color: var(--accent-green); }
     .day-cell.empty { background: transparent; cursor: default; }
 
-    .day-net {
-      font-size: 0.65rem;
-      color: var(--accent-green);
-      font-weight: 800;
-    }
+    .day-net { font-size: 0.65rem; color: var(--accent-green); font-weight: 800; }
+    .day-location { font-size: 0.55rem; color: var(--text-secondary); }
 
-    .day-location {
-      font-size: 0.55rem;
-      color: var(--text-secondary);
-    }
-
-    /* Bottom Monthly Summary Card */
-    .monthly-summary-card {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
+    /* Monthly Summary Card */
     .big-net-box {
       background: rgba(16, 185, 129, 0.15);
       border: 1.5px solid var(--accent-green);
@@ -201,26 +192,10 @@
       text-align: center;
     }
 
-    .big-net-label {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
+    .big-net-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
+    .big-net-value { font-size: 2.2rem; font-weight: 900; color: var(--accent-green); margin-top: 2px; }
 
-    .big-net-value {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: var(--accent-green);
-      margin-top: 2px;
-      letter-spacing: 0.5px;
-    }
-
-    .summary-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .summary-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .summary-item {
       background: var(--card-inner);
       padding: 12px;
@@ -230,236 +205,237 @@
       align-items: center;
       border: 1px solid var(--border-color);
     }
+    .summary-item .title { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
+    .summary-item .val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
 
-    .summary-item .title {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      font-weight: 600;
+    /* Receipts Tab */
+    .upload-btn-box { display: flex; flex-direction: column; gap: 8px; }
+    .btn-camera-upload {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
     }
 
-    .summary-item .val {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      text-align: left;
+    .receipts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+    .receipt-card {
+      background: var(--card-inner);
+      border-radius: 14px;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    .receipt-img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
+    .receipt-date-tag { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; text-align: center; }
+    .btn-del-receipt {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(239, 68, 68, 0.85); color: #fff;
+      border: none; width: 26px; height: 26px; border-radius: 50%;
+      font-weight: bold; cursor: pointer;
     }
 
-    .summary-item .val.blue { color: var(--accent-blue); }
-    .summary-item .val.orange { color: var(--accent-orange); }
+    .btn-share-whatsapp {
+      background: var(--accent-green);
+      color: #000;
+      border: none;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
 
-    /* Modal Form Sheet */
+    /* Bottom Nav Bar */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-around;
+      padding: 10px 0 max(10px, env(safe-area-inset-bottom)) 0;
+      z-index: 900; backdrop-filter: blur(10px);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      color: var(--text-secondary); font-size: 0.75rem; font-weight: 600;
+      background: none; border: none; cursor: pointer; flex: 1;
+    }
+    .nav-item.active { color: var(--accent-blue); }
+    .nav-icon { font-size: 1.3rem; }
+
+    /* Modals */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(6px);
-      display: none;
-      justify-content: flex-end;
-      flex-direction: column;
+      display: none; justify-content: flex-end; flex-direction: column;
       z-index: 999;
     }
-
     .modal-overlay.active { display: flex; }
 
     .modal-sheet {
       background: var(--card-bg);
-      border-top-left-radius: 24px;
-      border-top-right-radius: 24px;
+      border-top-left-radius: 24px; border-top-right-radius: 24px;
       padding: 18px 16px max(18px, env(safe-area-inset-bottom)) 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 92vh;
-      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      max-height: 92vh; overflow-y: auto;
       border-top: 1px solid var(--border-color);
     }
 
-    .sheet-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; }
+    .sheet-title { font-size: 0.95rem; font-weight: 700; }
+    .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.3rem; cursor: pointer; }
 
-    .sheet-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 1.3rem;
-      cursor: pointer;
-    }
-
-    /* Form Fields */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .form-group { display: flex; flex-direction: column; gap: 3px; }
+    label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
 
     input, select {
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 10px;
-      border-radius: 12px;
-      font-size: 16px; /* מונע זום ב-iOS */
-      outline: none;
-      width: 100%;
+      background: var(--card-inner); border: 1px solid var(--border-color);
+      color: #fff; padding: 10px; border-radius: 12px; font-size: 16px;
+      outline: none; width: 100%;
     }
 
-    input:focus, select:focus {
-      border-color: var(--accent-blue);
-    }
-
-    /* Summary Breakdown Card Inside Modal */
     .breakdown-box {
-      background: var(--card-inner);
-      border-radius: 14px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      border: 1px solid var(--border-color);
+      background: var(--card-inner); border-radius: 14px; padding: 12px;
+      display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-color);
     }
-
-    .b-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
+    .b-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary); }
     .b-row.expense { color: var(--accent-red); }
     .b-row.gross { color: var(--accent-blue); font-weight: 600; }
-    
-    .b-row.net-main {
-      border-top: 1px dashed var(--border-color);
-      padding-top: 6px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--accent-green);
-    }
+    .b-row.net-main { border-top: 1px dashed var(--border-color); padding-top: 6px; font-size: 1.1rem; font-weight: 800; color: var(--accent-green); }
 
-    .sheet-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .btn-save {
-      flex: 2;
-      background: var(--accent-green);
-      color: #000;
-      border: none;
-      padding: 14px;
-      border-radius: 14px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    .btn-delete {
-      flex: 1;
-      background: rgba(239, 68, 68, 0.2);
-      color: var(--accent-red);
-      border: none;
-      padding: 14px;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-
-    .warning-msg {
-      color: var(--accent-red);
-      font-size: 0.75rem;
-      text-align: center;
-      display: none;
-    }
+    .sheet-actions { display: flex; gap: 8px; margin-top: 4px; }
+    .btn-save { flex: 2; background: var(--accent-green); color: #000; border: none; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+    .btn-delete { flex: 1; background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
   </style>
 </head>
 <body>
 
 <div class="app-container">
   <header>
-    <h1>🛵 Solo Delivery Manager</h1>
-    <button class="backup-btn" onclick="exportData()">💾 גיבוי</button>
+    <h1>🛵 Solo Courier Manager</h1>
+    <div class="header-btn-group">
+      <button class="top-btn" onclick="exportData()">💾 גיבוי</button>
+      <button class="top-btn danger" onclick="openPurgeModal()">🗑️ ניקוי</button>
+    </div>
   </header>
 
-  <!-- Live Fuel Banner -->
-  <div class="fuel-banner">
-    <div class="fuel-status-tag" id="fuelStatusTag">
-      <span id="fuelDot">🟢</span>
-      <span id="fuelStatusText">מחיר דלק 95 מעודכן</span>
+  <!-- TAB 1: HOME & CALENDAR -->
+  <div id="tabHome" class="tab-view active">
+    <!-- Fuel Banner -->
+    <div class="fuel-banner">
+      <div class="fuel-status-tag">
+        <span>🟢</span>
+        <span>מחיר דלק 95 מעודכן</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:4px;">
+        <input type="number" step="0.01" id="fuelPriceInput" inputmode="decimal" value="8.25" oninput="validateFuelPrice()" style="width:70px; padding:4px 8px; font-weight:bold; text-align:center;">
+        <span style="font-size:0.8rem; color:var(--text-secondary);">₪/ל'</span>
+      </div>
     </div>
-    <div style="display:flex; align-items:center; gap:4px;">
-      <input type="number" step="0.01" id="fuelPriceInput" inputmode="decimal" value="8.25" oninput="validateFuelPrice()" style="width:70px; padding:4px 8px; font-weight:bold; text-align:center;">
-      <span style="font-size:0.8rem; color:var(--text-secondary);">₪/ל'</span>
+
+    <!-- Calendar Card -->
+    <div class="card">
+      <div class="cal-nav">
+        <button onclick="changeMonth(-1)">&lt;</button>
+        <span class="cal-month-title" id="calTitle">--</span>
+        <button onclick="changeMonth(1)">&gt;</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <!-- Bottom Monthly Summary Card -->
+    <div class="card">
+      <div class="card-title" id="monthlySummaryHeaderTitle">סיכום חודשי נקי</div>
+      <div class="big-net-box">
+        <div class="big-net-label">רווח נקי כולל לחודש זה (לאחר ניכוי הכל)</div>
+        <div class="big-net-value" id="mBigNet">0.00 ₪</div>
+      </div>
+
+      <div class="summary-list">
+        <div class="summary-item">
+          <span class="title">🏢 מגיע לי מהחברה (בסיס):</span>
+          <span class="val" id="mCompanySalary" style="color:var(--accent-blue);">0.00 ₪</span>
+        </div>
+
+        <div class="summary-item">
+          <span class="title">💳 טיפים באשראי (נטו):</span>
+          <span class="val" id="mCreditTips" style="color:var(--accent-orange);">0.00 ₪</span>
+        </div>
+
+        <div class="summary-item">
+          <span class="title">🛣️ סה"כ קילומטראז' נסועה:</span>
+          <span class="val" id="mTotalKm">0 ק"מ</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Calendar Card -->
-  <div class="card">
-    <div class="cal-nav">
-      <button onclick="changeMonth(-1)">&lt;</button>
-      <span class="cal-month-title" id="calTitle">--</span>
-      <button onclick="changeMonth(1)">&gt;</button>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-  </div>
-
-  <!-- Bottom Monthly Summary Card -->
-  <div class="card monthly-summary-card">
-    <div class="card-title" id="monthlySummaryHeaderTitle">סיכום חודשי נקי</div>
-    
-    <!-- Big Highlight Net Profit Box -->
-    <div class="big-net-box">
-      <div class="big-net-label">רווח נקי כולל לחודש זה (לאחר ניכוי הכל)</div>
-      <div class="big-net-value" id="mBigNet">0.00 ₪</div>
+  <!-- TAB 2: RECEIPTS GALLERY -->
+  <div id="tabReceipts" class="tab-view">
+    <div class="card">
+      <div class="card-title">צלם ושמור קבלות טיפים (אשראי)</div>
+      <div class="upload-btn-box">
+        <label class="btn-camera-upload">
+          📷 צלם קבלה חדשה
+          <input type="file" accept="image/*" capture="environment" id="cameraFileInput" onchange="handlePhotoCapture(event)" style="display:none;">
+        </label>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <label style="font-size:0.8rem; color:var(--text-secondary);">תאריך הקבלה:</label>
+          <input type="date" id="receiptTargetDate" style="width:160px; padding:6px;">
+        </div>
+      </div>
     </div>
 
-    <!-- Detailed Sub-Stats -->
-    <div class="summary-list">
-      <div class="summary-item">
-        <span class="title">🏢 מגיע לי מהחברה (בסיס):</span>
-        <span class="val blue" id="mCompanySalary">0.00 ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(0.00 שעות)</small></span>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div class="card-title" style="margin:0;">גלריית קבלות לחודש הנבחר</div>
+        <span id="receiptCountBadge" style="font-size:0.8rem; color:var(--accent-blue); font-weight:bold;">0 קבלות</span>
       </div>
 
-      <div class="summary-item">
-        <span class="title">💳 טיפים באשראי (נטו):</span>
-        <span class="val orange" id="mCreditTips">0.00 ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(0.00 ₪ לפני מע"מ)</small></span>
-      </div>
+      <div class="receipts-grid" id="receiptsGrid"></div>
 
-      <div class="summary-item">
-        <span class="title">🛣️ סה"כ קילומטראז' נסועה:</span>
-        <span class="val" id="mTotalKm">0 ק"מ</span>
-      </div>
+      <button class="btn-share-whatsapp" onclick="shareMonthReceiptsWhatsApp()">
+        📲 שתף קבלות חודשיות לוואטסאפ
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Modal Form Sheet -->
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="navHomeBtn" onclick="switchTab('home')">
+    <span class="nav-icon">🏠</span>
+    <span>בית ומשמרות</span>
+  </button>
+  <button class="nav-item" id="navReceiptsBtn" onclick="switchTab('receipts')">
+    <span class="nav-icon">📸</span>
+    <span>קבלות ותמונות</span>
+  </button>
+</div>
+
+<!-- Modal Shift Edit -->
 <div class="modal-overlay" id="formModal">
   <div class="modal-sheet">
     <div class="sheet-header">
       <span class="sheet-title" id="modalDateLabel">דיווח יום עבודה</span>
-      <button class="close-btn" onclick="closeModal()">✕</button>
+      <button class="close-btn" onclick="closeModal('formModal')">✕</button>
     </div>
 
     <div class="form-grid">
@@ -467,27 +443,22 @@
         <label>1. שעת התחלה</label>
         <input type="time" id="startTimeInput" onchange="calculateShift()">
       </div>
-
       <div class="form-group">
         <label>2. שעת סיום</label>
         <input type="time" id="endTimeInput" onchange="calculateShift()">
       </div>
-
       <div class="form-group">
         <label>3. טיפים במזומן (₪)</label>
         <input type="number" id="cashTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
       </div>
-
       <div class="form-group">
         <label>4. טיפים באשראי (₪)</label>
         <input type="number" id="creditTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
       </div>
-
       <div class="form-group">
         <label>5. כמות ק"מ</label>
         <input type="number" id="kmInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
       </div>
-
       <div class="form-group">
         <label>6. מיקום עבודה</label>
         <select id="locationSelect">
@@ -497,31 +468,13 @@
       </div>
     </div>
 
-    <!-- Calculations Breakdown Box Inside Modal -->
     <div class="breakdown-box">
-      <div class="b-row">
-        <span>שעות עבודה מדויקות:</span>
-        <span id="resHoursDisplay" style="color:#fff;">0.00 שעות</span>
-      </div>
-      <div class="b-row gross">
-        <span>כמה הרווחתי (ברוטו):</span>
-        <span id="resGrossDisplay">0.00 ₪</span>
-      </div>
-      <div class="b-row expense">
-        <span>כמה בזבזתי (דלק לפי 11.65 ק"מ/ל'):</span>
-        <span id="resFuelExpenseDisplay">- 0.00 ₪</span>
-      </div>
-      <div class="b-row">
-        <span>רווח שעתי נקי אפקטיבי:</span>
-        <span id="resHourlyNetDisplay" style="color:var(--accent-orange); font-weight:700;">0.00 ₪ / שעה</span>
-      </div>
-      <div class="b-row net-main">
-        <span>כמה נשאר לי (רווח נקי):</span>
-        <span id="resNetDisplay">0.00 ₪</span>
-      </div>
+      <div class="b-row"><span>שעות עבודה מדויקות:</span><span id="resHoursDisplay" style="color:#fff;">0.00 שעות</span></div>
+      <div class="b-row gross"><span>כמה הרווחתי (ברוטו):</span><span id="resGrossDisplay">0.00 ₪</span></div>
+      <div class="b-row expense"><span>כמה בזבזתי (דלק לפי 11.65 ק"מ/ל'):</span><span id="resFuelExpenseDisplay">- 0.00 ₪</span></div>
+      <div class="b-row"><span>רווח שעתי נקי אפקטיבי:</span><span id="resHourlyNetDisplay" style="color:var(--accent-orange); font-weight:700;">0.00 ₪ / שעה</span></div>
+      <div class="b-row net-main"><span>כמה נשאר לי (רווח נקי):</span><span id="resNetDisplay">0.00 ₪</span></div>
     </div>
-
-    <div class="warning-msg" id="fuelWarning">⚠️ חובה להזין מחיר דלק תקין (בירוק) כדי לחשב ולשמור.</div>
 
     <div class="sheet-actions">
       <button class="btn-save" id="saveBtn" onclick="saveShiftData()">שמור יום עבודה</button>
@@ -530,55 +483,79 @@
   </div>
 </div>
 
+<!-- Modal Purge / Month Delete -->
+<div class="modal-overlay" id="purgeModal">
+  <div class="modal-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title" style="color:var(--accent-red);">🗑️ ניהול זיכרון ומחיקת חודש</span>
+      <button class="close-btn" onclick="closeModal('purgeModal')">✕</button>
+    </div>
+
+    <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">
+      בחר חודש שברצונך למחוק מזיכרון המכשיר. מחיקה זו תנקה את כל המשמרות, הנתונים והקבלות של אותו חודש בלבד.
+    </div>
+
+    <div class="form-group" style="margin-top:8px;">
+      <label>בחר חודש למחיקה:</label>
+      <select id="purgeMonthSelect"></select>
+    </div>
+
+    <div class="sheet-actions" style="margin-top:10px;">
+      <button class="btn-delete" style="flex:1; padding:16px; font-size:1rem;" onclick="confirmAndExecutePurge()">מחק חודש זה לצמיתות</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const HOURLY_RATE = 50;
   const KM_PER_LITER = 11.65;
-  const VAT_RATE = 0.18; // 18% מע"מ מתקבל מטיפי אשראי
+  const VAT_RATE = 0.18;
 
   let shiftsData = JSON.parse(localStorage.getItem('solo_shifts_data')) || {};
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
   let viewDate = new Date();
   let selectedDateKey = null;
 
+  /* IndexedDB Setup */
+  let db;
+  const dbReq = indexedDB.open("SoloReceiptsDB", 1);
+  dbReq.onupgradeneeded = (e) => {
+    db = e.target.result;
+    if (!db.objectStoreNames.contains("receipts")) {
+      db.createObjectStore("receipts", { keyPath: "id", autoIncrement: true });
+    }
+  };
+  dbReq.onsuccess = (e) => { db = e.target.result; loadMonthReceipts(); };
+
   function init() {
     document.getElementById('fuelPriceInput').value = currentFuelPrice;
+    document.getElementById('receiptTargetDate').value = new Date().toISOString().split('T')[0];
     validateFuelPrice();
     renderCalendar();
   }
 
+  function switchTab(tab) {
+    document.getElementById('tabHome').classList.toggle('active', tab === 'home');
+    document.getElementById('tabReceipts').classList.toggle('active', tab === 'receipts');
+    document.getElementById('navHomeBtn').classList.toggle('active', tab === 'home');
+    document.getElementById('navReceiptsBtn').classList.toggle('active', tab === 'receipts');
+    if (tab === 'receipts') loadMonthReceipts();
+  }
+
   function validateFuelPrice() {
     const val = parseFloat(document.getElementById('fuelPriceInput').value);
-    const statusTag = document.getElementById('fuelStatusTag');
-    const dot = document.getElementById('fuelDot');
-    const txt = document.getElementById('fuelStatusText');
-    const warning = document.getElementById('fuelWarning');
-    const saveBtn = document.getElementById('saveBtn');
-
     if (val && val > 0) {
       currentFuelPrice = val;
       localStorage.setItem('solo_fuel_price', currentFuelPrice);
-      statusTag.classList.remove('invalid');
-      dot.innerText = '🟢';
-      txt.innerText = 'מחיר דלק 95 מעודכן';
-      warning.style.display = 'none';
-      saveBtn.style.opacity = '1';
-      saveBtn.style.pointerEvents = 'auto';
       calculateShift();
-    } else {
-      statusTag.classList.add('invalid');
-      dot.innerText = '🔴';
-      txt.innerText = 'מחיר דלק לא תקין!';
-      warning.style.display = 'block';
-      saveBtn.style.opacity = '0.4';
-      saveBtn.style.pointerEvents = 'none';
     }
   }
 
   function renderCalendar() {
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
-
     const monthNameStr = new Date(year, month).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+
     document.getElementById('calTitle').innerText = monthNameStr;
     document.getElementById('monthlySummaryHeaderTitle').innerText = `סיכום חודשי נקי - ${monthNameStr}`;
 
@@ -593,17 +570,9 @@
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const todayKey = new Date().toISOString().split('T')[0];
 
-    // Monthly accumulators
-    let monthlyHours = 0;
-    let monthlyBaseSalary = 0;
-    let monthlyCreditTipsGross = 0;
-    let monthlyCreditTipsNet = 0;
-    let monthlyKm = 0;
-    let monthlyNetProfit = 0;
+    let monthlyHours = 0, monthlyBaseSalary = 0, monthlyCreditTipsGross = 0, monthlyCreditTipsNet = 0, monthlyKm = 0, monthlyNetProfit = 0;
 
-    for (let i = 0; i < firstDayIndex; i++) {
-      grid.innerHTML += `<div class="day-cell empty"></div>`;
-    }
+    for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div class="day-cell empty"></div>`;
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -630,13 +599,12 @@
       grid.appendChild(cell);
     }
 
-    // Update Bottom Summary Elements
     document.getElementById('mBigNet').innerText = `${monthlyNetProfit.toFixed(2)} ₪`;
-    document.getElementById('mCompanySalary').innerHTML = 
-      `${monthlyBaseSalary.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyHours.toFixed(2)} שעות)</small>`;
-    document.getElementById('mCreditTips').innerHTML = 
-      `${monthlyCreditTipsNet.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyCreditTipsGross.toFixed(2)} ₪ לפני מע"מ)</small>`;
+    document.getElementById('mCompanySalary').innerHTML = `${monthlyBaseSalary.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyHours.toFixed(2)} שעות)</small>`;
+    document.getElementById('mCreditTips').innerHTML = `${monthlyCreditTipsNet.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyCreditTipsGross.toFixed(2)} ₪ לפני מע"מ)</small>`;
     document.getElementById('mTotalKm').innerText = `${monthlyKm} ק"מ`;
+
+    if (db) loadMonthReceipts();
   }
 
   function changeMonth(delta) {
@@ -673,15 +641,14 @@
       const [eh, em] = endVal.split(':').map(Number);
       let startMins = sh * 60 + sm;
       let endMins = eh * 60 + em;
-      if (endMins < startMins) endMins += 24 * 60; // חציית חצות
+      if (endMins < startMins) endMins += 24 * 60;
       totalHours = (endMins - startMins) / 60;
     }
 
     const baseSalary = totalHours * HOURLY_RATE;
-    const creditTipsNet = creditTips * (1 - VAT_RATE); // 18% מע"מ
+    const creditTipsNet = creditTips * (1 - VAT_RATE);
     const grossEarnings = baseSalary + cashTips + creditTipsNet;
 
-    // חישוב הוצאת דלק לפי 11.65 ק"מ לליטר
     const litersUsed = km / KM_PER_LITER;
     const fuelExpense = litersUsed * currentFuelPrice;
 
@@ -695,50 +662,212 @@
     document.getElementById('resNetDisplay').innerText = `${netProfit.toFixed(2)} ₪`;
 
     return {
-      startTime: startVal,
-      endTime: endVal,
-      totalHours: parseFloat(totalHours.toFixed(2)),
-      baseSalary: parseFloat(baseSalary.toFixed(2)),
-      cashTips,
-      creditTips,
-      creditTipsNet: parseFloat(creditTipsNet.toFixed(2)),
-      km,
-      fuelExpense: parseFloat(fuelExpense.toFixed(2)),
-      grossEarnings: parseFloat(grossEarnings.toFixed(2)),
-      netProfit: parseFloat(netProfit.toFixed(2)),
-      effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2))
+      startTime: startVal, endTime: endVal, totalHours: parseFloat(totalHours.toFixed(2)),
+      baseSalary: parseFloat(baseSalary.toFixed(2)), cashTips, creditTips,
+      creditTipsNet: parseFloat(creditTipsNet.toFixed(2)), km,
+      fuelExpense: parseFloat(fuelExpense.toFixed(2)), grossEarnings: parseFloat(grossEarnings.toFixed(2)),
+      netProfit: parseFloat(netProfit.toFixed(2)), effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2))
     };
   }
 
   function saveShiftData() {
-    if (!currentFuelPrice || currentFuelPrice <= 0) {
-      alert("מחיר הדלק אינו תקין. אנא וודא שהתג ירוק.");
-      return;
-    }
-
     const calc = calculateShift();
-    const location = document.getElementById('locationSelect').value;
-
-    shiftsData[selectedDateKey] = {
-      ...calc,
-      location,
-      fuelPriceUsed: currentFuelPrice
-    };
-
+    shiftsData[selectedDateKey] = { ...calc, location: document.getElementById('locationSelect').value, fuelPriceUsed: currentFuelPrice };
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
-    closeModal();
+    closeModal('formModal');
     renderCalendar();
   }
 
   function deleteShiftData() {
     delete shiftsData[selectedDateKey];
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
-    closeModal();
+    closeModal('formModal');
     renderCalendar();
   }
 
-  function closeModal() {
-    document.getElementById('formModal').classList.remove('active');
+  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+  /* Photo Receipts & IndexedDB Logic */
+  function handlePhotoCapture(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const targetDate = document.getElementById('receiptTargetDate').value || new Date().toISOString().split('T')[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const base64Img = event.target.result;
+      const tx = db.transaction("receipts", "readwrite");
+      tx.objectStore("receipts").add({
+        date: targetDate,
+        imageData: base64Img,
+        createdAt: new Date().toISOString()
+      });
+      tx.oncomplete = () => loadMonthReceipts();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function loadMonthReceipts() {
+    if (!db) return;
+    const year = viewDate.getFullYear();
+    const month = String(viewDate.getMonth() + 1).padStart(2, '0');
+    const monthPrefix = `${year}-${month}`;
+
+    const tx = db.transaction("receipts", "readonly");
+    const store = tx.objectStore("receipts");
+    const req = store.getAll();
+
+    req.onsuccess = () => {
+      const allReceipts = req.result || [];
+      const monthReceipts = allReceipts.filter(r => r.date.startsWith(monthPrefix));
+
+      document.getElementById('receiptCountBadge').innerText = `${monthReceipts.length} קבלות`;
+      const grid = document.getElementById('receiptsGrid');
+      grid.innerHTML = '';
+
+      if (monthReceipts.length === 0) {
+        grid.innerHTML = `<div style="grid-column:span 2; text-align:center; color:var(--text-secondary); padding:20px; font-size:0.85rem;">אין קבלות שמורות לחודש זה</div>`;
+        return;
+      }
+
+      monthReceipts.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'receipt-card';
+        item.innerHTML = `
+          <button class="btn-del-receipt" onclick="deleteReceipt(${r.id})">✕</button>
+          <img src="${r.imageData}" class="receipt-img" onclick="previewImage('${r.imageData}')">
+          <div class="receipt-date-tag">תאריך: ${r.date}</div>
+        `;
+        grid.appendChild(item);
+      });
+    };
+  }
+
+  function deleteReceipt(id) {
+    const tx = db.transaction("receipts", "readwrite");
+    tx.objectStore("receipts").delete(id);
+    tx.oncomplete = () => loadMonthReceipts();
+  }
+
+  function previewImage(src) {
+    const w = window.open("");
+    w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+  }
+
+  /* Batch WhatsApp Receipt Share */
+  async function shareMonthReceiptsWhatsApp() {
+    if (!db) return;
+    const year = viewDate.getFullYear();
+    const month = String(viewDate.getMonth() + 1).padStart(2, '0');
+    const monthPrefix = `${year}-${month}`;
+
+    const tx = db.transaction("receipts", "readonly");
+    const req = tx.objectStore("receipts").getAll();
+
+    req.onsuccess = async () => {
+      const monthReceipts = (req.result || []).filter(r => r.date.startsWith(monthPrefix));
+
+      if (monthReceipts.length === 0) {
+        alert("אין קבלות שמורות בחודש זה לשליחה.");
+        return;
+      }
+
+      const files = [];
+      for (let i = 0; i < monthReceipts.length; i++) {
+        const res = await fetch(monthReceipts[i].imageData);
+        const blob = await res.blob();
+        files.push(new File([blob], `receipt_${monthReceipts[i].date}_${i+1}.jpg`, { type: 'image/jpeg' }));
+      }
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files })) {
+        try {
+          await navigator.share({
+            title: `קבלות טיפים - סולו ${monthPrefix}`,
+            text: `מצורפות ${files.length} קבלות טיפים באשראי לחודש ${monthPrefix}`,
+            files: files
+          });
+        } catch (err) {
+          console.log("Share cancelled/failed", err);
+        }
+      } else {
+        alert(`נמצאו ${files.length} קבלות. מכשירך מוריד כעת את הקבלות למכשיר לצורך שליחה בוואטסאפ.`);
+        files.forEach((f) => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(f);
+          a.download = f.name;
+          a.click();
+        });
+      }
+    };
+  }
+
+  /* Month Purge Modal & Execution Logic */
+  function openPurgeModal() {
+    const select = document.getElementById('purgeMonthSelect');
+    select.innerHTML = '';
+
+    // Collect all available YYYY-MM keys from shiftsData
+    const monthsSet = new Set();
+    Object.keys(shiftsData).forEach(k => {
+      if (k.length >= 7) monthsSet.add(k.slice(0, 7));
+    });
+
+    // Add current view month if not present
+    const curMonthKey = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
+    monthsSet.add(curMonthKey);
+
+    const sortedMonths = Array.from(monthsSet).sort().reverse();
+    sortedMonths.forEach(mKey => {
+      const [y, m] = mKey.split('-');
+      const monthName = new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+      const opt = document.createElement('option');
+      opt.value = mKey;
+      opt.innerText = monthName;
+      select.appendChild(opt);
+    });
+
+    document.getElementById('purgeModal').classList.add('active');
+  }
+
+  function confirmAndExecutePurge() {
+    const mKey = document.getElementById('purgeMonthSelect').value;
+    if (!mKey) return;
+
+    const [y, m] = mKey.split('-');
+    const monthName = new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+
+    const isConfirmed = confirm(`⚠️ האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים והקבלות של חודש ${monthName}?\n\nפעולה זו תמחק את הנתונים לצמיתות ולא ניתן יהיה לשזרם!`);
+
+    if (isConfirmed) {
+      // 1. Delete matching shifts from localStorage
+      Object.keys(shiftsData).forEach(k => {
+        if (k.startsWith(mKey)) {
+          delete shiftsData[k];
+        }
+      });
+      localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+
+      // 2. Delete matching receipts from IndexedDB
+      if (db) {
+        const tx = db.transaction("receipts", "readwrite");
+        const store = tx.objectStore("receipts");
+        const req = store.getAll();
+
+        req.onsuccess = () => {
+          const allReceipts = req.result || [];
+          allReceipts.forEach(r => {
+            if (r.date && r.date.startsWith(mKey)) {
+              store.delete(r.id);
+            }
+          });
+        };
+      }
+
+      alert(`הנתונים והקבלות של חודש ${monthName} נמחקו בהצלחה.`);
+      closeModal('purgeModal');
+      renderCalendar();
+    }
   }
 
   function exportData() {
