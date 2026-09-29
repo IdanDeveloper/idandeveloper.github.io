@@ -406,7 +406,7 @@
         </div>
 
         <div class="summary-item">
-          <span class="title">🛣️ סה"כ קילומטראז' נסועה:</span>
+          <span class="title">🛣️️ סה"כ קילומטראז' נסיעה:</span>
           <span class="val" id="mTotalKm">0 ק"מ</span>
         </div>
       </div>
@@ -628,6 +628,15 @@
   let activeQuickAddType = null;
   let firebaseDB = null;
 
+  /* Helper for Pure Local Date String (YYYY-MM-DD) */
+  function getLocalDateStr() {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   /* IndexedDB Setup for Receipts & Drop-off Photos */
   let db;
   const dbReq = indexedDB.open("SoloAppDB", 2);
@@ -648,7 +657,8 @@
 
   function init() {
     document.getElementById('fuelPriceInput').value = currentFuelPrice;
-    const todayStr = new Date().toISOString().split('T')[0];
+    
+    const todayStr = getLocalDateStr();
     document.getElementById('receiptTargetDate').value = todayStr;
     document.getElementById('dropoffTargetDate').value = todayStr;
 
@@ -657,28 +667,29 @@
     renderCalendar();
   }
 
-  /* Robust Smart Parser for Firebase Input */
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      const todayStr = getLocalDateStr();
+      document.getElementById('receiptTargetDate').value = todayStr;
+      document.getElementById('dropoffTargetDate').value = todayStr;
+      renderCalendar();
+    }
+  });
+
   function parseFirebaseInput(input) {
     if (!input) return null;
     let str = input.trim();
-    
-    // Replace smart/curly quotes from iOS/mobile devices
     str = str.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
 
-    // Try direct JSON parse
     try {
       return JSON.parse(str);
     } catch (e) {}
 
-    // Extract JSON object structure inside { ... }
     const match = str.match(/\{[\s\S]*\}/);
     if (match) {
       let extracted = match[0];
-      // Add double quotes to unquoted JS object keys
       extracted = extracted.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
-      // Convert single quotes around values to double quotes
       extracted = extracted.replace(/:\s*'([^']*)'/g, ':"$1"');
-      // Remove trailing commas before } or ]
       extracted = extracted.replace(/,\s*([}\]])/g, '$1');
 
       try {
@@ -775,7 +786,7 @@
 
     const firstDayIndex = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const todayKey = new Date().toISOString().split('T')[0];
+    const todayKey = getLocalDateStr();
 
     let monthlyHours = 0, monthlyBaseSalary = 0, monthlyCreditTipsGross = 0, monthlyCreditTipsNet = 0, monthlyKm = 0, monthlyNetProfit = 0;
 
@@ -912,7 +923,11 @@
     renderCalendar();
   }
 
+  /* Delete Shift Data with Confirmation Prompt */
   function deleteShiftData() {
+    const isConfirmed = confirm(`האם אתה בטוח שברצונך למחוק את המשמרת בתאריך ${selectedDateKey}?`);
+    if (!isConfirmed) return;
+
     delete shiftsData[selectedDateKey];
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
     syncWithCloud();
@@ -927,7 +942,7 @@
     const file = e.target.files[0];
     if (!file) return;
 
-    const targetDate = document.getElementById('receiptTargetDate').value || new Date().toISOString().split('T')[0];
+    const targetDate = document.getElementById('receiptTargetDate').value || getLocalDateStr();
     const reader = new FileReader();
 
     reader.onload = function(event) {
@@ -992,7 +1007,7 @@
     const file = e.target.files[0];
     if (!file) return;
 
-    const targetDate = document.getElementById('dropoffTargetDate').value || new Date().toISOString().split('T')[0];
+    const targetDate = document.getElementById('dropoffTargetDate').value || getLocalDateStr();
     const noteVal = document.getElementById('dropoffNoteInput').value.trim();
     const now = new Date();
     const timeStr = now.toTimeString().substring(0, 5);
@@ -1194,7 +1209,7 @@
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObject, null, 2));
         const dlAnchor = document.createElement('a');
         dlAnchor.setAttribute("href", dataStr);
-        const dateStr = new Date().toISOString().split('T')[0];
+        const dateStr = getLocalDateStr();
         dlAnchor.setAttribute("download", `solo_full_backup_${dateStr}.json`);
         document.body.appendChild(dlAnchor);
         dlAnchor.click();
