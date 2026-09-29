@@ -96,11 +96,6 @@
       color: var(--accent-red);
     }
 
-    .fuel-price-val {
-      font-size: 1.1rem;
-      font-weight: 800;
-    }
-
     /* Cards */
     .card {
       background: var(--card-bg);
@@ -196,7 +191,17 @@
       cursor: pointer;
     }
 
-    .day-cell.today { border-color: var(--accent-blue); }
+    /* היום הנוכחי בצבע ירוק בולט */
+    .day-cell.today {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border: 2px solid var(--accent-green) !important;
+      font-weight: 800;
+    }
+
+    .day-cell.today > span:first-child {
+      color: var(--accent-green);
+    }
+
     .day-cell.empty { background: transparent; cursor: default; }
 
     .day-net {
@@ -365,14 +370,14 @@
     <button class="backup-btn" onclick="exportData()">💾 גיבוי</button>
   </header>
 
-  <!-- Live Verified Fuel Price Banner -->
+  <!-- Live Fuel Banner -->
   <div class="fuel-banner">
     <div class="fuel-status-tag" id="fuelStatusTag">
       <span id="fuelDot">🟢</span>
-      <span id="fuelStatusText">מחיר דלק 95 מעודכן (רשמי)</span>
+      <span id="fuelStatusText">מחיר דלק 95 מעודכן</span>
     </div>
     <div style="display:flex; align-items:center; gap:4px;">
-      <input type="number" step="0.01" id="fuelPriceInput" value="8.25" oninput="validateFuelPrice()" style="width:70px; padding:4px 8px; font-weight:bold; text-align:center;">
+      <input type="number" step="0.01" id="fuelPriceInput" inputmode="decimal" value="8.25" oninput="validateFuelPrice()" style="width:70px; padding:4px 8px; font-weight:bold; text-align:center;">
       <span style="font-size:0.8rem; color:var(--text-secondary);">₪/ל'</span>
     </div>
   </div>
@@ -428,17 +433,17 @@
 
       <div class="form-group">
         <label>3. טיפים במזומן (₪)</label>
-        <input type="number" id="cashTipsInput" placeholder="0" oninput="calculateShift()">
+        <input type="number" id="cashTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
       </div>
 
       <div class="form-group">
         <label>4. טיפים באשראי (₪)</label>
-        <input type="number" id="creditTipsInput" placeholder="0" oninput="calculateShift()">
+        <input type="number" id="creditTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
       </div>
 
       <div class="form-group">
         <label>5. כמות ק"מ</label>
-        <input type="number" id="kmInput" placeholder="0" oninput="calculateShift()">
+        <input type="number" id="kmInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
       </div>
 
       <div class="form-group">
@@ -485,8 +490,8 @@
 
 <script>
   const HOURLY_RATE = 50;
-  const KM_PER_LITER = 11.65; // צריכת דלק
-  const VAT_RATE = 0.18; // 18% מע"מ מטיפ אשראי
+  const KM_PER_LITER = 11.65;
+  const VAT_RATE = 0.18;
 
   let shiftsData = JSON.parse(localStorage.getItem('solo_shifts_data')) || {};
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
@@ -614,15 +619,14 @@
       const [eh, em] = endVal.split(':').map(Number);
       let startMins = sh * 60 + sm;
       let endMins = eh * 60 + em;
-      if (endMins < startMins) endMins += 24 * 60; // חציית חצות
+      if (endMins < startMins) endMins += 24 * 60;
       totalHours = (endMins - startMins) / 60;
     }
 
     const baseSalary = totalHours * HOURLY_RATE;
-    const creditTipsNet = creditTips * (1 - VAT_RATE); // 18% מע"מ
+    const creditTipsNet = creditTips * (1 - VAT_RATE);
     const grossEarnings = baseSalary + cashTips + creditTipsNet;
 
-    // חישוב דלק לפי 11.65 ק"מ לליטר
     const litersUsed = km / KM_PER_LITER;
     const fuelExpense = litersUsed * currentFuelPrice;
 
