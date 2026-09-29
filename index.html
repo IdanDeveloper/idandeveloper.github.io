@@ -305,6 +305,32 @@
     .form-group { display: flex; flex-direction: column; gap: 3px; }
     label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
 
+    /* Input Add Group */
+    .input-add-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-add-tip {
+      background: var(--accent-green);
+      color: #000;
+      border: none;
+      width: 40px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-add-tip:active {
+      opacity: 0.8;
+      transform: scale(0.95);
+    }
+
     input, select {
       background: var(--card-inner); border: 1px solid var(--border-color);
       color: #fff; padding: 10px; border-radius: 12px; font-size: 16px;
@@ -447,14 +473,25 @@
         <label>2. שעת סיום</label>
         <input type="time" id="endTimeInput" onchange="calculateShift()">
       </div>
+
+      <!-- Cash Tips Input + Green Plus Button -->
       <div class="form-group">
         <label>3. טיפים במזומן (₪)</label>
-        <input type="number" id="cashTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
+        <div class="input-add-group">
+          <input type="number" id="cashTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
+          <button class="btn-add-tip" onclick="openQuickAddModal('cash')">+</button>
+        </div>
       </div>
+
+      <!-- Credit Tips Input + Green Plus Button -->
       <div class="form-group">
         <label>4. טיפים באשראי (₪)</label>
-        <input type="number" id="creditTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
+        <div class="input-add-group">
+          <input type="number" id="creditTipsInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
+          <button class="btn-add-tip" onclick="openQuickAddModal('credit')">+</button>
+        </div>
       </div>
+
       <div class="form-group">
         <label>5. כמות ק"מ</label>
         <input type="number" id="kmInput" inputmode="decimal" placeholder="0" oninput="calculateShift()">
@@ -479,6 +516,25 @@
     <div class="sheet-actions">
       <button class="btn-save" id="saveBtn" onclick="saveShiftData()">שמור יום עבודה</button>
       <button class="btn-delete" onclick="deleteShiftData()">מחק</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Quick Tip Add -->
+<div class="modal-overlay" id="quickAddModal">
+  <div class="modal-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title" id="quickAddModalTitle" style="color:var(--accent-green);">🟢 הוספת טיפ מהירה</span>
+      <button class="close-btn" onclick="closeModal('quickAddModal')">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label id="quickAddModalLabel">סכום הטיפ להוספה (₪):</label>
+      <input type="number" id="quickAddAmountInput" inputmode="decimal" placeholder="0" style="font-size:1.5rem; text-align:center; padding:14px;">
+    </div>
+
+    <div class="sheet-actions" style="margin-top:6px;">
+      <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="executeQuickTipAdd()">הוסף למאזן</button>
     </div>
   </div>
 </div>
@@ -515,6 +571,7 @@
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
   let viewDate = new Date();
   let selectedDateKey = null;
+  let activeQuickAddType = null; // 'cash' or 'credit'
 
   /* IndexedDB Setup */
   let db;
@@ -670,6 +727,31 @@
     };
   }
 
+  /* Quick Tip Add Logic */
+  function openQuickAddModal(type) {
+    activeQuickAddType = type;
+    const labelStr = type === 'cash' ? 'הוספת טיפ במזומן (₪)' : 'הוספת טיפ באשראי (₪)';
+    document.getElementById('quickAddModalTitle').innerText = `🟢 ${labelStr}`;
+    document.getElementById('quickAddModalLabel').innerText = `הכנס סכום להוספה:`;
+    document.getElementById('quickAddAmountInput').value = '';
+    document.getElementById('quickAddModal').classList.add('active');
+    setTimeout(() => document.getElementById('quickAddAmountInput').focus(), 300);
+  }
+
+  function executeQuickTipAdd() {
+    const addVal = parseFloat(document.getElementById('quickAddAmountInput').value);
+    if (addVal && addVal > 0) {
+      const targetInputId = activeQuickAddType === 'cash' ? 'cashTipsInput' : 'creditTipsInput';
+      const targetInput = document.getElementById(targetInputId);
+      const currentVal = parseFloat(targetInput.value) || 0;
+      
+      const newTotal = currentVal + addVal;
+      targetInput.value = parseFloat(newTotal.toFixed(2));
+      calculateShift();
+    }
+    closeModal('quickAddModal');
+  }
+
   function saveShiftData() {
     const calc = calculateShift();
     shiftsData[selectedDateKey] = { ...calc, location: document.getElementById('locationSelect').value, fuelPriceUsed: currentFuelPrice };
@@ -807,13 +889,11 @@
     const select = document.getElementById('purgeMonthSelect');
     select.innerHTML = '';
 
-    // Collect all available YYYY-MM keys from shiftsData
     const monthsSet = new Set();
     Object.keys(shiftsData).forEach(k => {
       if (k.length >= 7) monthsSet.add(k.slice(0, 7));
     });
 
-    // Add current view month if not present
     const curMonthKey = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
     monthsSet.add(curMonthKey);
 
@@ -840,7 +920,6 @@
     const isConfirmed = confirm(`⚠️ האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים והקבלות של חודש ${monthName}?\n\nפעולה זו תמחק את הנתונים לצמיתות ולא ניתן יהיה לשזרם!`);
 
     if (isConfirmed) {
-      // 1. Delete matching shifts from localStorage
       Object.keys(shiftsData).forEach(k => {
         if (k.startsWith(mKey)) {
           delete shiftsData[k];
@@ -848,7 +927,6 @@
       });
       localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
 
-      // 2. Delete matching receipts from IndexedDB
       if (db) {
         const tx = db.transaction("receipts", "readwrite");
         const store = tx.objectStore("receipts");
