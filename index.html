@@ -33,7 +33,7 @@
       display: flex;
       flex-direction: column;
       padding-top: max(12px, env(safe-area-inset-top));
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
       padding-left: 12px;
       padding-right: 12px;
     }
@@ -47,7 +47,7 @@
       gap: 12px;
     }
 
-    /* Header & Fuel Bar */
+    /* Header */
     header {
       display: flex;
       justify-content: space-between;
@@ -105,39 +105,10 @@
     }
 
     .card-title {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-secondary);
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    /* Summary Grid */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
-    .stat-box {
-      background: var(--card-inner);
-      padding: 10px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--accent-blue);
-    }
-
-    .stat-value.green { color: var(--accent-green); }
-    .stat-value.red { color: var(--accent-red); }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-secondary);
-      margin-top: 2px;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
     /* Calendar Grid */
@@ -214,6 +185,67 @@
       font-size: 0.55rem;
       color: var(--text-secondary);
     }
+
+    /* Bottom Monthly Summary Card */
+    .monthly-summary-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .big-net-box {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1.5px solid var(--accent-green);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .big-net-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .big-net-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--accent-green);
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .summary-item {
+      background: var(--card-inner);
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .summary-item .title {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .summary-item .val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: left;
+    }
+
+    .summary-item .val.blue { color: var(--accent-blue); }
+    .summary-item .val.orange { color: var(--accent-orange); }
 
     /* Modal Form Sheet */
     .modal-overlay {
@@ -382,25 +414,6 @@
     </div>
   </div>
 
-  <!-- Monthly Summary Stats -->
-  <div class="card">
-    <div class="card-title">סיכום חודשי נקי</div>
-    <div class="summary-grid">
-      <div class="summary-stat stat-box">
-        <div class="stat-value" id="mTotalGross">0 ₪</div>
-        <div class="stat-label">הרווחתי (ברוטו)</div>
-      </div>
-      <div class="summary-stat stat-box">
-        <div class="stat-value red" id="mTotalFuel">0 ₪</div>
-        <div class="stat-label">בזבזתי (דלק)</div>
-      </div>
-      <div class="summary-stat stat-box">
-        <div class="stat-value green" id="mTotalNet">0 ₪</div>
-        <div class="stat-label">נשאר לי (נטו)</div>
-      </div>
-    </div>
-  </div>
-
   <!-- Calendar Card -->
   <div class="card">
     <div class="cal-nav">
@@ -409,6 +422,35 @@
       <button onclick="changeMonth(1)">&gt;</button>
     </div>
     <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <!-- Bottom Monthly Summary Card -->
+  <div class="card monthly-summary-card">
+    <div class="card-title" id="monthlySummaryHeaderTitle">סיכום חודשי נקי</div>
+    
+    <!-- Big Highlight Net Profit Box -->
+    <div class="big-net-box">
+      <div class="big-net-label">רווח נקי כולל לחודש זה (לאחר ניכוי הכל)</div>
+      <div class="big-net-value" id="mBigNet">0.00 ₪</div>
+    </div>
+
+    <!-- Detailed Sub-Stats -->
+    <div class="summary-list">
+      <div class="summary-item">
+        <span class="title">🏢 מגיע לי מהחברה (בסיס):</span>
+        <span class="val blue" id="mCompanySalary">0.00 ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(0.00 שעות)</small></span>
+      </div>
+
+      <div class="summary-item">
+        <span class="title">💳 טיפים באשראי (נטו):</span>
+        <span class="val orange" id="mCreditTips">0.00 ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(0.00 ₪ לפני מע"מ)</small></span>
+      </div>
+
+      <div class="summary-item">
+        <span class="title">🛣️ סה"כ קילומטראז' נסועה:</span>
+        <span class="val" id="mTotalKm">0 ק"מ</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -455,7 +497,7 @@
       </div>
     </div>
 
-    <!-- Calculations Breakdown Box -->
+    <!-- Calculations Breakdown Box Inside Modal -->
     <div class="breakdown-box">
       <div class="b-row">
         <span>שעות עבודה מדויקות:</span>
@@ -491,7 +533,7 @@
 <script>
   const HOURLY_RATE = 50;
   const KM_PER_LITER = 11.65;
-  const VAT_RATE = 0.18;
+  const VAT_RATE = 0.18; // 18% מע"מ מתקבל מטיפי אשראי
 
   let shiftsData = JSON.parse(localStorage.getItem('solo_shifts_data')) || {};
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
@@ -536,8 +578,9 @@
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
 
-    document.getElementById('calTitle').innerText = 
-      new Date(year, month).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+    const monthNameStr = new Date(year, month).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+    document.getElementById('calTitle').innerText = monthNameStr;
+    document.getElementById('monthlySummaryHeaderTitle').innerText = `סיכום חודשי נקי - ${monthNameStr}`;
 
     const grid = document.getElementById('calGrid');
     grid.innerHTML = '';
@@ -550,9 +593,13 @@
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const todayKey = new Date().toISOString().split('T')[0];
 
-    let monthlyGross = 0;
-    let monthlyFuel = 0;
-    let monthlyNet = 0;
+    // Monthly accumulators
+    let monthlyHours = 0;
+    let monthlyBaseSalary = 0;
+    let monthlyCreditTipsGross = 0;
+    let monthlyCreditTipsNet = 0;
+    let monthlyKm = 0;
+    let monthlyNetProfit = 0;
 
     for (let i = 0; i < firstDayIndex; i++) {
       grid.innerHTML += `<div class="day-cell empty"></div>`;
@@ -564,9 +611,12 @@
       const isToday = dateKey === todayKey;
 
       if (shift) {
-        monthlyGross += shift.grossEarnings || 0;
-        monthlyFuel += shift.fuelExpense || 0;
-        monthlyNet += shift.netProfit || 0;
+        monthlyHours += shift.totalHours || 0;
+        monthlyBaseSalary += shift.baseSalary || 0;
+        monthlyCreditTipsGross += shift.creditTips || 0;
+        monthlyCreditTipsNet += shift.creditTipsNet || 0;
+        monthlyKm += shift.km || 0;
+        monthlyNetProfit += shift.netProfit || 0;
       }
 
       const cell = document.createElement('div');
@@ -580,9 +630,13 @@
       grid.appendChild(cell);
     }
 
-    document.getElementById('mTotalGross').innerText = `${monthlyGross.toFixed(0)} ₪`;
-    document.getElementById('mTotalFuel').innerText = `${monthlyFuel.toFixed(0)} ₪`;
-    document.getElementById('mTotalNet').innerText = `${monthlyNet.toFixed(0)} ₪`;
+    // Update Bottom Summary Elements
+    document.getElementById('mBigNet').innerText = `${monthlyNetProfit.toFixed(2)} ₪`;
+    document.getElementById('mCompanySalary').innerHTML = 
+      `${monthlyBaseSalary.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyHours.toFixed(2)} שעות)</small>`;
+    document.getElementById('mCreditTips').innerHTML = 
+      `${monthlyCreditTipsNet.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyCreditTipsGross.toFixed(2)} ₪ לפני מע"מ)</small>`;
+    document.getElementById('mTotalKm').innerText = `${monthlyKm} ק"מ`;
   }
 
   function changeMonth(delta) {
@@ -619,14 +673,15 @@
       const [eh, em] = endVal.split(':').map(Number);
       let startMins = sh * 60 + sm;
       let endMins = eh * 60 + em;
-      if (endMins < startMins) endMins += 24 * 60;
+      if (endMins < startMins) endMins += 24 * 60; // חציית חצות
       totalHours = (endMins - startMins) / 60;
     }
 
     const baseSalary = totalHours * HOURLY_RATE;
-    const creditTipsNet = creditTips * (1 - VAT_RATE);
+    const creditTipsNet = creditTips * (1 - VAT_RATE); // 18% מע"מ
     const grossEarnings = baseSalary + cashTips + creditTipsNet;
 
+    // חישוב הוצאת דלק לפי 11.65 ק"מ לליטר
     const litersUsed = km / KM_PER_LITER;
     const fuelExpense = litersUsed * currentFuelPrice;
 
