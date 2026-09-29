@@ -579,12 +579,12 @@
     </div>
 
     <div style="font-size:0.8rem; color:var(--text-secondary); line-height:1.4;">
-      הדבק את הגדרות פרויקט ה-Firebase החינמי שלך כדי לאפשר סנכרון וגיבוי אוטומטי ברקע בכל שינוי.
+      הדבק את הקוד מהאתר של Firebase. האפליקציה תתקן ותסדר אותו אוטומטית!
     </div>
 
     <div class="form-group" style="margin-top:6px;">
-      <label>הגדרות Firebase Config (קוד JSON):</label>
-      <textarea id="firebaseConfigInput" rows="5" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "..."}' style="font-family:monospace; font-size:0.75rem;"></textarea>
+      <label>הדבק כאן את הקוד מ-Firebase:</label>
+      <textarea id="firebaseConfigInput" rows="6" placeholder="הדבק כאן את הקוד..." style="font-family:monospace; font-size:0.75rem;"></textarea>
     </div>
 
     <div class="sheet-actions" style="margin-top:6px;">
@@ -657,7 +657,38 @@
     renderCalendar();
   }
 
-  /* Firebase Cloud Auto-Sync Initialization */
+  /* Robust Smart Parser for Firebase Input */
+  function parseFirebaseInput(input) {
+    if (!input) return null;
+    let str = input.trim();
+    
+    // Replace smart/curly quotes from iOS/mobile devices
+    str = str.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+
+    // Try direct JSON parse
+    try {
+      return JSON.parse(str);
+    } catch (e) {}
+
+    // Extract JSON object structure inside { ... }
+    const match = str.match(/\{[\s\S]*\}/);
+    if (match) {
+      let extracted = match[0];
+      // Add double quotes to unquoted JS object keys
+      extracted = extracted.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+      // Convert single quotes around values to double quotes
+      extracted = extracted.replace(/:\s*'([^']*)'/g, ':"$1"');
+      // Remove trailing commas before } or ]
+      extracted = extracted.replace(/,\s*([}\]])/g, '$1');
+
+      try {
+        return JSON.parse(extracted);
+      } catch (e) {}
+    }
+
+    return null;
+  }
+
   function initFirebaseIfAvailable() {
     const storedCfg = localStorage.getItem('solo_firebase_config');
     if (storedCfg) {
@@ -683,28 +714,26 @@
   }
 
   function saveFirebaseConfig() {
-    const val = document.getElementById('firebaseConfigInput').value.trim();
-    if (val) {
-      try {
-        JSON.parse(val);
-        localStorage.setItem('solo_firebase_config', val);
-        alert("הגדרות ענן נשמרו בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
-        closeModal('cloudModal');
-        initFirebaseIfAvailable();
-      } catch(e) {
-        alert("קוד ה-JSON אינו תקין. אנא העתק את הגדרות ה-Firebase המדויקות.");
-      }
-    } else {
+    const val = document.getElementById('firebaseConfigInput').value;
+    const parsedConfig = parseFirebaseInput(val);
+
+    if (parsedConfig && (parsedConfig.apiKey || parsedConfig.projectId)) {
+      localStorage.setItem('solo_firebase_config', JSON.stringify(parsedConfig));
+      alert("🎉 הענן חובק בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
+      closeModal('cloudModal');
+      initFirebaseIfAvailable();
+    } else if (!val.trim()) {
       localStorage.removeItem('solo_firebase_config');
       firebaseDB = null;
       document.getElementById('cloudStatusBtn').innerHTML = "☁️ ענן";
       closeModal('cloudModal');
+    } else {
+      alert("קוד ה-Firebase אינו תקין. אנא העתק והדבק את ההגדרות מחדש.");
     }
   }
 
   function syncWithCloud() {
     if (!firebaseDB) return;
-    // Auto-save shifts to Firebase doc
     firebaseDB.collection("solo_courier").doc("shifts").set({ data: JSON.stringify(shiftsData) }, { merge: true });
   }
 
@@ -893,7 +922,7 @@
 
   function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-  /* Tab 2: Photo Receipts Logic */
+  /* Photo Receipts Logic */
   function handlePhotoCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -958,7 +987,7 @@
     tx.oncomplete = () => loadMonthReceipts();
   }
 
-  /* Tab 3: Door Drop-off Photos Logic */
+  /* Door Drop-off Photos Logic */
   function handleDropoffCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1141,25 +1170,25 @@
     }
   }
 
-  /* Full Export / Backup */
   async function exportFullData() {
-    if (!db) return;
+    if (!db) {
+      alert("מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
+      return;
+    }
 
-    const tx1 = db.transaction("receipts", "readonly").objectStore("receipts").getAll();
-    const tx2 = db.transaction("dropoffs", "readonly").objectStore("dropoffs").getAll();
+    try {
+      const tx = db.transaction(["receipts", "dropoffs"], "readonly");
+      const receiptsReq = tx.objectStore("receipts").getAll();
+      const dropoffsReq = tx.objectStore("dropoffs").getAll();
 
-    tx1.onsuccess = () => {
-      const receiptsList = tx1.result || [];
-      tx2.onsuccess = () => {
-        const dropoffsList = tx2.result || [];
-
+      tx.oncomplete = () => {
         const backupObject = {
           version: 2,
           exportDate: new Date().toISOString(),
           fuelPrice: currentFuelPrice,
           shiftsData: shiftsData,
-          receipts: receiptsList,
-          dropoffs: dropoffsList
+          receipts: receiptsReq.result || [],
+          dropoffs: dropoffsReq.result || []
         };
 
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObject, null, 2));
@@ -1167,12 +1196,19 @@
         dlAnchor.setAttribute("href", dataStr);
         const dateStr = new Date().toISOString().split('T')[0];
         dlAnchor.setAttribute("download", `solo_full_backup_${dateStr}.json`);
+        document.body.appendChild(dlAnchor);
         dlAnchor.click();
+        document.body.removeChild(dlAnchor);
       };
-    };
+
+      tx.onerror = (err) => {
+        alert("שגיאה ביצירת קובץ הגיבוי: " + err.target.error);
+      };
+    } catch(e) {
+      alert("שגיאה ביצירת הגיבוי: " + e.message);
+    }
   }
 
-  /* Full Import / Restore */
   function triggerImport() { document.getElementById('importFileInput').click(); }
 
   function handleFileImport(e) {
@@ -1199,23 +1235,29 @@
         }
 
         if (db) {
+          const tx = db.transaction(["receipts", "dropoffs"], "readwrite");
+          const receiptsStore = tx.objectStore("receipts");
+          const dropoffsStore = tx.objectStore("dropoffs");
+
           if (backupObj.receipts && Array.isArray(backupObj.receipts)) {
-            const tx = db.transaction("receipts", "readwrite");
-            const store = tx.objectStore("receipts");
-            store.clear();
-            backupObj.receipts.forEach(r => { delete r.id; store.add(r); });
+            receiptsStore.clear();
+            backupObj.receipts.forEach(r => { delete r.id; receiptsStore.add(r); });
           }
 
           if (backupObj.dropoffs && Array.isArray(backupObj.dropoffs)) {
-            const tx = db.transaction("dropoffs", "readwrite");
-            const store = tx.objectStore("dropoffs");
-            store.clear();
-            backupObj.dropoffs.forEach(d => { delete d.id; store.add(d); });
+            dropoffsStore.clear();
+            backupObj.dropoffs.forEach(d => { delete d.id; dropoffsStore.add(d); });
           }
+
+          tx.oncomplete = () => {
+            alert("🎉 השחזור המלא הושלם בהצלחה!");
+            init();
+          };
+        } else {
+          alert("🎉 השחזור הושלם בהצלחה!");
+          init();
         }
 
-        alert("🎉 השחזור הושלם בהצלחה!");
-        init();
       } catch (err) {
         alert("שגיאה בקריאת קובץ הגיבוי.");
       }
