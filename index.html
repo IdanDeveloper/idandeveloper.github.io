@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Solo Courier Manager</title>
 
+  <!-- Modern Hebrew Sans-Serif Google Font (Heebo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <!-- Firebase Scripts for Auto Cloud Sync -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -33,7 +38,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Heebo', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
       letter-spacing: -0.2px;
     }
@@ -52,6 +57,20 @@
         radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.06) 0%, transparent 40%);
       background-attachment: fixed;
+    }
+
+    /* System Icons Styling */
+    .app-icon {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      display: inline-block;
+      flex-shrink: 0;
     }
 
     .app-container {
@@ -81,12 +100,10 @@
     }
 
     header h1 {
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 30%, #8e8e93 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
     }
 
     .header-btn-group {
@@ -112,13 +129,12 @@
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
     .top-btn:active { transform: scale(0.95); opacity: 0.8; }
 
     .top-btn.cloud { background: rgba(10, 132, 255, 0.12); color: var(--accent-blue); border-color: rgba(10, 132, 255, 0.3); }
-    .top-btn.telegram { background: rgba(0, 136, 204, 0.12); color: #0088cc; border-color: rgba(0, 136, 204, 0.3); }
     .top-btn.excel { background: rgba(48, 209, 88, 0.12); color: var(--accent-green); border-color: rgba(48, 209, 88, 0.3); }
     .top-btn.danger { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); border-color: rgba(255, 69, 58, 0.3); }
 
@@ -349,7 +365,7 @@
       box-shadow: 0 4px 15px rgba(48, 209, 88, 0.3);
     }
 
-    /* iOS Floating Tab Bar */
+    /* iOS Floating Navigation Bar */
     .bottom-nav {
       position: fixed; 
       bottom: max(12px, env(safe-area-inset-bottom)); 
@@ -389,7 +405,11 @@
       color: var(--accent-blue);
       background: rgba(10, 132, 255, 0.12);
     }
-    .nav-icon { font-size: 1.25rem; }
+
+    .nav-item .app-icon {
+      width: 22px;
+      height: 22px;
+    }
 
     /* iOS Bottom Sheets (Modals) */
     .modal-overlay {
@@ -432,7 +452,7 @@
     }
 
     .sheet-header { display: flex; justify-content: space-between; align-items: center; }
-    .sheet-title { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; }
+    .sheet-title { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; }
     .close-btn { 
       background: rgba(255,255,255,0.1); 
       border: none; 
@@ -558,20 +578,82 @@
 </head>
 <body>
 
+<!-- Hidden SVG Sprite Sheet -->
+<svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+  <!-- 1. Door / Dropoff Icon -->
+  <symbol id="icon-door" viewBox="0 0 24 24">
+    <rect x="5" y="3" width="14" height="18" rx="3" ry="3"/>
+    <circle cx="15" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+
+  <!-- 2. Receipt Icon -->
+  <symbol id="icon-receipt" viewBox="0 0 24 24">
+    <path d="M5 3h14v18l-2.33-1.33L14.33 21l-2.33-1.33L9.67 21 7.33 19.67 5 21V3z"/>
+    <line x1="8" y1="8" x2="16" y2="8"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+    <line x1="8" y1="16" x2="12" y2="16"/>
+  </symbol>
+
+  <!-- 3. Screen / Dashboard Stats Icon -->
+  <symbol id="icon-home" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="13" rx="2" ry="2"/>
+    <path d="M8 21h8M12 16v5M6 12l4-4 4 3 4-5"/>
+    <circle cx="6" cy="12" r="1" fill="currentColor"/>
+    <circle cx="10" cy="8" r="1" fill="currentColor"/>
+    <circle cx="14" cy="11" r="1" fill="currentColor"/>
+    <circle cx="18" cy="6" r="1" fill="currentColor"/>
+  </symbol>
+
+  <!-- 4. Upload / Backup Export Icon -->
+  <symbol id="icon-backup" viewBox="0 0 24 24">
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 3v12M8 7l4-4 4 4"/>
+  </symbol>
+
+  <!-- 5. Download / Restore Import Icon -->
+  <symbol id="icon-restore" viewBox="0 0 24 24">
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 15V3M8 11l4 4 4-4"/>
+  </symbol>
+
+  <!-- 6. Excel Export Icon -->
+  <symbol id="icon-excel" viewBox="0 0 24 24">
+    <path d="M4 4h10l6 4v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+    <path d="M7 10l5 6M12 10l-5 6M15 11h3M15 15h3"/>
+  </symbol>
+
+  <!-- 7. Cloud Sync Icon (Clean Rounded Cloud) -->
+  <symbol id="icon-cloud" viewBox="0 0 24 24">
+    <path d="M18 10h-1.26A8 8 0 1 0 3 16.3 4 4 0 0 0 6.5 18h11.5a4.5 4.5 0 0 0 0-9z"/>
+  </symbol>
+
+  <!-- 8. Trash / Delete Icon -->
+  <symbol id="icon-trash" viewBox="0 0 24 24">
+    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+  </symbol>
+</svg>
+
 <div class="app-container">
   <header>
     <div class="header-top">
-      <h1>Solo Courier</h1>
+      <h1>שלום עידן!</h1>
       <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">ניהול שליחויות מתקדם</div>
     </div>
     
     <div class="header-btn-group">
-      <button class="top-btn cloud" onclick="openCloudModal()" id="cloudStatusBtn">☁️ ענן</button>
-      <button class="top-btn telegram" onclick="openTelegramModal()" id="telegramStatusBtn">✈️ טלגרם</button>
-      <button class="top-btn excel" onclick="exportToExcel()">📊 אקסל</button>
-      <button class="top-btn" onclick="exportFullData()">💾 גיבוי</button>
-      <button class="top-btn" onclick="triggerImport()">📂 שחזור</button>
-      <button class="top-btn danger" onclick="openPurgeModal()">🗑️ ניקוי</button>
+      <button class="top-btn cloud" onclick="openCloudModal()" id="cloudStatusBtn">
+        <svg class="app-icon"><use href="#icon-cloud"/></svg> ענן
+      </button>
+      <button class="top-btn excel" onclick="exportToExcel()">
+        <svg class="app-icon"><use href="#icon-excel"/></svg> אקסל
+      </button>
+      <button class="top-btn" onclick="exportFullData()">
+        <svg class="app-icon"><use href="#icon-backup"/></svg> גיבוי
+      </button>
+      <button class="top-btn" onclick="triggerImport()">
+        <svg class="app-icon"><use href="#icon-restore"/></svg> שחזור
+      </button>
+      <button class="top-btn danger" onclick="openPurgeModal()">
+        <svg class="app-icon"><use href="#icon-trash"/></svg> ניקוי
+      </button>
       <input type="file" id="importFileInput" accept=".json" onchange="handleFileImport(event)" style="display:none;">
     </div>
   </header>
@@ -599,7 +681,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title" id="monthlySummaryHeaderTitle">סיכום חודשי נקי</div>
+      <div class="card-title" id="monthlySummaryHeaderTitle">סיכום חודשי</div>
       <div class="big-net-box">
         <div class="big-net-label">רווח נקי כולל לחודש זה (לאחר ניכוי הוצאות)</div>
         <div class="big-net-value" id="mBigNet">0.00 ₪</div>
@@ -617,7 +699,7 @@
         </div>
 
         <div class="summary-item">
-          <span class="title">🛣️ סה"כ קילומטראז' נסיעה:</span>
+          <span class="title">🛣️ סה"כ ק"מ נסיעה:</span>
           <span class="val" id="mTotalKm">0 ק"מ</span>
         </div>
       </div>
@@ -627,10 +709,11 @@
   <!-- TAB 2: RECEIPTS GALLERY -->
   <div id="tabReceipts" class="tab-view">
     <div class="card">
-      <div class="card-title">צלם ושמור קבלות טיפים (אשראי)</div>
+      <div class="card-title">צילום ושמירת קבלות</div>
       <div class="upload-btn-box">
         <label class="btn-camera-upload">
-          📷 צלם קבלה חדשה
+          <svg class="app-icon" style="width:20px; height:20px;"><use href="#icon-receipt"/></svg>
+          צלם קבלה חדשה
           <input type="file" accept="image/*" capture="environment" id="cameraFileInput" onchange="handlePhotoCapture(event)" style="display:none;">
         </label>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
@@ -657,10 +740,11 @@
   <!-- TAB 3: DOOR DROP-OFF PHOTOS -->
   <div id="tabDropoffs" class="tab-view">
     <div class="card">
-      <div class="card-title">תיעוד השארה מחוץ לדלת (הוכחת מסירה)</div>
+      <div class="card-title">תיעוד השארה מחוץ לדלת (תיעוד מסירה)</div>
       <div class="upload-btn-box">
         <label class="btn-camera-upload orange">
-          🚪 צלם תמונת מסירה בדלת
+          <svg class="app-icon" style="width:20px; height:20px;"><use href="#icon-door"/></svg>
+          צלם תמונת מסירה בדלת
           <input type="file" accept="image/*" capture="environment" id="dropoffFileInput" onchange="handleDropoffCapture(event)" style="display:none;">
         </label>
         <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
@@ -675,7 +759,7 @@
 
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <div class="card-title" style="margin:0;">הוכחות מסירה לחודש הנבחר</div>
+        <div class="card-title" style="margin:0;">תיעודי מסירה לחודש הנבחר</div>
         <span id="dropoffCountBadge" style="font-size:0.8rem; color:var(--accent-orange); font-weight:bold;">0 תמונות</span>
       </div>
 
@@ -687,16 +771,16 @@
 <!-- iOS Floating Navigation Bar -->
 <div class="bottom-nav">
   <button class="nav-item active" id="navHomeBtn" onclick="switchTab('home')">
-    <span class="nav-icon">🏠</span>
+    <svg class="app-icon"><use href="#icon-home"/></svg>
     <span>משמרות</span>
   </button>
   <button class="nav-item" id="navReceiptsBtn" onclick="switchTab('receipts')">
-    <span class="nav-icon">📸</span>
+    <svg class="app-icon"><use href="#icon-receipt"/></svg>
     <span>קבלות</span>
   </button>
   <button class="nav-item" id="navDropoffsBtn" onclick="switchTab('dropoffs')">
-    <span class="nav-icon">🚪</span>
-    <span>הוכחת מסירה</span>
+    <svg class="app-icon"><use href="#icon-door"/></svg>
+    <span>תיעודי מסירה</span>
   </button>
 </div>
 
@@ -788,7 +872,9 @@
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-      <span class="sheet-title" style="color:var(--accent-blue);">☁️ סנכרון אוטומטי לענן Firebase</span>
+      <span class="sheet-title" style="color:var(--accent-blue);">
+        <svg class="app-icon"><use href="#icon-cloud"/></svg> סנכרון אוטומטי לענן Firebase
+      </span>
       <button class="close-btn" onclick="closeModal('cloudModal')">✕</button>
     </div>
 
@@ -807,41 +893,14 @@
   </div>
 </div>
 
-<!-- Modal Telegram Setup -->
-<div class="modal-overlay" id="telegramModal">
-  <div class="modal-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-header">
-      <span class="sheet-title" style="color:#0088cc;">✈️ גיבוי תמונות אוטומטי לטלגרם</span>
-      <button class="close-btn" onclick="closeModal('telegramModal')">✕</button>
-    </div>
-
-    <div style="font-size:0.8rem; color:var(--text-secondary); line-height:1.4;">
-      הזן את ה-Bot Token וה-Chat ID שלך מטלגרם. כל תמונה שתצלם תעלה אוטומטית לשיחה הפרטית שלך בטלגרם!
-    </div>
-
-    <div class="form-group" style="margin-top:6px;">
-      <label>1. Bot Token (מ-BotFather@):</label>
-      <input type="text" id="tgTokenInput" placeholder="לדוגמה: 7123456789:AAE..." style="font-family:monospace; font-size:0.8rem;">
-    </div>
-
-    <div class="form-group" style="margin-top:6px;">
-      <label>2. Chat ID (מ-userinfobot@):</label>
-      <input type="text" id="tgChatIdInput" placeholder="לדוגמה: 123456789" style="font-family:monospace; font-size:0.8rem;">
-    </div>
-
-    <div class="sheet-actions" style="margin-top:8px;">
-      <button class="btn-save" style="padding:14px; background:#0088cc; color:#fff;" onclick="saveTelegramConfig()">חבר טלגרם ושמור</button>
-    </div>
-  </div>
-</div>
-
 <!-- Modal Purge / Month Delete -->
 <div class="modal-overlay" id="purgeModal">
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-      <span class="sheet-title" style="color:var(--accent-red);">🗑️ ניהול זיכרון ומחיקת חודש</span>
+      <span class="sheet-title" style="color:var(--accent-red);">
+        <svg class="app-icon"><use href="#icon-trash"/></svg> ניהול זיכרון ומחיקת חודש
+      </span>
       <button class="close-btn" onclick="closeModal('purgeModal')">✕</button>
     </div>
 
@@ -860,7 +919,7 @@
   </div>
 </div>
 
-<!-- Modal Custom Dialog (Designed Replacement for Alert & Confirm) -->
+<!-- Modal Custom Dialog -->
 <div class="modal-overlay" id="customDialogModal">
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
@@ -967,66 +1026,10 @@
     document.getElementById('customDialogModal').classList.add('active');
   }
 
-  /* Telegram Auto Image Upload Logic */
-  function openTelegramModal() {
-    document.getElementById('tgTokenInput').value = localStorage.getItem('solo_tg_token') || '';
-    document.getElementById('tgChatIdInput').value = localStorage.getItem('solo_tg_chat_id') || '';
-    document.getElementById('telegramModal').classList.add('active');
-  }
-
-  function saveTelegramConfig() {
-    const token = document.getElementById('tgTokenInput').value.trim();
-    const chatId = document.getElementById('tgChatIdInput').value.trim();
-
-    if (token && chatId) {
-      localStorage.setItem('solo_tg_token', token);
-      localStorage.setItem('solo_tg_chat_id', chatId);
-      document.getElementById('telegramStatusBtn').innerHTML = "🟢 טלגרם פעיל";
-      showCustomAlert("✈️️ חיבור טלגרם", "החיבור לטלגרם הושלם בהצלחה! כל תמונה שתצלם תגובה מעכשיו בענן של טלגרם.");
-    } else {
-      localStorage.removeItem('solo_tg_token');
-      localStorage.removeItem('solo_tg_chat_id');
-      document.getElementById('telegramStatusBtn').innerHTML = "✈️ טלגרם";
-      showCustomAlert("✈️ טלגרם", "הגדרות טלגרם הוסרו.");
-    }
-    closeModal('telegramModal');
-  }
-
-  function initTelegramStatus() {
-    const token = localStorage.getItem('solo_tg_token');
-    const chatId = localStorage.getItem('solo_tg_chat_id');
-    if (token && chatId) {
-      document.getElementById('telegramStatusBtn').innerHTML = "🟢 טלגרם פעיל";
-    }
-  }
-
-  async function uploadToTelegram(base64Data, captionText) {
-    const token = localStorage.getItem('solo_tg_token');
-    const chatId = localStorage.getItem('solo_tg_chat_id');
-    if (!token || !chatId) return;
-
-    try {
-      const res = await fetch(base64Data);
-      const blob = await res.blob();
-
-      const formData = new FormData();
-      formData.append('chat_id', chatId);
-      formData.append('photo', blob, 'photo.jpg');
-      if (captionText) formData.append('caption', captionText);
-
-      await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
-        method: 'POST',
-        body: formData
-      });
-    } catch (e) {
-      console.error("Telegram Upload Error:", e);
-    }
-  }
-
   /* Export Native XLSX Report with Auto-Oriented Embedded Images */
   async function exportToExcel() {
     if (typeof ExcelJS === 'undefined') {
-      showCustomAlert("📊 אקסל", "ספריית האקסל טרם נטענה, ודא שיש חיבור לאינטרנט ונסה שוב בעוד רגע.");
+      showCustomAlert("אקסל", "ספריית האקסל טרם נטענה, ודא שיש חיבור לאינטרנט ונסה שוב בעוד רגע.");
       return;
     }
 
@@ -1086,7 +1089,7 @@
     // Table 1: Summary Title
     sheet.mergeCells('A1:B1');
     const sumTitle = sheet.getCell('A1');
-    sumTitle.value = `📈 סיכום חודשי - ${monthNameStr}`;
+    sumTitle.value = `סיכום חודשי - ${monthNameStr}`;
     sumTitle.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FFFFFF' } };
     sumTitle.fill = summaryFill;
     sumTitle.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -1097,7 +1100,7 @@
       ['טיפים במזומן:', `${mCash.toFixed(2)} ₪`],
       ['טיפים באשראי (נטו):', `${mCreditNet.toFixed(2)} ₪ (${mCreditGross.toFixed(2)} ₪ ברוטו)`],
       ['הוצאות דלק שנרשמו:', `- ${mFuel.toFixed(2)} ₪`],
-      ['סה"כ קילומטראז\' נסיעה:', `${mKm} ק"מ`]
+      ['סה"כ ק"מ נסיעה:', `${mKm} ק"מ`]
     ];
 
     summaryRows.forEach((r, idx) => {
@@ -1147,7 +1150,7 @@
     sheet.addRow([]);
 
     // Table 3: Receipts with Auto-Oriented Images
-    const recHeader = sheet.addRow(['📸 קבלות טיפים באשראי', 'תמונת הקבלה']);
+    const recHeader = sheet.addRow(['קבלות טיפים באשראי', 'תמונת הקבלה']);
     recHeader.getCell(1).fill = headerFill;
     recHeader.getCell(1).font = fontHeader;
     recHeader.getCell(2).fill = headerFill;
@@ -1183,7 +1186,7 @@
     sheet.addRow([]);
 
     // Table 4: Dropoffs with Auto-Oriented Images
-    const dropHeader = sheet.addRow(['🚪 הוכחות מסירה בדלת', 'תאריך ושעה', 'הערה / מס\' דירה', 'תמונת מסירה']);
+    const dropHeader = sheet.addRow(['תיעודי מסירה בדלת', 'תאריך ושעה', 'הערה / מס\' דירה', 'תמונת מסירה']);
     dropHeader.eachCell(c => {
       c.fill = headerFill;
       c.font = fontHeader;
@@ -1194,7 +1197,7 @@
       sheet.addRow(['אין תמונות מסירה שמורות בחודש זה', '', '', '']);
     } else {
       for (let d of monthDropoffs) {
-        const row = sheet.addRow(['הוכחת מסירה', `${d.date} ${d.time || ''}`, d.note || '-', '']);
+        const row = sheet.addRow(['תיעוד מסירה', `${d.date} ${d.time || ''}`, d.note || '-', '']);
         row.height = 120;
         row.eachCell(c => c.alignment = { vertical: 'middle', horizontal: 'center' });
 
@@ -1232,7 +1235,7 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showCustomAlert("📊 ייצוא לאקסל", `הדוח החודשי המלא (${monthNameStr}) הורד בהצלחה עם תמונות ישרות ומיושרות!`);
+    showCustomAlert("ייצוא לאקסל", `הדוח החודשי המלא (${monthNameStr}) הורד בהצלחה עם תמונות ישרות ומיושרות!`);
   }
 
   /* IndexedDB Setup for Receipts & Drop-off Photos */
@@ -1261,7 +1264,6 @@
     document.getElementById('dropoffTargetDate').value = todayStr;
 
     initFirebaseIfAvailable();
-    initTelegramStatus();
     validateFuelPrice();
     renderCalendar();
   }
@@ -1308,11 +1310,11 @@
           firebase.initializeApp(cfg);
         }
         firebaseDB = firebase.firestore();
-        document.getElementById('cloudStatusBtn').innerHTML = "🟢 ענן פעיל";
+        document.getElementById('cloudStatusBtn').innerHTML = '<svg class="app-icon"><use href="#icon-cloud"/></svg> ענן פעיל';
         syncWithCloud();
       } catch(e) {
         console.error("Firebase init error", e);
-        document.getElementById('cloudStatusBtn').innerHTML = "🔴 שגיאת ענן";
+        document.getElementById('cloudStatusBtn').innerHTML = '<svg class="app-icon"><use href="#icon-cloud"/></svg> שגיאה';
       }
     }
   }
@@ -1329,16 +1331,16 @@
 
     if (parsedConfig && (parsedConfig.apiKey || parsedConfig.projectId)) {
       localStorage.setItem('solo_firebase_config', JSON.stringify(parsedConfig));
-      showCustomAlert("🎉 חיבור ענן", "הענן חובר בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
+      showCustomAlert("חיבור ענן", "הענן חובר בהצלחה! האפליקציה תסתנכרן כעת ברקע.");
       closeModal('cloudModal');
       initFirebaseIfAvailable();
     } else if (!val.trim()) {
       localStorage.removeItem('solo_firebase_config');
       firebaseDB = null;
-      document.getElementById('cloudStatusBtn').innerHTML = "☁️ ענן";
+      document.getElementById('cloudStatusBtn').innerHTML = '<svg class="app-icon"><use href="#icon-cloud"/></svg> ענן';
       closeModal('cloudModal');
     } else {
-      showCustomAlert("❌ שגיאת הגדרה", "קוד ה-Firebase אינו תקין. אנא העתק והדבק את ההגדרות מחדש.");
+      showCustomAlert("שגיאת הגדרה", "קוד ה-Firebase אינו תקין. אנא העתק והדבק את ההגדרות מחדש.");
     }
   }
 
@@ -1374,7 +1376,7 @@
     const monthNameStr = new Date(year, month).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
 
     document.getElementById('calTitle').innerText = monthNameStr;
-    document.getElementById('monthlySummaryHeaderTitle').innerText = `סיכום חודשי נקי - ${monthNameStr}`;
+    document.getElementById('monthlySummaryHeaderTitle').innerText = `סיכום חודשי - ${monthNameStr}`;
 
     const grid = document.getElementById('calGrid');
     grid.innerHTML = '';
@@ -1493,7 +1495,7 @@
   function openQuickAddModal(type) {
     activeQuickAddType = type;
     const labelStr = type === 'cash' ? 'הוספת טיפ במזומן (₪)' : 'הוספת טיפ באשראי (₪)';
-    document.getElementById('quickAddModalTitle').innerText = `🟢 ${labelStr}`;
+    document.getElementById('quickAddModalTitle').innerText = labelStr;
     document.getElementById('quickAddAmountInput').value = '';
     document.getElementById('quickAddModal').classList.add('active');
     setTimeout(() => document.getElementById('quickAddAmountInput').focus(), 300);
@@ -1524,7 +1526,7 @@
 
   function deleteShiftData() {
     showCustomConfirm(
-      "🗑️ מחיקת משמרת",
+      "מחיקת משמרת",
       `האם אתה בטוח שברצונך למחוק את המשמרת בתאריך ${selectedDateKey}?`,
       () => {
         delete shiftsData[selectedDateKey];
@@ -1540,7 +1542,7 @@
 
   function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-  /* Photo Receipts Logic with Automatic Telegram Backup */
+  /* Photo Receipts Logic */
   function handlePhotoCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1556,10 +1558,7 @@
         imageData: base64Img,
         createdAt: new Date().toISOString()
       });
-      tx.oncomplete = () => {
-        loadMonthReceipts();
-        uploadToTelegram(base64Img, `📸 קבלת טיפ באשראי\n📅 תאריך: ${targetDate}`);
-      };
+      tx.oncomplete = () => loadMonthReceipts();
     };
     reader.readAsDataURL(file);
   }
@@ -1601,7 +1600,7 @@
 
   function deleteReceipt(id) {
     showCustomConfirm(
-      "🗑️ מחיקת קבלה",
+      "מחיקת קבלה",
       "האם אתה בטוח שברצונך למחוק קבלה זו?",
       () => {
         const tx = db.transaction("receipts", "readwrite");
@@ -1613,7 +1612,7 @@
     );
   }
 
-  /* Door Drop-off Photos Logic with Automatic Telegram Backup */
+  /* Door Drop-off Photos Logic */
   function handleDropoffCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1637,9 +1636,6 @@
       tx.oncomplete = () => {
         document.getElementById('dropoffNoteInput').value = '';
         loadMonthDropoffs();
-        
-        const tgCaption = `🚪 הוכחת מסירה בדלת\n📅 תאריך: ${targetDate}\n⏰ שעה: ${timeStr}${noteVal ? '\n📍 הערה: ' + noteVal : ''}`;
-        uploadToTelegram(base64Img, tgCaption);
       };
     };
     reader.readAsDataURL(file);
@@ -1663,7 +1659,7 @@
       grid.innerHTML = '';
 
       if (monthDropoffs.length === 0) {
-        grid.innerHTML = `<div style="grid-column:span 2; text-align:center; color:var(--text-secondary); padding:20px; font-size:0.85rem;">אין הוכחות מסירה שמורות לחודש זה</div>`;
+        grid.innerHTML = `<div style="grid-column:span 2; text-align:center; color:var(--text-secondary); padding:20px; font-size:0.85rem;">אין תיעודי מסירה שמורים לחודש זה</div>`;
         return;
       }
 
@@ -1683,7 +1679,7 @@
 
   function deleteDropoff(id) {
     showCustomConfirm(
-      "🗑️ מחיקת תמונת מסירה",
+      "מחיקת תמונת מסירה",
       "האם אתה בטוח שברצונך למחוק תמונת מסירה זו?",
       () => {
         const tx = db.transaction("dropoffs", "readwrite");
@@ -1713,7 +1709,7 @@
       const monthReceipts = (req.result || []).filter(r => r.date.startsWith(monthPrefix));
 
       if (monthReceipts.length === 0) {
-        showCustomAlert("📸 קבלות אשראי", "אין קבלות שמורות בחודש זה לשליחה.");
+        showCustomAlert("קבלות אשראי", "אין קבלות שמורות בחודש זה לשליחה.");
         return;
       }
 
@@ -1733,7 +1729,7 @@
           });
         } catch (err) { console.log("Share error", err); }
       } else {
-        showCustomAlert("📲 הורדת קבלות", `נמצאו ${files.length} קבלות. המכשיר מוריד אותן כעת למכשירך.`);
+        showCustomAlert("הורדת קבלות", `נמצאו ${files.length} קבלות. המכשיר מוריד אותן כעת למכשירך.`);
         files.forEach((f) => {
           const a = document.createElement('a');
           a.href = URL.createObjectURL(f);
@@ -1777,7 +1773,7 @@
     const monthName = new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
 
     showCustomConfirm(
-      "⚠️ מחיקת חודש לצמיתות",
+      "מחיקת חודש לצמיתות",
       `האם אתה בטוח לחלוטין שברצונך למחוק את כל המשמרות, הנתונים, הקבלות ותמונות המסירה של חודש ${monthName}?`,
       () => {
         Object.keys(shiftsData).forEach(k => {
@@ -1800,7 +1796,7 @@
         }
 
         closeModal('purgeModal');
-        showCustomAlert("✨ ניקוי הושלם", `הנתונים והתמונות של חודש ${monthName} נמחקו בהצלחה.`);
+        showCustomAlert("ניקוי הושלם", `הנתונים והתמונות של חודש ${monthName} נמחקו בהצלחה.`);
         renderCalendar();
       },
       "מחק חודש זה",
@@ -1810,7 +1806,7 @@
 
   async function exportFullData() {
     if (!db) {
-      showCustomAlert("💾 גיבוי", "מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
+      showCustomAlert("גיבוי", "מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
       return;
     }
 
@@ -1840,10 +1836,10 @@
       };
 
       tx.onerror = (err) => {
-        showCustomAlert("❌ שגיאה", "שגיאה ביצירת קובץ הגיבוי: " + err.target.error);
+        showCustomAlert("שגיאה", "שגיאה ביצירת קובץ הגיבוי: " + err.target.error);
       };
     } catch(e) {
-      showCustomAlert("❌ שגיאה", "שגיאה ביצירת הגיבוי: " + e.message);
+      showCustomAlert("שגיאה", "שגיאה ביצירת הגיבוי: " + e.message);
     }
   }
 
@@ -1860,7 +1856,7 @@
         if (!backupObj) return;
 
         showCustomConfirm(
-          "📂 שחזור נתונים",
+          "שחזור נתונים",
           "האם אתה בטוח שברצונך לשחזר נתונים מקובץ גיבוי זה?",
           () => {
             if (backupObj.shiftsData) {
@@ -1889,11 +1885,11 @@
               }
 
               tx.oncomplete = () => {
-                showCustomAlert("🎉 שחזור מוצלח", "השחזור המלא הושלם בהצלחה!");
+                showCustomAlert("שחזור מוצלח", "השחזור המלא הושלם בהצלחה!");
                 init();
               };
             } else {
-              showCustomAlert("🎉 שחזור מוצלח", "השחזור הושלם בהצלחה!");
+              showCustomAlert("שחזור מוצלח", "השחזור הושלם בהצלחה!");
               init();
             }
           },
@@ -1902,7 +1898,7 @@
         );
 
       } catch (err) {
-        showCustomAlert("❌ שגיאה", "שגיאה בקריאת קובץ הגיבוי.");
+        showCustomAlert("שגיאה", "שגיאה בקריאת קובץ הגיבוי.");
       }
     };
     reader.readAsText(file);
