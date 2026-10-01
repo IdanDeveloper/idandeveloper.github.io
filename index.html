@@ -321,6 +321,33 @@
     .summary-item .title { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
     .summary-item .val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
 
+    /* Cash Tracking List Items */
+    .cash-order-item {
+      background: rgba(255, 69, 58, 0.12);
+      border: 1.5px solid var(--accent-red);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cash-order-item:active { transform: scale(0.98); }
+    .cash-order-price { font-size: 1.3rem; font-weight: 900; color: var(--accent-red); }
+    .cash-order-status { font-size: 0.72rem; color: var(--accent-red); font-weight: 800; text-transform: uppercase; margin-top: 2px; }
+    .cash-order-note { font-size: 0.82rem; color: var(--text-primary); font-weight: 600; }
+
+    .cash-history-item {
+      background: var(--card-inner);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     /* Buttons & Controls */
     .upload-btn-box { display: flex; flex-direction: column; gap: 10px; }
     
@@ -424,16 +451,16 @@
     .bottom-nav {
       position: fixed; 
       bottom: max(12px, env(safe-area-inset-bottom)); 
-      left: 16px; 
-      right: 16px;
-      max-width: 400px;
+      left: 12px; 
+      right: 12px;
+      max-width: 420px;
       margin: 0 auto;
       background: var(--nav-bg);
       border: 1px solid var(--card-border);
       border-radius: 35px;
       display: flex; 
       justify-content: space-around;
-      padding: 8px 6px;
+      padding: 8px 4px;
       z-index: 900; 
       backdrop-filter: blur(25px);
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -445,14 +472,14 @@
       align-items: center; 
       gap: 3px;
       color: var(--text-secondary); 
-      font-size: 0.68rem; 
+      font-size: 0.65rem; 
       font-weight: 600;
       background: none; 
       border: none; 
       cursor: pointer; 
       flex: 1;
       padding: 4px 0;
-      border-radius: 20px;
+      border-radius: 18px;
       transition: all 0.2s ease;
     }
 
@@ -462,8 +489,8 @@
     }
 
     .nav-item .app-icon {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
 
     /* iOS Bottom Sheets (Modals) */
@@ -659,39 +686,46 @@
     <circle cx="18" cy="6" r="1" fill="currentColor"/>
   </symbol>
 
-  <!-- 4. Download Icon (Backup) -->
+  <!-- 4. Banknote / Cash Icon (שטר כסף מודרני) -->
+  <symbol id="icon-cash" viewBox="0 0 24 24">
+    <rect x="2" y="6" width="20" height="12" rx="2.5"/>
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M6 12h.01M18 12h.01"/>
+  </symbol>
+
+  <!-- 5. Download Icon (Backup) -->
   <symbol id="icon-download" viewBox="0 0 24 24">
     <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 15V3M8 11l4 4 4-4"/>
   </symbol>
 
-  <!-- 5. Upload Icon (Restore) -->
+  <!-- 6. Upload Icon (Restore) -->
   <symbol id="icon-upload" viewBox="0 0 24 24">
     <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 3v12M8 7l4-4 4 4"/>
   </symbol>
 
-  <!-- 6. Excel Export Icon -->
+  <!-- 7. Excel Export Icon -->
   <symbol id="icon-excel" viewBox="0 0 24 24">
     <path d="M4 4h10l6 4v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
     <path d="M7 10l5 6M12 10l-5 6M15 11h3M15 15h3"/>
   </symbol>
 
-  <!-- 7. Cloud Sync Icon (Clean Rounded Cloud) -->
+  <!-- 8. Cloud Sync Icon (Clean Rounded Cloud) -->
   <symbol id="icon-cloud" viewBox="0 0 24 24">
     <path d="M18 10h-1.26A8 8 0 1 0 3 16.3 4 4 0 0 0 6.5 18h11.5a4.5 4.5 0 0 0 0-9z"/>
   </symbol>
 
-  <!-- 8. Trash / Delete Icon -->
+  <!-- 9. Trash / Delete Icon -->
   <symbol id="icon-trash" viewBox="0 0 24 24">
     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
   </symbol>
 
-  <!-- 9. Settings Gear Icon -->
+  <!-- 10. Settings Gear Icon -->
   <symbol id="icon-settings" viewBox="0 0 24 24">
     <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
   </symbol>
 
-  <!-- 10. Sleek Clean WhatsApp Icon (Line-Art) -->
+  <!-- 11. WhatsApp Icon (Line-Art) -->
   <symbol id="icon-whatsapp" viewBox="0 0 24 24">
     <path d="M3 21l1.65-3.8A9 9 0 1 1 12 21a8.9 8.9 0 0 1-4.6-1.3L3 21z"/>
     <path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5"/>
@@ -767,7 +801,36 @@
     </div>
   </div>
 
-  <!-- TAB 2: RECEIPTS GALLERY -->
+  <!-- TAB 2: CASH TRACKING (מעקב מזומן) -->
+  <div id="tabCash" class="tab-view">
+    <div class="card">
+      <div class="card-title">הוספת משלוח מזומן חדש</div>
+      <div class="upload-btn-box">
+        <div class="form-group">
+          <label>מחיר המשלוח / הזמנה (₪):</label>
+          <input type="number" id="newCashOrderPriceInput" inputmode="decimal" placeholder="0.00" style="font-size:1.2rem; font-weight:800;">
+        </div>
+        <div class="form-group" style="margin-top:4px;">
+          <label>כתובת / הערה (רשות):</label>
+          <input type="text" id="newCashOrderNoteInput" placeholder="למשל: הרצל 15 דירה 4">
+        </div>
+        <button class="btn-camera-upload" style="margin-top:4px;" onclick="addNewCashOrder()">
+          <span style="font-size:1.2rem; line-height:1;">+</span> הוסף משלוח לרשימה
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="card-title" style="margin:0;">משלוחים פתוחים (לתשלום)</div>
+        <span id="activeCashCountBadge" style="font-size:0.8rem; color:var(--accent-red); font-weight:bold;">0 פתוחים</span>
+      </div>
+
+      <div id="activeCashOrdersList" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: RECEIPTS GALLERY -->
   <div id="tabReceipts" class="tab-view">
     <div class="card">
       <div class="card-title">צילום ושמירת קבלות</div>
@@ -799,7 +862,7 @@
     </div>
   </div>
 
-  <!-- TAB 3: DOOR DROP-OFF PHOTOS -->
+  <!-- TAB 4: DOOR DROP-OFF PHOTOS -->
   <div id="tabDropoffs" class="tab-view">
     <div class="card">
       <div class="card-title">תיעוד השארה מחוץ לדלת (תיעוד מסירה)</div>
@@ -830,11 +893,15 @@
   </div>
 </div>
 
-<!-- iOS Floating Navigation Bar -->
+<!-- iOS Floating Navigation Bar (4 Tabs) -->
 <div class="bottom-nav">
   <button class="nav-item active" id="navHomeBtn" onclick="switchTab('home')">
     <svg class="app-icon"><use href="#icon-home"/></svg>
     <span>משמרות</span>
+  </button>
+  <button class="nav-item" id="navCashBtn" onclick="switchTab('cash')">
+    <svg class="app-icon"><use href="#icon-cash"/></svg>
+    <span>מזומן</span>
   </button>
   <button class="nav-item" id="navReceiptsBtn" onclick="switchTab('receipts')">
     <svg class="app-icon"><use href="#icon-receipt"/></svg>
@@ -842,8 +909,54 @@
   </button>
   <button class="nav-item" id="navDropoffsBtn" onclick="switchTab('dropoffs')">
     <svg class="app-icon"><use href="#icon-door"/></svg>
-    <span>תיעודי מסירה</span>
+    <span>מסירה</span>
   </button>
+</div>
+
+<!-- Modal Cash Order Calculator (קופה רושמת) -->
+<div class="modal-overlay" id="cashCalcModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" style="color:var(--accent-red);">
+        <svg class="app-icon" style="width:20px; height:20px;"><use href="#icon-cash"/></svg> קופה - תשלום מזומן
+      </span>
+      <button class="close-btn" onclick="closeModal('cashCalcModal')">✕</button>
+    </div>
+
+    <div class="breakdown-box" style="background:rgba(255,69,58,0.1); border-color:rgba(255,69,58,0.3);">
+      <div class="b-row" style="font-size:1.1rem; font-weight:800; color:var(--accent-red);">
+        <span>מחיר המשלוח לגבייה:</span>
+        <span id="calcOrderPriceDisplay">0.00 ₪</span>
+      </div>
+      <div id="calcOrderNoteDisplay" style="font-size:0.8rem; color:var(--text-secondary);"></div>
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>כמה מזומן קיבלת מהלקוח (₪):</label>
+      <input type="number" id="cashReceivedInput" inputmode="decimal" placeholder="0.00" oninput="calculateChange()" style="font-size:1.5rem; text-align:center; padding:12px; font-weight:900; height:auto;">
+    </div>
+
+    <div class="breakdown-box" style="margin-top:6px;">
+      <div class="b-row net-main" style="border:none; padding:0;">
+        <span>עודף להחזיר ללקוח:</span>
+        <span id="calcChangeDisplay" style="color:var(--accent-green); font-size:1.6rem; font-weight:900;">0.00 ₪</span>
+      </div>
+    </div>
+
+    <!-- Keep Change Tip Option -->
+    <div id="keepChangeTipBox" style="display:none; margin-top:8px;">
+      <label style="display:flex; align-items:center; gap:10px; font-size:0.85rem; font-weight:700; color:var(--accent-green); cursor:pointer; background:rgba(48, 209, 88, 0.12); padding:12px; border-radius:14px; border:1px solid rgba(48, 209, 88, 0.3);">
+        <input type="checkbox" id="keepChangeTipCheckbox" style="width:22px; height:22px; accent-color:var(--accent-green); cursor:pointer;">
+        <span>הלקוח אמר לשמור את העודף (<strong id="tipChangeAmountText">0.00 ₪</strong>) והוסף לטיפים במזומן להיום</span>
+      </label>
+    </div>
+
+    <div class="sheet-actions" style="margin-top:8px;">
+      <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="confirmCashPayment()">אשר תשלום והעבר להיסטוריה</button>
+      <button class="btn-delete" onclick="deleteActiveCashOrder()">מחק</button>
+    </div>
+  </div>
 </div>
 
 <!-- Modal Shift Edit (iOS Sheet) -->
@@ -924,7 +1037,7 @@
       <label>1. ערכת נושא (Theme):</label>
       <div class="theme-toggle-box">
         <button class="theme-opt-btn active" id="themeDarkBtn" onclick="setTheme('dark')">🌙 כהה (Dark)</button>
-        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀️️ בהיר (Light)</button>
+        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀️ בהיר (Light)</button>
       </div>
     </div>
 
@@ -939,7 +1052,14 @@
     </div>
 
     <div class="form-group" style="margin-top:6px;">
-      <label>4. עדכון גרסת אפליקציה:</label>
+      <label>4. היסטוריית מזומן:</label>
+      <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px; background:rgba(10,132,255,0.12); color:var(--accent-blue);" onclick="openCashHistoryModal()">
+        <svg class="app-icon"><use href="#icon-cash"/></svg> היסטוריית תשלומי מזומן
+      </button>
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>5. עדכון גרסת אפליקציה:</label>
       <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px;" onclick="forceAppRefresh()">
         🔄 רענן וטען קוד עדכני מ-GitHub
       </button>
@@ -947,6 +1067,25 @@
 
     <div class="sheet-actions" style="margin-top:10px;">
       <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="saveSettings()">שמור הגדרות</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cash History Sheet -->
+<div class="modal-overlay" id="cashHistoryModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" style="color:var(--accent-blue);">
+        <svg class="app-icon" style="width:20px; height:20px;"><use href="#icon-cash"/></svg> היסטוריית תשלומי מזומן
+      </span>
+      <button class="close-btn" onclick="closeModal('cashHistoryModal')">✕</button>
+    </div>
+
+    <div id="cashHistoryList" style="display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; margin-top:4px;"></div>
+
+    <div class="sheet-actions" style="margin-top:10px;">
+      <button class="btn-delete" style="flex:1; padding:16px; font-size:1rem;" onclick="confirmPurgeCashHistory()">מחק היסטוריית מזומן</button>
     </div>
   </div>
 </div>
@@ -1048,6 +1187,9 @@
   const VAT_RATE = 0.18;
 
   let shiftsData = JSON.parse(localStorage.getItem('solo_shifts_data')) || {};
+  let activeCashOrders = JSON.parse(localStorage.getItem('solo_active_cash_orders')) || [];
+  let cashHistory = JSON.parse(localStorage.getItem('solo_cash_history')) || [];
+
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
   let kmPerLiter = parseFloat(localStorage.getItem('solo_km_per_liter')) || 11.65;
   let currentTheme = localStorage.getItem('solo_theme') || 'dark';
@@ -1055,6 +1197,7 @@
   let viewDate = new Date();
   let selectedDateKey = null;
   let activeQuickAddType = null;
+  let selectedCashOrderId = null;
   let firebaseDB = null;
 
   /* Helper for Pure Local Date String (YYYY-MM-DD) */
@@ -1185,6 +1328,261 @@
       });
     }
     window.location.href = window.location.pathname + '?v=' + Date.now();
+  }
+
+  /* CASH TRACKING LOGIC (מעקב מזומן) */
+  function renderActiveCashOrders() {
+    const listContainer = document.getElementById('activeCashOrdersList');
+    const badge = document.getElementById('activeCashCountBadge');
+    listContainer.innerHTML = '';
+
+    badge.innerText = `${activeCashOrders.length} פתוחים`;
+
+    if (activeCashOrders.length === 0) {
+      listContainer.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:0.85rem;">אין משלוחי מזומן פתוחים כרגע</div>`;
+      return;
+    }
+
+    activeCashOrders.forEach(order => {
+      const item = document.createElement('div');
+      item.className = 'cash-order-item';
+      item.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div class="cash-order-price">${parseFloat(order.price).toFixed(2)} ₪</div>
+          <div class="cash-order-status">ממתין לתשלום במזומן</div>
+          ${order.note ? `<div class="cash-order-note">📍 ${order.note}</div>` : ''}
+        </div>
+        <button class="btn-save" style="flex:none; padding:8px 14px; font-size:0.8rem; border-radius:12px;">חשב עודף</button>
+      `;
+      item.onclick = () => openCashCalcModal(order.id);
+      listContainer.appendChild(item);
+    });
+  }
+
+  function addNewCashOrder() {
+    const priceInput = document.getElementById('newCashOrderPriceInput');
+    const noteInput = document.getElementById('newCashOrderNoteInput');
+
+    const price = parseFloat(priceInput.value);
+    if (!price || price <= 0) {
+      showCustomAlert("שגיאה", "אנא הזן מחיר משלוח תקין.");
+      return;
+    }
+
+    const newOrder = {
+      id: Date.now(),
+      price: price,
+      note: noteInput.value.trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    activeCashOrders.push(newOrder);
+    localStorage.setItem('solo_active_cash_orders', JSON.stringify(activeCashOrders));
+
+    priceInput.value = '';
+    noteInput.value = '';
+
+    renderActiveCashOrders();
+  }
+
+  function openCashCalcModal(orderId) {
+    selectedCashOrderId = orderId;
+    const order = activeCashOrders.find(o => o.id === orderId);
+    if (!order) return;
+
+    document.getElementById('calcOrderPriceDisplay').innerText = `${parseFloat(order.price).toFixed(2)} ₪`;
+    document.getElementById('calcOrderNoteDisplay').innerText = order.note ? `כתובת / הערה: ${order.note}` : '';
+    document.getElementById('cashReceivedInput').value = '';
+    document.getElementById('calcChangeDisplay').innerText = '0.00 ₪';
+    
+    document.getElementById('keepChangeTipBox').style.display = 'none';
+    document.getElementById('keepChangeTipCheckbox').checked = false;
+
+    document.getElementById('cashCalcModal').classList.add('active');
+    setTimeout(() => document.getElementById('cashReceivedInput').focus(), 300);
+  }
+
+  function calculateChange() {
+    const order = activeCashOrders.find(o => o.id === selectedCashOrderId);
+    if (!order) return;
+
+    const received = parseFloat(document.getElementById('cashReceivedInput').value) || 0;
+    const change = received - order.price;
+
+    const changeDisplay = document.getElementById('calcChangeDisplay');
+    const tipBox = document.getElementById('keepChangeTipBox');
+    const tipAmountText = document.getElementById('tipChangeAmountText');
+    const checkbox = document.getElementById('keepChangeTipCheckbox');
+
+    if (change < 0) {
+      changeDisplay.style.color = 'var(--accent-red)';
+      changeDisplay.innerText = `חסר ${Math.abs(change).toFixed(2)} ₪`;
+      tipBox.style.display = 'none';
+      checkbox.checked = false;
+    } else {
+      changeDisplay.style.color = 'var(--accent-green)';
+      changeDisplay.innerText = `${change.toFixed(2)} ₪`;
+
+      if (change > 0) {
+        tipBox.style.display = 'block';
+        tipAmountText.innerText = `${change.toFixed(2)} ₪`;
+      } else {
+        tipBox.style.display = 'none';
+        checkbox.checked = false;
+      }
+    }
+  }
+
+  function addCashTipToToday(tipAmount) {
+    if (!tipAmount || tipAmount <= 0) return;
+    const todayKey = getLocalDateStr();
+
+    if (!shiftsData[todayKey]) {
+      shiftsData[todayKey] = {
+        startTime: '',
+        endTime: '',
+        totalHours: 0,
+        baseSalary: 0,
+        cashTips: 0,
+        creditTips: 0,
+        creditTipsNet: 0,
+        km: 0,
+        fuelExpense: 0,
+        grossEarnings: 0,
+        netProfit: 0,
+        effectiveHourlyNet: 0,
+        location: 'כרמיאל',
+        fuelPriceUsed: currentFuelPrice,
+        kmPerLiterUsed: kmPerLiter
+      };
+    }
+
+    const shift = shiftsData[todayKey];
+    shift.cashTips = (parseFloat(shift.cashTips) || 0) + tipAmount;
+
+    // Recalculate shift totals
+    const totalHours = parseFloat(shift.totalHours) || 0;
+    const baseSalary = totalHours * HOURLY_RATE;
+    const creditTips = parseFloat(shift.creditTips) || 0;
+    const creditTipsNet = creditTips * (1 - VAT_RATE);
+    const cashTips = parseFloat(shift.cashTips) || 0;
+    const grossEarnings = baseSalary + cashTips + creditTipsNet;
+
+    const km = parseFloat(shift.km) || 0;
+    const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
+    const fuelExpense = litersUsed * (shift.fuelPriceUsed || currentFuelPrice);
+
+    const netProfit = grossEarnings - fuelExpense;
+    const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
+
+    shift.baseSalary = parseFloat(baseSalary.toFixed(2));
+    shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
+    shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+    shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
+    shift.netProfit = parseFloat(netProfit.toFixed(2));
+    shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+
+    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    syncWithCloud();
+    renderCalendar();
+  }
+
+  function confirmCashPayment() {
+    const orderIndex = activeCashOrders.findIndex(o => o.id === selectedCashOrderId);
+    if (orderIndex === -1) return;
+
+    const order = activeCashOrders[orderIndex];
+    const received = parseFloat(document.getElementById('cashReceivedInput').value) || 0;
+    const change = received - order.price;
+    const keepAsTip = document.getElementById('keepChangeTipCheckbox').checked && change > 0;
+
+    if (keepAsTip) {
+      addCashTipToToday(change);
+    }
+
+    const completedRecord = {
+      ...order,
+      received: received,
+      changeReturned: keepAsTip ? 0 : (change >= 0 ? change : 0),
+      tipKept: keepAsTip ? change : 0,
+      completedAt: new Date().toISOString()
+    };
+
+    cashHistory.unshift(completedRecord);
+    localStorage.setItem('solo_cash_history', JSON.stringify(cashHistory));
+
+    activeCashOrders.splice(orderIndex, 1);
+    localStorage.setItem('solo_active_cash_orders', JSON.stringify(activeCashOrders));
+
+    closeModal('cashCalcModal');
+    renderActiveCashOrders();
+
+    const alertMsg = keepAsTip 
+      ? `התשלום אושר! עודף בסך ${change.toFixed(2)} ₪ התווסף אוטומטית לטיפים במזומן של היום, והלוח שנה והסיכום החודשי עודכנו!` 
+      : "המשלוח סומן כמשולם והועבר בהצלחה להיסטוריה!";
+    showCustomAlert("תשלום אושר", alertMsg);
+  }
+
+  function deleteActiveCashOrder() {
+    showCustomConfirm(
+      "מחיקת משלוח מזומן",
+      "האם אתה בטוח שברצונך למחוק משלוח מזומן זה מהרשימה?",
+      () => {
+        activeCashOrders = activeCashOrders.filter(o => o.id !== selectedCashOrderId);
+        localStorage.setItem('solo_active_cash_orders', JSON.stringify(activeCashOrders));
+        closeModal('cashCalcModal');
+        renderActiveCashOrders();
+      },
+      "מחק משלוח",
+      true
+    );
+  }
+
+  function openCashHistoryModal() {
+    const listContainer = document.getElementById('cashHistoryList');
+    listContainer.innerHTML = '';
+
+    if (cashHistory.length === 0) {
+      listContainer.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:0.85rem;">אין היסטוריית תשלומי מזומן</div>`;
+    } else {
+      cashHistory.forEach(h => {
+        const d = new Date(h.completedAt || h.createdAt);
+        const dateStr = d.toLocaleDateString('he-IL');
+        const timeStr = d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+
+        const item = document.createElement('div');
+        item.className = 'cash-history-item';
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:var(--accent-green); font-size:1.05rem;">${parseFloat(h.price).toFixed(2)} ₪</span>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">${dateStr} | ${timeStr}</span>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-secondary); display:flex; justify-content:space-between;">
+            <span>התקבל: ${parseFloat(h.received || 0).toFixed(2)} ₪</span>
+            <span>${h.tipKept ? `<strong style="color:var(--accent-orange);">שמרת טיפ: ${parseFloat(h.tipKept).toFixed(2)} ₪</strong>` : `עודף: ${parseFloat(h.changeReturned || 0).toFixed(2)} ₪`}</span>
+          </div>
+          ${h.note ? `<div style="font-size:0.8rem; color:var(--text-primary); margin-top:2px;">📍 ${h.note}</div>` : ''}
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    document.getElementById('cashHistoryModal').classList.add('active');
+  }
+
+  function confirmPurgeCashHistory() {
+    showCustomConfirm(
+      "מחיקת היסטוריית מזומן",
+      "האם אתה בטוח שברצונך למחוק את כל היסטוריית תשלומי המזומן לצמיתות?",
+      () => {
+        cashHistory = [];
+        localStorage.removeItem('solo_cash_history');
+        openCashHistoryModal();
+        showCustomAlert("היסטוריה נוקתה", "היסטוריית תשלומי המזומן נמחקה בהצלחה!");
+      },
+      "מחק היסטוריה",
+      true
+    );
   }
 
   /* Export Native XLSX Report with Auto-Oriented Embedded Images */
@@ -1426,6 +1824,7 @@
 
     initFirebaseIfAvailable();
     renderCalendar();
+    renderActiveCashOrders();
   }
 
   document.addEventListener("visibilitychange", () => {
@@ -1434,6 +1833,7 @@
       document.getElementById('receiptTargetDate').value = todayStr;
       document.getElementById('dropoffTargetDate').value = todayStr;
       renderCalendar();
+      renderActiveCashOrders();
     }
   });
 
@@ -1511,12 +1911,16 @@
 
   function switchTab(tab) {
     document.getElementById('tabHome').classList.toggle('active', tab === 'home');
+    document.getElementById('tabCash').classList.toggle('active', tab === 'cash');
     document.getElementById('tabReceipts').classList.toggle('active', tab === 'receipts');
     document.getElementById('tabDropoffs').classList.toggle('active', tab === 'dropoffs');
+
     document.getElementById('navHomeBtn').classList.toggle('active', tab === 'home');
+    document.getElementById('navCashBtn').classList.toggle('active', tab === 'cash');
     document.getElementById('navReceiptsBtn').classList.toggle('active', tab === 'receipts');
     document.getElementById('navDropoffsBtn').classList.toggle('active', tab === 'dropoffs');
 
+    if (tab === 'cash') renderActiveCashOrders();
     if (tab === 'receipts') loadMonthReceipts();
     if (tab === 'dropoffs') loadMonthDropoffs();
   }
@@ -1969,12 +2373,14 @@
 
       tx.oncomplete = () => {
         const backupObject = {
-          version: 3,
+          version: 4,
           exportDate: new Date().toISOString(),
           fuelPrice: currentFuelPrice,
           kmPerLiter: kmPerLiter,
           theme: currentTheme,
           shiftsData: shiftsData,
+          activeCashOrders: activeCashOrders,
+          cashHistory: cashHistory,
           receipts: receiptsReq.result || [],
           dropoffs: dropoffsReq.result || []
         };
@@ -2019,6 +2425,16 @@
             if (backupObj.shiftsData) {
               shiftsData = backupObj.shiftsData;
               localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+            }
+
+            if (backupObj.activeCashOrders) {
+              activeCashOrders = backupObj.activeCashOrders;
+              localStorage.setItem('solo_active_cash_orders', JSON.stringify(activeCashOrders));
+            }
+
+            if (backupObj.cashHistory) {
+              cashHistory = backupObj.cashHistory;
+              localStorage.setItem('solo_cash_history', JSON.stringify(cashHistory));
             }
 
             if (backupObj.fuelPrice) {
