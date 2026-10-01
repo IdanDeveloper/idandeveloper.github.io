@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
+  <!-- Prevent Aggressive Caching on iOS WebClips / GitHub Pages -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <title>Solo Courier Manager</title>
 
   <!-- Modern Hebrew Sans-Serif Google Font (Heebo) -->
@@ -711,13 +717,16 @@
       <button class="top-btn" onclick="exportFullData()">
         <svg class="app-icon"><use href="#icon-download"/></svg> גיבוי
       </button>
-      <button class="top-btn" onclick="triggerImport()">
+      
+      <!-- Native HTML Label Trigger for 100% Reliable File Picker on iOS WebKit -->
+      <label class="top-btn" for="importFileInput">
         <svg class="app-icon"><use href="#icon-upload"/></svg> שחזור
-      </button>
+      </label>
+      <input type="file" id="importFileInput" accept=".json" onchange="handleFileImport(event)" style="display:none;">
+
       <button class="top-btn danger" onclick="openPurgeModal()">
         <svg class="app-icon"><use href="#icon-trash"/></svg> ניקוי
       </button>
-      <input type="file" id="importFileInput" accept=".json" onchange="handleFileImport(event)" style="display:none;">
     </div>
   </header>
 
@@ -915,7 +924,7 @@
       <label>1. ערכת נושא (Theme):</label>
       <div class="theme-toggle-box">
         <button class="theme-opt-btn active" id="themeDarkBtn" onclick="setTheme('dark')">🌙 כהה (Dark)</button>
-        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀️ בהיר (Light)</button>
+        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀️️ בהיר (Light)</button>
       </div>
     </div>
 
@@ -927,6 +936,13 @@
     <div class="form-group" style="margin-top:6px;">
       <label>3. מחיר דלק מעודכן לליטר (₪):</label>
       <input type="number" step="0.01" id="settingsFuelPriceInput" inputmode="decimal" placeholder="8.25" style="font-weight:bold;">
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>4. עדכון גרסת אפליקציה:</label>
+      <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px;" onclick="forceAppRefresh()">
+        🔄 רענן וטען קוד עדכני מ-GitHub
+      </button>
     </div>
 
     <div class="sheet-actions" style="margin-top:10px;">
@@ -1159,6 +1175,16 @@
     closeModal('settingsModal');
     showCustomAlert("הגדרות", "ההגדרות נשמרו בהצלחה!");
     renderCalendar();
+  }
+
+  /* Force Hard Refresh for GitHub Pages Code Updates */
+  function forceAppRefresh() {
+    if ('caches' in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => caches.delete(name));
+      });
+    }
+    window.location.href = window.location.pathname + '?v=' + Date.now();
   }
 
   /* Export Native XLSX Report with Auto-Oriented Embedded Images */
@@ -1975,8 +2001,6 @@
       showCustomAlert("שגיאה", "שגיאה ביצירת הגיבוי: " + e.message);
     }
   }
-
-  function triggerImport() { document.getElementById('importFileInput').click(); }
 
   function handleFileImport(e) {
     const file = e.target.files[0];
