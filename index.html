@@ -944,6 +944,11 @@
       </div>
     </div>
 
+    <!-- Underpay Warning Banner -->
+    <div id="underpayWarningBox" style="display:none; margin-top:8px; background:rgba(255,69,58,0.18); border:1.5px solid var(--accent-red); padding:12px; border-radius:14px; color:var(--accent-red); font-weight:800; text-align:center; font-size:0.88rem;">
+      ⚠️ אזהרה: התקבל סכום נמוך ממחיר המשלוח (חוסר של <span id="underpayAmountText">0.00 ₪</span>)!
+    </div>
+
     <!-- Keep Change Tip Option -->
     <div id="keepChangeTipBox" style="display:none; margin-top:8px;">
       <label style="display:flex; align-items:center; gap:10px; font-size:0.85rem; font-weight:700; color:var(--accent-green); cursor:pointer; background:rgba(48, 209, 88, 0.12); padding:12px; border-radius:14px; border:1px solid rgba(48, 209, 88, 0.3);">
@@ -1395,6 +1400,7 @@
     document.getElementById('cashReceivedInput').value = '';
     document.getElementById('calcChangeDisplay').innerText = '0.00 ₪';
     
+    document.getElementById('underpayWarningBox').style.display = 'none';
     document.getElementById('keepChangeTipBox').style.display = 'none';
     document.getElementById('keepChangeTipCheckbox').checked = false;
 
@@ -1413,15 +1419,23 @@
     const tipBox = document.getElementById('keepChangeTipBox');
     const tipAmountText = document.getElementById('tipChangeAmountText');
     const checkbox = document.getElementById('keepChangeTipCheckbox');
+    const underpayBox = document.getElementById('underpayWarningBox');
+    const underpayAmountText = document.getElementById('underpayAmountText');
 
-    if (change < 0) {
+    if (change < 0 && received > 0) {
+      const shortfall = Math.abs(change);
       changeDisplay.style.color = 'var(--accent-red)';
-      changeDisplay.innerText = `חסר ${Math.abs(change).toFixed(2)} ₪`;
+      changeDisplay.innerText = `חסר ${shortfall.toFixed(2)} ₪`;
+      
+      underpayAmountText.innerText = `${shortfall.toFixed(2)} ₪`;
+      underpayBox.style.display = 'block';
+
       tipBox.style.display = 'none';
       checkbox.checked = false;
     } else {
+      underpayBox.style.display = 'none';
       changeDisplay.style.color = 'var(--accent-green)';
-      changeDisplay.innerText = `${change.toFixed(2)} ₪`;
+      changeDisplay.innerText = `${Math.max(0, change).toFixed(2)} ₪`;
 
       if (change > 0) {
         tipBox.style.display = 'block';
@@ -1505,6 +1519,7 @@
       received: received,
       changeReturned: keepAsTip ? 0 : (change >= 0 ? change : 0),
       tipKept: keepAsTip ? change : 0,
+      shortfall: change < 0 ? Math.abs(change) : 0,
       completedAt: new Date().toISOString()
     };
 
@@ -1517,9 +1532,15 @@
     closeModal('cashCalcModal');
     renderActiveCashOrders();
 
-    const alertMsg = keepAsTip 
-      ? `התשלום אושר! עודף בסך ${change.toFixed(2)} ₪ התווסף אוטומטית לטיפים במזומן של היום, והלוח שנה והסיכום החודשי עודכנו!` 
-      : "המשלוח סומן כמשולם והועבר בהצלחה להיסטוריה!";
+    let alertMsg = "";
+    if (change < 0) {
+      alertMsg = `המשלוח נשמר בהיסטוריה! ⚠️ שים לב שנרשם חוסר בתשלום של ${Math.abs(change).toFixed(2)} ₪.`;
+    } else if (keepAsTip) {
+      alertMsg = `התשלום אושר! עודף בסך ${change.toFixed(2)} ₪ התווסף אוטומטית לטיפים במזומן של היום, והלוח שנה והסיכום החודשי עודכנו!`;
+    } else {
+      alertMsg = "המשלוח סומן כמשולם והועבר בהצלחה להיסטוריה!";
+    }
+
     showCustomAlert("תשלום אושר", alertMsg);
   }
 
@@ -1550,16 +1571,33 @@
         const dateStr = d.toLocaleDateString('he-IL');
         const timeStr = d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
 
+        const isShortfall = (h.shortfall && h.shortfall > 0) || (h.received < h.price);
+        const shortfallAmount = h.shortfall || (h.price - h.received);
+
+        let secondRowHtml = '';
+        if (isShortfall) {
+          secondRowHtml = `<strong style="color:var(--accent-red);">⚠️ חוסר בתשלום: ${parseFloat(shortfallAmount).toFixed(2)} ₪</strong>`;
+        } else if (h.tipKept) {
+          secondRowHtml = `<strong style="color:var(--accent-orange);">שמרת טיפ: ${parseFloat(h.tipKept).toFixed(2)} ₪</strong>`;
+        } else {
+          secondRowHtml = `עודף: ${parseFloat(h.changeReturned || 0).toFixed(2)} ₪`;
+        }
+
         const item = document.createElement('div');
         item.className = 'cash-history-item';
+        if (isShortfall) {
+          item.style.borderColor = 'rgba(255, 69, 58, 0.4)';
+          item.style.background = 'rgba(255, 69, 58, 0.08)';
+        }
+
         item.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:800; color:var(--accent-green); font-size:1.05rem;">${parseFloat(h.price).toFixed(2)} ₪</span>
+            <span style="font-weight:800; color:${isShortfall ? 'var(--accent-red)' : 'var(--accent-green)'}; font-size:1.05rem;">${parseFloat(h.price).toFixed(2)} ₪</span>
             <span style="font-size:0.75rem; color:var(--text-secondary);">${dateStr} | ${timeStr}</span>
           </div>
-          <div style="font-size:0.8rem; color:var(--text-secondary); display:flex; justify-content:space-between;">
+          <div style="font-size:0.8rem; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center;">
             <span>התקבל: ${parseFloat(h.received || 0).toFixed(2)} ₪</span>
-            <span>${h.tipKept ? `<strong style="color:var(--accent-orange);">שמרת טיפ: ${parseFloat(h.tipKept).toFixed(2)} ₪</strong>` : `עודף: ${parseFloat(h.changeReturned || 0).toFixed(2)} ₪`}</span>
+            <span>${secondRowHtml}</span>
           </div>
           ${h.note ? `<div style="font-size:0.8rem; color:var(--text-primary); margin-top:2px;">📍 ${h.note}</div>` : ''}
         `;
