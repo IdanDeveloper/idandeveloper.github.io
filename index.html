@@ -61,6 +61,18 @@
       --input-bg: rgba(0, 0, 0, 0.05);
     }
 
+    /* Hide Scrollbar for WebKit (iOS Safari) and standard browsers */
+    html, body, * {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -159,9 +171,7 @@
       gap: 5px;
       overflow-x: auto;
       padding-bottom: 2px;
-      scrollbar-width: none;
     }
-    .header-btn-group::-webkit-scrollbar { display: none; }
 
     /* Compact Top Action Buttons */
     .top-btn {
