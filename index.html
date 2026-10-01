@@ -32,6 +32,27 @@
       --text-secondary: #8e8e93;
       --text-tertiary: #636366;
       --shadow-ios: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --nav-bg: rgba(28, 28, 30, 0.8);
+      --modal-bg: #1c1c1e;
+      --input-bg: rgba(255, 255, 255, 0.06);
+    }
+
+    body.light-theme {
+      --bg-main: #f2f2f7;
+      --card-bg: #ffffff;
+      --card-border: rgba(0, 0, 0, 0.08);
+      --card-inner: rgba(0, 0, 0, 0.03);
+      --accent-blue: #007aff;
+      --accent-green: #34c759;
+      --accent-red: #ff3b30;
+      --accent-orange: #ff9500;
+      --text-primary: #000000;
+      --text-secondary: #6c6c70;
+      --text-tertiary: #8e8e93;
+      --shadow-ios: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
+      --nav-bg: rgba(255, 255, 255, 0.85);
+      --modal-bg: #ffffff;
+      --input-bg: rgba(0, 0, 0, 0.05);
     }
 
     * {
@@ -57,12 +78,13 @@
         radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.06) 0%, transparent 40%);
       background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* System Icons Styling */
     .app-icon {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       fill: none;
       stroke: currentColor;
       stroke-width: 2;
@@ -89,8 +111,8 @@
     header {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 4px 2px;
+      gap: 8px;
+      padding: 2px 2px;
     }
 
     .header-top {
@@ -100,28 +122,49 @@
     }
 
     header h1 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 800;
       letter-spacing: -0.3px;
       color: var(--text-primary);
     }
 
+    .btn-settings-icon {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+
+    .btn-settings-icon:active {
+      transform: scale(0.92);
+      color: var(--text-primary);
+    }
+
     .header-btn-group {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       overflow-x: auto;
       padding-bottom: 2px;
       scrollbar-width: none;
     }
     .header-btn-group::-webkit-scrollbar { display: none; }
 
+    /* Compact Top Action Buttons */
     .top-btn {
       background: rgba(255, 255, 255, 0.06);
       color: var(--text-primary);
       border: 1px solid var(--card-border);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      padding: 4px 9px;
+      border-radius: 16px;
+      font-size: 0.7rem;
       font-weight: 600;
       cursor: pointer;
       backdrop-filter: blur(10px);
@@ -129,7 +172,11 @@
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+    }
+
+    body.light-theme .top-btn {
+      background: rgba(0, 0, 0, 0.04);
     }
 
     .top-btn:active { transform: scale(0.95); opacity: 0.8; }
@@ -137,36 +184,6 @@
     .top-btn.cloud { background: rgba(10, 132, 255, 0.12); color: var(--accent-blue); border-color: rgba(10, 132, 255, 0.3); }
     .top-btn.excel { background: rgba(48, 209, 88, 0.12); color: var(--accent-green); border-color: rgba(48, 209, 88, 0.3); }
     .top-btn.danger { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); border-color: rgba(255, 69, 58, 0.3); }
-
-    /* iOS Glass Banner */
-    .fuel-banner {
-      background: rgba(48, 209, 88, 0.08);
-      border: 1px solid rgba(48, 209, 88, 0.25);
-      border-radius: 18px;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .fuel-status-tag {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent-green);
-    }
-
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--accent-green);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--accent-green);
-    }
 
     /* iOS Glass Cards */
     .card {
@@ -197,7 +214,7 @@
 
     .cal-nav button {
       background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+      color: var(--text-primary);
       border: 1px solid var(--card-border);
       width: 34px;
       height: 34px;
@@ -208,6 +225,10 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
+    }
+
+    body.light-theme .cal-nav button {
+      background: rgba(0, 0, 0, 0.05);
     }
 
     .cal-nav button:active { transform: scale(0.9); }
@@ -365,6 +386,34 @@
       box-shadow: 0 4px 15px rgba(48, 209, 88, 0.3);
     }
 
+    /* Theme Toggle Switch Control */
+    .theme-toggle-box {
+      display: flex;
+      background: var(--card-inner);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .theme-opt-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-opt-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+
     /* iOS Floating Navigation Bar */
     .bottom-nav {
       position: fixed; 
@@ -373,15 +422,15 @@
       right: 16px;
       max-width: 400px;
       margin: 0 auto;
-      background: rgba(28, 28, 30, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--nav-bg);
+      border: 1px solid var(--card-border);
       border-radius: 35px;
       display: flex; 
       justify-content: space-around;
       padding: 8px 6px;
       z-index: 900; 
       backdrop-filter: blur(25px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .nav-item {
@@ -407,8 +456,8 @@
     }
 
     .nav-item .app-icon {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
 
     /* iOS Bottom Sheets (Modals) */
@@ -428,7 +477,8 @@
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
     .modal-sheet {
-      background: #1c1c1e;
+      background: var(--modal-bg);
+      color: var(--text-primary);
       border-top-left-radius: 28px; 
       border-top-right-radius: 28px;
       padding: 12px 18px max(24px, env(safe-area-inset-bottom)) 18px;
@@ -437,15 +487,15 @@
       gap: 12px;
       max-height: 90vh; 
       overflow-y: auto;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+      border-top: 1px solid var(--card-border);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .sheet-handle {
       width: 36px;
       height: 5px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(128, 128, 128, 0.4);
       border-radius: 3px;
       align-self: center;
       margin-bottom: 4px;
@@ -454,7 +504,7 @@
     .sheet-header { display: flex; justify-content: space-between; align-items: center; }
     .sheet-title { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; }
     .close-btn { 
-      background: rgba(255,255,255,0.1); 
+      background: var(--input-bg); 
       border: none; 
       color: var(--text-secondary); 
       width: 28px; height: 28px;
@@ -464,7 +514,6 @@
       display: flex; align-items: center; justify-content: center;
     }
 
-    /* Fixed Layout Bug for iOS Grid Overlapping */
     .form-grid { 
       display: grid; 
       grid-template-columns: repeat(2, minmax(0, 1fr)); 
@@ -507,9 +556,9 @@
     }
 
     input, select, textarea {
-      background: rgba(255, 255, 255, 0.06); 
+      background: var(--input-bg); 
       border: 1px solid var(--card-border);
-      color: #fff; 
+      color: var(--text-primary); 
       padding: 10px 12px; 
       border-radius: 14px; 
       font-size: 15px;
@@ -604,14 +653,14 @@
     <circle cx="18" cy="6" r="1" fill="currentColor"/>
   </symbol>
 
-  <!-- 4. Upload / Backup Export Icon -->
-  <symbol id="icon-backup" viewBox="0 0 24 24">
-    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 3v12M8 7l4-4 4 4"/>
+  <!-- 4. Download Icon (Backup) -->
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 15V3M8 11l4 4 4-4"/>
   </symbol>
 
-  <!-- 5. Download / Restore Import Icon -->
-  <symbol id="icon-restore" viewBox="0 0 24 24">
-    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 15V3M8 11l4 4 4-4"/>
+  <!-- 5. Upload Icon (Restore) -->
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 3v12M8 7l4-4 4 4"/>
   </symbol>
 
   <!-- 6. Excel Export Icon -->
@@ -629,13 +678,27 @@
   <symbol id="icon-trash" viewBox="0 0 24 24">
     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
   </symbol>
+
+  <!-- 9. Settings Gear Icon -->
+  <symbol id="icon-settings" viewBox="0 0 24 24">
+    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </symbol>
+
+  <!-- 10. Sleek Clean WhatsApp Icon (Line-Art) -->
+  <symbol id="icon-whatsapp" viewBox="0 0 24 24">
+    <path d="M3 21l1.65-3.8A9 9 0 1 1 12 21a8.9 8.9 0 0 1-4.6-1.3L3 21z"/>
+    <path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5"/>
+  </symbol>
 </svg>
 
 <div class="app-container">
   <header>
     <div class="header-top">
       <h1>שלום עידן!</h1>
-      <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">ניהול שליחויות מתקדם</div>
+      <button class="btn-settings-icon" onclick="openSettingsModal()" title="הגדרות">
+        <svg class="app-icon" style="width:18px; height:18px;"><use href="#icon-settings"/></svg>
+      </button>
     </div>
     
     <div class="header-btn-group">
@@ -646,10 +709,10 @@
         <svg class="app-icon"><use href="#icon-excel"/></svg> אקסל
       </button>
       <button class="top-btn" onclick="exportFullData()">
-        <svg class="app-icon"><use href="#icon-backup"/></svg> גיבוי
+        <svg class="app-icon"><use href="#icon-download"/></svg> גיבוי
       </button>
       <button class="top-btn" onclick="triggerImport()">
-        <svg class="app-icon"><use href="#icon-restore"/></svg> שחזור
+        <svg class="app-icon"><use href="#icon-upload"/></svg> שחזור
       </button>
       <button class="top-btn danger" onclick="openPurgeModal()">
         <svg class="app-icon"><use href="#icon-trash"/></svg> ניקוי
@@ -660,17 +723,6 @@
 
   <!-- TAB 1: HOME & CALENDAR -->
   <div id="tabHome" class="tab-view active">
-    <div class="fuel-banner">
-      <div class="fuel-status-tag">
-        <div class="pulse-dot"></div>
-        <span>מחיר דלק 95 מעודכן</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:6px;">
-        <input type="number" step="0.01" id="fuelPriceInput" inputmode="decimal" value="8.25" oninput="validateFuelPrice()" style="width:72px; padding:6px 8px; font-weight:bold; text-align:center; border-radius:10px; height:auto;">
-        <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">₪/ל'</span>
-      </div>
-    </div>
-
     <div class="card">
       <div class="cal-nav">
         <button onclick="changeMonth(-1)">&lt;</button>
@@ -689,17 +741,17 @@
 
       <div class="summary-list">
         <div class="summary-item">
-          <span class="title">🏢 מגיע לי מהחברה (בסיס):</span>
+          <span class="title">מגיע לי מהחברה (בסיס):</span>
           <span class="val" id="mCompanySalary" style="color:var(--accent-blue);">0.00 ₪</span>
         </div>
 
         <div class="summary-item">
-          <span class="title">💳 טיפים באשראי (נטו):</span>
+          <span class="title">טיפים באשראי (נטו):</span>
           <span class="val" id="mCreditTips" style="color:var(--accent-orange);">0.00 ₪</span>
         </div>
 
         <div class="summary-item">
-          <span class="title">🛣️ סה"כ ק"מ נסיעה:</span>
+          <span class="title">סה"כ ק"מ נסיעה:</span>
           <span class="val" id="mTotalKm">0 ק"מ</span>
         </div>
       </div>
@@ -732,7 +784,8 @@
       <div class="photos-grid" id="receiptsGrid"></div>
 
       <button class="btn-share-whatsapp" onclick="shareMonthReceiptsWhatsApp()">
-        📲 שתף קבלות חודשיות לוואטסאפ
+        <svg class="app-icon" style="width:20px; height:20px;"><use href="#icon-whatsapp"/></svg>
+        <span>שתף קבלות חודשיות לוואטסאפ</span>
       </button>
     </div>
   </div>
@@ -833,9 +886,9 @@
     </div>
 
     <div class="breakdown-box">
-      <div class="b-row"><span>שעות עבודה מדויקות:</span><span id="resHoursDisplay" style="color:#fff;">0.00 שעות</span></div>
+      <div class="b-row"><span>שעות עבודה מדויקות:</span><span id="resHoursDisplay" style="color:var(--text-primary);">0.00 שעות</span></div>
       <div class="b-row gross"><span>כמה הרווחתי (ברוטו):</span><span id="resGrossDisplay">0.00 ₪</span></div>
-      <div class="b-row expense"><span>כמה בזבזתי (דלק לפי 11.65 ק"מ/ל'):</span><span id="resFuelExpenseDisplay">- 0.00 ₪</span></div>
+      <div class="b-row expense"><span>כמה בזבזתי (עלות דלק):</span><span id="resFuelExpenseDisplay">- 0.00 ₪</span></div>
       <div class="b-row"><span>רווח שעתי נקי אפקטיבי:</span><span id="resHourlyNetDisplay" style="color:var(--accent-orange); font-weight:700;">0.00 ₪ / שעה</span></div>
       <div class="b-row net-main"><span>כמה נשאר לי (רווח נקי):</span><span id="resNetDisplay">0.00 ₪</span></div>
     </div>
@@ -843,6 +896,41 @@
     <div class="sheet-actions">
       <button class="btn-save" id="saveBtn" onclick="saveShiftData()">שמור יום עבודה</button>
       <button class="btn-delete" onclick="deleteShiftData()">מחק</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Settings Sheet -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title">
+        <svg class="app-icon" style="width:20px; height:20px;"><use href="#icon-settings"/></svg> הגדרות מערכת
+      </span>
+      <button class="close-btn" onclick="closeModal('settingsModal')">✕</button>
+    </div>
+
+    <div class="form-group" style="margin-top:4px;">
+      <label>1. ערכת נושא (Theme):</label>
+      <div class="theme-toggle-box">
+        <button class="theme-opt-btn active" id="themeDarkBtn" onclick="setTheme('dark')">🌙 כהה (Dark)</button>
+        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀️ בהיר (Light)</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>2. צריכת דלק ברכב (ק"מ לליטר):</label>
+      <input type="number" step="0.01" id="settingsKmPerLiterInput" inputmode="decimal" placeholder="11.65" style="font-weight:bold;">
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>3. מחיר דלק מעודכן לליטר (₪):</label>
+      <input type="number" step="0.01" id="settingsFuelPriceInput" inputmode="decimal" placeholder="8.25" style="font-weight:bold;">
+    </div>
+
+    <div class="sheet-actions" style="margin-top:10px;">
+      <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="saveSettings()">שמור הגדרות</button>
     </div>
   </div>
 </div>
@@ -934,18 +1022,20 @@
 
     <div class="sheet-actions" style="margin-top:8px;">
       <button class="btn-save" id="customDialogConfirmBtn">אישור</button>
-      <button class="btn-delete" id="customDialogCancelBtn" style="background:rgba(255,255,255,0.1); color:#fff; border:none;" onclick="closeModal('customDialogModal')">ביטול</button>
+      <button class="btn-delete" id="customDialogCancelBtn" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:none;" onclick="closeModal('customDialogModal')">ביטול</button>
     </div>
   </div>
 </div>
 
 <script>
   const HOURLY_RATE = 50;
-  const KM_PER_LITER = 11.65;
   const VAT_RATE = 0.18;
 
   let shiftsData = JSON.parse(localStorage.getItem('solo_shifts_data')) || {};
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
+  let kmPerLiter = parseFloat(localStorage.getItem('solo_km_per_liter')) || 11.65;
+  let currentTheme = localStorage.getItem('solo_theme') || 'dark';
+
   let viewDate = new Date();
   let selectedDateKey = null;
   let activeQuickAddType = null;
@@ -1024,6 +1114,51 @@
     };
     
     document.getElementById('customDialogModal').classList.add('active');
+  }
+
+  /* Theme Management */
+  function applyTheme(theme) {
+    currentTheme = theme;
+    localStorage.setItem('solo_theme', theme);
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+      document.getElementById('themeLightBtn').classList.add('active');
+      document.getElementById('themeDarkBtn').classList.remove('active');
+    } else {
+      document.body.classList.remove('light-theme');
+      document.getElementById('themeDarkBtn').classList.add('active');
+      document.getElementById('themeLightBtn').classList.remove('active');
+    }
+  }
+
+  function setTheme(theme) {
+    applyTheme(theme);
+  }
+
+  function openSettingsModal() {
+    document.getElementById('settingsKmPerLiterInput').value = kmPerLiter;
+    document.getElementById('settingsFuelPriceInput').value = currentFuelPrice;
+    applyTheme(currentTheme);
+    document.getElementById('settingsModal').classList.add('active');
+  }
+
+  function saveSettings() {
+    const kpl = parseFloat(document.getElementById('settingsKmPerLiterInput').value);
+    const fp = parseFloat(document.getElementById('settingsFuelPriceInput').value);
+
+    if (kpl && kpl > 0) {
+      kmPerLiter = kpl;
+      localStorage.setItem('solo_km_per_liter', kmPerLiter);
+    }
+
+    if (fp && fp > 0) {
+      currentFuelPrice = fp;
+      localStorage.setItem('solo_fuel_price', currentFuelPrice);
+    }
+
+    closeModal('settingsModal');
+    showCustomAlert("הגדרות", "ההגדרות נשמרו בהצלחה!");
+    renderCalendar();
   }
 
   /* Export Native XLSX Report with Auto-Oriented Embedded Images */
@@ -1257,14 +1392,13 @@
   };
 
   function init() {
-    document.getElementById('fuelPriceInput').value = currentFuelPrice;
-    
+    applyTheme(currentTheme);
+
     const todayStr = getLocalDateStr();
     document.getElementById('receiptTargetDate').value = todayStr;
     document.getElementById('dropoffTargetDate').value = todayStr;
 
     initFirebaseIfAvailable();
-    validateFuelPrice();
     renderCalendar();
   }
 
@@ -1359,15 +1493,6 @@
 
     if (tab === 'receipts') loadMonthReceipts();
     if (tab === 'dropoffs') loadMonthDropoffs();
-  }
-
-  function validateFuelPrice() {
-    const val = parseFloat(document.getElementById('fuelPriceInput').value);
-    if (val && val > 0) {
-      currentFuelPrice = val;
-      localStorage.setItem('solo_fuel_price', currentFuelPrice);
-      calculateShift();
-    }
   }
 
   function renderCalendar() {
@@ -1471,7 +1596,7 @@
     const creditTipsNet = creditTips * (1 - VAT_RATE);
     const grossEarnings = baseSalary + cashTips + creditTipsNet;
 
-    const litersUsed = km / KM_PER_LITER;
+    const litersUsed = km / kmPerLiter;
     const fuelExpense = litersUsed * currentFuelPrice;
 
     const netProfit = grossEarnings - fuelExpense;
@@ -1517,7 +1642,7 @@
 
   function saveShiftData() {
     const calc = calculateShift();
-    shiftsData[selectedDateKey] = { ...calc, location: document.getElementById('locationSelect').value, fuelPriceUsed: currentFuelPrice };
+    shiftsData[selectedDateKey] = { ...calc, location: document.getElementById('locationSelect').value, fuelPriceUsed: currentFuelPrice, kmPerLiterUsed: kmPerLiter };
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
     syncWithCloud();
     closeModal('formModal');
@@ -1804,6 +1929,7 @@
     );
   }
 
+  /* Fixed iOS Safari JSON Download Bug via ObjectURL Blob */
   async function exportFullData() {
     if (!db) {
       showCustomAlert("גיבוי", "מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
@@ -1817,22 +1943,29 @@
 
       tx.oncomplete = () => {
         const backupObject = {
-          version: 2,
+          version: 3,
           exportDate: new Date().toISOString(),
           fuelPrice: currentFuelPrice,
+          kmPerLiter: kmPerLiter,
+          theme: currentTheme,
           shiftsData: shiftsData,
           receipts: receiptsReq.result || [],
           dropoffs: dropoffsReq.result || []
         };
 
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObject, null, 2));
+        const jsonStr = JSON.stringify(backupObject, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
         const dlAnchor = document.createElement('a');
-        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.href = url;
         const dateStr = getLocalDateStr();
-        dlAnchor.setAttribute("download", `solo_full_backup_${dateStr}.json`);
+        dlAnchor.download = `solo_full_backup_${dateStr}.json`;
         document.body.appendChild(dlAnchor);
         dlAnchor.click();
         document.body.removeChild(dlAnchor);
+        
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       };
 
       tx.onerror = (err) => {
@@ -1867,6 +2000,16 @@
             if (backupObj.fuelPrice) {
               currentFuelPrice = backupObj.fuelPrice;
               localStorage.setItem('solo_fuel_price', currentFuelPrice);
+            }
+
+            if (backupObj.kmPerLiter) {
+              kmPerLiter = backupObj.kmPerLiter;
+              localStorage.setItem('solo_km_per_liter', kmPerLiter);
+            }
+
+            if (backupObj.theme) {
+              currentTheme = backupObj.theme;
+              applyTheme(currentTheme);
             }
 
             if (db) {
