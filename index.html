@@ -1199,20 +1199,28 @@
   let kmPerLiter = parseFloat(localStorage.getItem('solo_km_per_liter')) || 11.65;
   let currentTheme = localStorage.getItem('solo_theme') || 'dark';
 
-  let viewDate = new Date();
-  let selectedDateKey = null;
-  let activeQuickAddType = null;
-  let selectedCashOrderId = null;
-  let firebaseDB = null;
-
-  /* Helper for Pure Local Date String (YYYY-MM-DD) */
-  function getLocalDateStr() {
+  /* Helper for Shift Date with Night Cutoff (before 05:00 AM = yesterday's shift) */
+  function getShiftDate() {
     const d = new Date();
+    if (d.getHours() < 5) {
+      d.setDate(d.getDate() - 1);
+    }
+    return d;
+  }
+
+  function getLocalDateStr() {
+    const d = getShiftDate();
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
+  let viewDate = getShiftDate();
+  let selectedDateKey = null;
+  let activeQuickAddType = null;
+  let selectedCashOrderId = null;
+  let firebaseDB = null;
 
   /* Helper: Normalize image orientation via HTML5 Canvas before exporting to Excel */
   async function fixImageOrientation(base64Data) {
@@ -1856,6 +1864,7 @@
   function init() {
     applyTheme(currentTheme);
 
+    viewDate = getShiftDate();
     const todayStr = getLocalDateStr();
     document.getElementById('receiptTargetDate').value = todayStr;
     document.getElementById('dropoffTargetDate').value = todayStr;
