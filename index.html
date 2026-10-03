@@ -15,9 +15,9 @@
   <meta name="apple-mobile-web-app-title" content="Neto Courier">
   
   <!-- Apple Touch Icon (180x180) & Favicon with Cache-Busting Version Query -->
-  <link rel="apple-touch-icon" href="neto-courier-01.png?v=10">
-  <link rel="apple-touch-icon" sizes="180x180" href="neto-courier-01.png?v=10">
-  <link rel="icon" type="image/png" href="neto-courier-01.png?v=10">
+  <link rel="apple-touch-icon" href="splash-01.png?v=12">
+  <link rel="apple-touch-icon" sizes="180x180" href="splash-01.png?v=12">
+  <link rel="icon" type="image/png" href="splash-01.png?v=12">
 
   <title>Neto Courier Manager</title>
 
@@ -121,6 +121,26 @@
         radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 45%);
       pointer-events: none;
       z-index: -1;
+    }
+
+    /* Inline Splash Overlay Screen */
+    #appSplashOverlay {
+      position: fixed;
+      inset: 0;
+      background-color: #2B2F3A;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      opacity: 1;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #appSplashOverlay img {
+      width: 130px;
+      max-width: 40vw;
+      height: auto;
+      border-radius: 18px;
     }
 
     /* System Icons Styling */
@@ -322,7 +342,7 @@
     .day-net { font-size: 0.65rem; color: var(--accent-green); font-weight: 800; }
     .day-location { font-size: 0.55rem; color: var(--text-secondary); }
 
-    /* Monthly Summary Box */
+    /* Monthly Summary Box - Enlarged Green Net Text */
     .big-net-box {
       background: linear-gradient(135deg, rgba(48, 209, 88, 0.18) 0%, rgba(10, 132, 255, 0.1) 100%);
       border: 1px solid rgba(48, 209, 88, 0.35);
@@ -333,12 +353,14 @@
     }
 
     .big-net-label { font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
+    
     .big-net-value { 
-      font-size: 2.3rem; 
+      font-size: 3.4rem; 
       font-weight: 900; 
       color: var(--accent-green); 
-      margin-top: 4px;
-      letter-spacing: -1px;
+      margin-top: 2px;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
       font-feature-settings: "tnum";
     }
 
@@ -353,7 +375,12 @@
       border: 1px solid var(--card-border);
     }
     .summary-item .title { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
-    .summary-item .val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+    
+    .summary-item .val { 
+      font-size: 1.2rem; 
+      font-weight: 800; 
+      color: var(--text-primary); 
+    }
 
     /* Cash Tracking List Items */
     .cash-order-item {
@@ -694,6 +721,11 @@
   </style>
 </head>
 <body>
+
+<!-- Instant App Splash Screen Overlay -->
+<div id="appSplashOverlay">
+  <img src="splash-01.png?v=12" alt="Neto Courier Logo">
+</div>
 
 <!-- Hidden SVG Sprite Sheet -->
 <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
@@ -2035,6 +2067,16 @@
     renderCalendar();
     renderActiveCashOrders();
     initPinchToZoom();
+
+    // Smoothly remove Splash Screen Overlay after initialization
+    setTimeout(() => {
+      const splash = document.getElementById('appSplashOverlay');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.visibility = 'hidden';
+        setTimeout(() => splash.remove(), 450);
+      }
+    }, 350);
   }
 
   document.addEventListener("visibilitychange", () => {
