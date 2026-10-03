@@ -102,11 +102,25 @@
       padding-bottom: max(90px, env(safe-area-inset-bottom));
       padding-left: 14px;
       padding-right: 14px;
-      background-image: 
-        radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.1) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.08) 0%, transparent 40%);
-      background-attachment: fixed;
+      position: relative;
       transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Fixed Seamless Gradient Backdrop Layer for iOS Safari/PWA */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 45%);
+      pointer-events: none;
+      z-index: -1;
     }
 
     /* System Icons Styling */
