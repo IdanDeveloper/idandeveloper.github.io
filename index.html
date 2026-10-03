@@ -73,10 +73,11 @@
       --input-bg: rgba(0, 0, 0, 0.05);
     }
 
-    /* Seamless Document Base Background to Prevent Scroll Mismatch Lines */
-    html {
+    /* Prevent iOS Rubber-Banding Scroll Mismatch */
+    html, body {
       background-color: var(--bg-main);
-      transition: background-color 0.3s ease;
+      overscroll-behavior-y: none;
+      min-height: 100%;
     }
 
     /* Hide Scrollbar for WebKit (iOS Safari) and standard browsers */
@@ -100,8 +101,30 @@
       letter-spacing: -0.2px;
     }
 
+    /* Unified Seamless Fixed Background Overlay (Fixes Scroll Line Cut-off) */
+    #appFixedBackground {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(10, 132, 255, 0.28) 0%, transparent 50%),
+        radial-gradient(circle at 90% 35%, rgba(191, 90, 242, 0.22) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(48, 209, 88, 0.20) 0%, transparent 55%),
+        linear-gradient(160deg, #0d111d 0%, #161b2c 50%, #101422 100%);
+      transition: background 0.3s ease;
+    }
+
+    body.light-theme #appFixedBackground {
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(0, 122, 255, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 90% 85%, rgba(52, 199, 89, 0.15) 0%, transparent 50%),
+        linear-gradient(160deg, #f5f7fa 0%, #e2e8f0 100%);
+    }
+
     body {
-      background: linear-gradient(160deg, #0d111d 0%, #161b2c 50%, #101422 100%);
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
@@ -111,35 +134,7 @@
       padding-left: 14px;
       padding-right: 14px;
       position: relative;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    body.light-theme {
-      background: linear-gradient(160deg, #f5f7fa 0%, #e2e8f0 100%);
-    }
-
-    /* Vibrant Rich Backdrop Fade Layer (FADE) */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: 
-        radial-gradient(circle at 10% 15%, rgba(10, 132, 255, 0.28) 0%, transparent 50%),
-        radial-gradient(circle at 90% 35%, rgba(191, 90, 242, 0.22) 0%, transparent 50%),
-        radial-gradient(circle at 50% 85%, rgba(48, 209, 88, 0.20) 0%, transparent 55%);
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    body.light-theme::before {
-      background-image: 
-        radial-gradient(circle at 10% 15%, rgba(0, 122, 255, 0.18) 0%, transparent 50%),
-        radial-gradient(circle at 90% 85%, rgba(52, 199, 89, 0.15) 0%, transparent 50%);
+      background: transparent;
     }
 
     /* Inline Splash Overlay Screen */
@@ -188,7 +183,7 @@
     .tab-view { display: none; flex-direction: column; gap: 14px; }
     .tab-view.active { display: flex; }
 
-    /* Header & Navigation Pills - Isolated Layer to Prevent WebKit Backdrop Blur Bleeding */
+    /* Header & Navigation Pills */
     header {
       display: flex;
       flex-direction: column;
@@ -381,7 +376,7 @@
     .day-net { font-size: 0.65rem; color: var(--accent-green); font-weight: 800; }
     .day-location { font-size: 0.55rem; color: var(--text-secondary); }
 
-    /* Monthly Summary Box - Enlarged Green Net Text & Gradient */
+    /* Monthly Summary Box */
     .big-net-box {
       background: linear-gradient(135deg, rgba(48, 209, 88, 0.22) 0%, rgba(10, 132, 255, 0.15) 100%);
       border: 1px solid rgba(48, 209, 88, 0.4);
@@ -764,6 +759,9 @@
   </style>
 </head>
 <body>
+
+<!-- Unified Seamless Fixed Background Layer -->
+<div id="appFixedBackground"></div>
 
 <!-- Instant App Splash Screen Overlay -->
 <div id="appSplashOverlay">
@@ -1438,7 +1436,7 @@
     document.getElementById('customDialogModal').classList.add('active');
   }
 
-  /* Theme Management with Dynamic iOS Safari Status Bar Sync & Vivid Gradient Fade */
+  /* Theme Management with Dynamic iOS Safari Status Bar Sync & Seamless Fixed Gradient */
   function applyTheme(theme) {
     currentTheme = theme;
     localStorage.setItem('solo_theme', theme);
