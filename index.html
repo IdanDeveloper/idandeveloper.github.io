@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" style="background-color: #2B2F3A;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -9,15 +9,17 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- iOS Home Screen Icon & PWA WebClip Settings -->
+  <!-- iOS Safari Theme & Status Bar Color -->
+  <meta name="theme-color" content="#2B2F3A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Neto Courier">
   
-  <!-- Apple Touch Icon (180x180) & Favicon with Cache-Busting Version Query -->
-  <link rel="apple-touch-icon" href="neto-courier-01.png?v=10">
-  <link rel="apple-touch-icon" sizes="180x180" href="neto-courier-01.png?v=10">
-  <link rel="icon" type="image/png" href="neto-courier-01.png?v=10">
+  <!-- Apple Touch Icon & PWA Startup Image -->
+  <link rel="apple-touch-icon" href="splash-01.png?v=10">
+  <link rel="apple-touch-icon" sizes="180x180" href="splash-01.png?v=10">
+  <link rel="icon" type="image/png" href="splash-01.png?v=10">
+  <link rel="apple-touch-startup-image" href="splash-01.png?v=10">
 
   <title>Neto Courier Manager</title>
 
@@ -121,6 +123,26 @@
         radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 45%);
       pointer-events: none;
       z-index: -1;
+    }
+
+    /* Inline Splash Overlay Screen */
+    #appSplashOverlay {
+      position: fixed;
+      inset: 0;
+      background-color: #2B2F3A;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      opacity: 1;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #appSplashOverlay img {
+      width: 260px;
+      max-width: 70vw;
+      height: auto;
+      border-radius: 24px;
     }
 
     /* System Icons Styling */
@@ -694,6 +716,11 @@
   </style>
 </head>
 <body>
+
+<!-- Instant App Splash Screen Overlay -->
+<div id="appSplashOverlay">
+  <img src="splash-01.png?v=10" alt="Neto Courier Logo">
+</div>
 
 <!-- Hidden SVG Sprite Sheet -->
 <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
@@ -2035,6 +2062,16 @@
     renderCalendar();
     renderActiveCashOrders();
     initPinchToZoom();
+
+    // Smoothly remove Splash Screen Overlay after initialization
+    setTimeout(() => {
+      const splash = document.getElementById('appSplashOverlay');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.visibility = 'hidden';
+        setTimeout(() => splash.remove(), 450);
+      }
+    }, 350);
   }
 
   document.addEventListener("visibilitychange", () => {
