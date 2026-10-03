@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl" style="background-color: #2B2F3A;">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -10,16 +10,16 @@
   <meta http-equiv="Expires" content="0">
 
   <!-- iOS Safari Theme & Status Bar Color -->
-  <meta name="theme-color" content="#2B2F3A">
+  <meta name="theme-color" id="themeColorMeta" content="#0d111d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Neto Courier">
   
   <!-- Apple Touch Icon & PWA Startup Image -->
-  <link rel="apple-touch-icon" href="splash-01.png?v=10">
-  <link rel="apple-touch-icon" sizes="180x180" href="splash-01.png?v=10">
-  <link rel="icon" type="image/png" href="splash-01.png?v=10">
-  <link rel="apple-touch-startup-image" href="splash-01.png?v=10">
+  <link rel="apple-touch-icon" href="splash-01.png?v=12">
+  <link rel="apple-touch-icon" sizes="180x180" href="splash-01.png?v=12">
+  <link rel="icon" type="image/png" href="splash-01.png?v=12">
+  <link rel="apple-touch-startup-image" href="splash-01.png?v=12">
 
   <title>Neto Courier Manager</title>
 
@@ -37,27 +37,27 @@
 
   <style>
     :root {
-      --bg-main: #141824;
-      --card-bg: rgba(255, 255, 255, 0.07);
-      --card-border: rgba(255, 255, 255, 0.12);
-      --card-inner: rgba(0, 0, 0, 0.22);
+      --bg-main: #0d111d;
+      --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --card-inner: rgba(0, 0, 0, 0.25);
       --accent-blue: #0a84ff;
       --accent-green: #30d158;
       --accent-red: #ff453a;
       --accent-orange: #ff9f0a;
       --accent-purple: #bf5af2;
       --text-primary: #ffffff;
-      --text-secondary: #9ea4b5;
+      --text-secondary: #a2a8b8;
       --text-tertiary: #6e7382;
-      --shadow-ios: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --nav-bg: rgba(30, 35, 48, 0.88);
-      --modal-bg: #212636;
+      --shadow-ios: 0 10px 35px 0 rgba(0, 0, 0, 0.45);
+      --nav-bg: rgba(20, 25, 38, 0.88);
+      --modal-bg: #1a1f2c;
       --input-bg: rgba(255, 255, 255, 0.08);
     }
 
     body.light-theme {
-      --bg-main: #f2f2f7;
-      --card-bg: #ffffff;
+      --bg-main: #f0f3f8;
+      --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
       --card-border: rgba(0, 0, 0, 0.08);
       --card-inner: rgba(0, 0, 0, 0.03);
       --accent-blue: #007aff;
@@ -68,9 +68,15 @@
       --text-secondary: #6c6c70;
       --text-tertiary: #8e8e93;
       --shadow-ios: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
-      --nav-bg: rgba(255, 255, 255, 0.85);
+      --nav-bg: rgba(255, 255, 255, 0.88);
       --modal-bg: #ffffff;
       --input-bg: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Seamless Document Base Background to Prevent Scroll Mismatch Lines */
+    html {
+      background-color: var(--bg-main);
+      transition: background-color 0.3s ease;
     }
 
     /* Hide Scrollbar for WebKit (iOS Safari) and standard browsers */
@@ -95,7 +101,7 @@
     }
 
     body {
-      background-color: var(--bg-main);
+      background: linear-gradient(160deg, #0d111d 0%, #161b2c 50%, #101422 100%);
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
@@ -105,10 +111,14 @@
       padding-left: 14px;
       padding-right: 14px;
       position: relative;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
-    /* Fixed Seamless Gradient Backdrop Layer for iOS Safari/PWA */
+    body.light-theme {
+      background: linear-gradient(160deg, #f5f7fa 0%, #e2e8f0 100%);
+    }
+
+    /* Vibrant Rich Backdrop Fade Layer (FADE) */
     body::before {
       content: '';
       position: fixed;
@@ -119,10 +129,17 @@
       width: 100vw;
       height: 100vh;
       background-image: 
-        radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.12) 0%, transparent 45%),
-        radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 45%);
+        radial-gradient(circle at 10% 15%, rgba(10, 132, 255, 0.28) 0%, transparent 50%),
+        radial-gradient(circle at 90% 35%, rgba(191, 90, 242, 0.22) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(48, 209, 88, 0.20) 0%, transparent 55%);
       pointer-events: none;
       z-index: -1;
+    }
+
+    body.light-theme::before {
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(0, 122, 255, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 90% 85%, rgba(52, 199, 89, 0.15) 0%, transparent 50%);
     }
 
     /* Inline Splash Overlay Screen */
@@ -139,10 +156,10 @@
     }
 
     #appSplashOverlay img {
-      width: 260px;
-      max-width: 70vw;
+      width: 130px;
+      max-width: 40vw;
       height: auto;
-      border-radius: 24px;
+      border-radius: 18px;
     }
 
     /* System Icons Styling */
@@ -171,18 +188,23 @@
     .tab-view { display: none; flex-direction: column; gap: 14px; }
     .tab-view.active { display: flex; }
 
-    /* Header & Navigation Pills */
+    /* Header & Navigation Pills - Isolated Layer to Prevent WebKit Backdrop Blur Bleeding */
     header {
       display: flex;
       flex-direction: column;
       gap: 8px;
       padding: 2px 2px;
+      position: relative;
+      z-index: 10;
+      isolation: isolate;
     }
 
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      isolation: isolate;
     }
 
     header h1 {
@@ -190,6 +212,9 @@
       font-weight: 800;
       letter-spacing: -0.3px;
       color: var(--text-primary);
+      position: relative;
+      z-index: 2;
+      isolation: isolate;
     }
 
     .btn-settings-icon {
@@ -203,8 +228,13 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       transition: all 0.2s ease;
+      position: relative;
+      z-index: 1;
+      isolation: isolate;
+      transform: translateZ(0);
     }
 
     .btn-settings-icon:active {
@@ -217,6 +247,9 @@
       gap: 5px;
       overflow-x: auto;
       padding-bottom: 2px;
+      position: relative;
+      z-index: 1;
+      isolation: isolate;
     }
 
     /* Compact Top Action Buttons */
@@ -229,12 +262,15 @@
       font-size: 0.72rem;
       font-weight: 600;
       cursor: pointer;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: all 0.2s ease;
       white-space: nowrap;
       display: flex;
       align-items: center;
       gap: 4px;
+      isolation: isolate;
+      transform: translateZ(0);
     }
 
     body.light-theme .top-btn {
@@ -243,17 +279,18 @@
 
     .top-btn:active { transform: scale(0.95); opacity: 0.8; }
 
-    .top-btn.cloud { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); border-color: rgba(10, 132, 255, 0.35); }
-    .top-btn.excel { background: rgba(48, 209, 88, 0.15); color: var(--accent-green); border-color: rgba(48, 209, 88, 0.35); }
-    .top-btn.danger { background: rgba(255, 69, 58, 0.15); color: var(--accent-red); border-color: rgba(255, 69, 58, 0.35); }
+    .top-btn.cloud { background: rgba(10, 132, 255, 0.18); color: var(--accent-blue); border-color: rgba(10, 132, 255, 0.35); }
+    .top-btn.excel { background: rgba(48, 209, 88, 0.18); color: var(--accent-green); border-color: rgba(48, 209, 88, 0.35); }
+    .top-btn.danger { background: rgba(255, 69, 58, 0.18); color: var(--accent-red); border-color: rgba(255, 69, 58, 0.35); }
 
-    /* iOS Glass Cards */
+    /* Modern Glass Cards with Gradient FADE Background */
     .card {
       background: var(--card-bg);
       border-radius: 24px;
       padding: 16px;
       border: 1px solid var(--card-border);
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       box-shadow: var(--shadow-ios);
     }
 
@@ -325,7 +362,7 @@
       justify-content: space-between;
       padding: 5px;
       font-size: 0.85rem;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -333,9 +370,9 @@
     .day-cell:active { transform: scale(0.94); }
 
     .day-cell.today {
-      background: rgba(48, 209, 88, 0.18) !important;
+      background: rgba(48, 209, 88, 0.2) !important;
       border: 1.5px solid var(--accent-green) !important;
-      box-shadow: 0 0 12px rgba(48, 209, 88, 0.25);
+      box-shadow: 0 0 12px rgba(48, 209, 88, 0.3);
     }
 
     .day-cell.today > span:first-child { color: var(--accent-green); font-weight: 800; }
@@ -344,23 +381,26 @@
     .day-net { font-size: 0.65rem; color: var(--accent-green); font-weight: 800; }
     .day-location { font-size: 0.55rem; color: var(--text-secondary); }
 
-    /* Monthly Summary Box */
+    /* Monthly Summary Box - Enlarged Green Net Text & Gradient */
     .big-net-box {
-      background: linear-gradient(135deg, rgba(48, 209, 88, 0.18) 0%, rgba(10, 132, 255, 0.1) 100%);
-      border: 1px solid rgba(48, 209, 88, 0.35);
+      background: linear-gradient(135deg, rgba(48, 209, 88, 0.22) 0%, rgba(10, 132, 255, 0.15) 100%);
+      border: 1px solid rgba(48, 209, 88, 0.4);
       border-radius: 20px;
       padding: 16px;
       text-align: center;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
     }
 
     .big-net-label { font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
+    
     .big-net-value { 
-      font-size: 2.3rem; 
+      font-size: 3.4rem;
       font-weight: 900; 
       color: var(--accent-green); 
-      margin-top: 4px;
-      letter-spacing: -1px;
+      margin-top: 2px;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
       font-feature-settings: "tnum";
     }
 
@@ -375,11 +415,16 @@
       border: 1px solid var(--card-border);
     }
     .summary-item .title { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
-    .summary-item .val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+    
+    .summary-item .val { 
+      font-size: 1.18rem; 
+      font-weight: 800; 
+      color: var(--text-primary); 
+    }
 
     /* Cash Tracking List Items */
     .cash-order-item {
-      background: rgba(255, 69, 58, 0.14);
+      background: linear-gradient(135deg, rgba(255, 69, 58, 0.18) 0%, rgba(255, 69, 58, 0.08) 100%);
       border: 1.5px solid var(--accent-red);
       border-radius: 18px;
       padding: 14px;
@@ -420,13 +465,13 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+      box-shadow: 0 4px 18px rgba(10, 132, 255, 0.35);
       transition: transform 0.2s ease;
     }
 
     .btn-camera-upload.orange {
       background: linear-gradient(135deg, var(--accent-orange) 0%, #c67a00 100%);
-      box-shadow: 0 4px 15px rgba(255, 159, 10, 0.3);
+      box-shadow: 0 4px 18px rgba(255, 159, 10, 0.35);
       color: #fff;
     }
 
@@ -446,12 +491,13 @@
     }
     .photo-img { width: 100%; height: 130px; object-fit: cover; border-radius: 12px; cursor: pointer; }
     .photo-time-tag { font-size: 0.72rem; color: var(--text-secondary); font-weight: 600; text-align: center; }
-    .photo-note-tag { font-size: 0.75rem; color: var(--accent-orange); font-weight: 800; text-align: center; word-break: break-all; }
+    .photo-note-tag { font-size: 0.78rem; color: var(--accent-orange); font-weight: 800; text-align: center; word-break: break-all; }
 
     .btn-del-photo {
       position: absolute; top: 12px; left: 12px;
       background: rgba(0, 0, 0, 0.65); color: #fff;
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255,255,255,0.25); 
       width: 28px; height: 28px; border-radius: 50%;
       font-weight: bold; cursor: pointer;
@@ -473,7 +519,7 @@
       gap: 8px;
       cursor: pointer;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(48, 209, 88, 0.3);
+      box-shadow: 0 4px 18px rgba(48, 209, 88, 0.35);
     }
 
     /* Theme Toggle Switch Control */
@@ -520,7 +566,8 @@
       padding: 8px 4px;
       z-index: 900; 
       backdrop-filter: blur(25px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      -webkit-backdrop-filter: blur(25px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
 
     .nav-item {
@@ -542,7 +589,7 @@
 
     .nav-item.active { 
       color: var(--accent-blue);
-      background: rgba(10, 132, 255, 0.15);
+      background: rgba(10, 132, 255, 0.18);
     }
 
     .nav-item .app-icon {
@@ -553,8 +600,9 @@
     /* iOS Bottom Sheets (Modals) */
     .modal-overlay {
       position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(12px);
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       display: none; 
       justify-content: flex-end; 
       flex-direction: column;
@@ -578,7 +626,7 @@
       max-height: 90vh; 
       overflow-y: auto;
       border-top: 1px solid var(--card-border);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -719,7 +767,7 @@
 
 <!-- Instant App Splash Screen Overlay -->
 <div id="appSplashOverlay">
-  <img src="splash-01.png?v=10" alt="Neto Courier Logo">
+  <img src="splash-01.png?v=12" alt="Neto Courier Logo">
 </div>
 
 <!-- Hidden SVG Sprite Sheet -->
@@ -748,7 +796,7 @@
     <circle cx="18" cy="6" r="1" fill="currentColor"/>
   </symbol>
 
-  <!-- 4. Banknote / Cash Icon (שטר כסף מודרני) -->
+  <!-- 4. Banknote / Cash Icon -->
   <symbol id="icon-cash" viewBox="0 0 24 24">
     <rect x="2" y="6" width="20" height="12" rx="2.5"/>
     <circle cx="12" cy="12" r="3"/>
@@ -771,7 +819,7 @@
     <path d="M7 10l5 6M12 10l-5 6M15 11h3M15 15h3"/>
   </symbol>
 
-  <!-- 8. Cloud Sync Icon (Clean Rounded Cloud) -->
+  <!-- 8. Cloud Sync Icon -->
   <symbol id="icon-cloud" viewBox="0 0 24 24">
     <path d="M18 10h-1.26A8 8 0 1 0 3 16.3 4 4 0 0 0 6.5 18h11.5a4.5 4.5 0 0 0 0-9z"/>
   </symbol>
@@ -787,7 +835,7 @@
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
   </symbol>
 
-  <!-- 11. WhatsApp Icon (Line-Art) -->
+  <!-- 11. WhatsApp Icon -->
   <symbol id="icon-whatsapp" viewBox="0 0 24 24">
     <path d="M3 21l1.65-3.8A9 9 0 1 1 12 21a8.9 8.9 0 0 1-4.6-1.3L3 21z"/>
     <path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5"/>
@@ -814,7 +862,7 @@
         <svg class="app-icon"><use href="#icon-download"/></svg> גיבוי
       </button>
       
-      <!-- Native HTML Label Trigger for 100% Reliable File Picker on iOS WebKit -->
+      <!-- Native HTML Label Trigger for File Import -->
       <label class="top-btn" for="importFileInput">
         <svg class="app-icon"><use href="#icon-upload"/></svg> שחזור
       </label>
@@ -935,7 +983,7 @@
           <input type="file" accept="image/*" capture="environment" id="dropoffFileInput" onchange="handleDropoffCapture(event)" style="display:none;">
         </label>
         <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-          <input type="text" id="dropoffNoteInput" placeholder="מספר דירה / שם לקוח (רשות)" style="padding:10px; font-size:0.85rem; height:auto;">
+          <input type="text" id="dropoffNoteInput" placeholder="מספר דירה / שם לקוח / מיקום" style="padding:10px; font-size:0.85rem; height:auto;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-size:0.8rem; color:var(--text-secondary);">תאריך המסירה:</label>
             <input type="date" id="dropoffTargetDate" style="width:160px; padding:8px; height:auto;">
@@ -986,7 +1034,7 @@
       <button class="close-btn" onclick="closeModal('cashCalcModal')">✕</button>
     </div>
 
-    <div class="breakdown-box" style="background:rgba(255,69,58,0.1); border-color:rgba(255,69,58,0.3);">
+    <div class="breakdown-box" style="background:rgba(255,69,58,0.12); border-color:rgba(255,69,58,0.35);">
       <div class="b-row" style="font-size:1.1rem; font-weight:800; color:var(--accent-red);">
         <span>מחיר המשלוח לגבייה:</span>
         <span id="calcOrderPriceDisplay">0.00 ₪</span>
@@ -1026,7 +1074,7 @@
   </div>
 </div>
 
-<!-- Modal Receipt Tip Prompt (הזנת טיפ באשראי בעת צילום קבלה) -->
+<!-- Modal Receipt Tip Prompt -->
 <div class="modal-overlay" id="receiptTipModal">
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
@@ -1051,7 +1099,7 @@
   </div>
 </div>
 
-<!-- Modal Full-Screen Image Preview (חלון תצוגת תמונה עם כפתור חזור, זום וגרירה בשתי אצבעות) -->
+<!-- Modal Full-Screen Image Preview -->
 <div class="modal-overlay" id="imagePreviewModal" style="z-index: 1000; background: rgba(0, 0, 0, 0.94);">
   <div style="position: absolute; top: max(16px, env(safe-area-inset-top)); left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 1001;">
     <button class="top-btn" style="padding: 10px 18px; font-size: 0.95rem; font-weight: 800; background: rgba(255,255,255,0.22); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 20px; backdrop-filter: blur(15px);" onclick="closeModal('imagePreviewModal')">
@@ -1141,7 +1189,7 @@
       <label>1. ערכת נושא (Theme):</label>
       <div class="theme-toggle-box">
         <button class="theme-opt-btn active" id="themeDarkBtn" onclick="setTheme('dark')">🌙 כהה (Dark)</button>
-        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀️ בהיר (Light)</button>
+        <button class="theme-opt-btn" id="themeLightBtn" onclick="setTheme('light')">☀ בהיר (Light)</button>
       </div>
     </div>
 
@@ -1157,7 +1205,7 @@
 
     <div class="form-group" style="margin-top:6px;">
       <label>4. היסטוריית מזומן:</label>
-      <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px; background:rgba(10,132,255,0.12); color:var(--accent-blue);" onclick="openCashHistoryModal()">
+      <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px; background:rgba(10,132,255,0.15); color:var(--accent-blue);" onclick="openCashHistoryModal()">
         <svg class="app-icon"><use href="#icon-cash"/></svg> היסטוריית תשלומי מזומן
       </button>
     </div>
@@ -1390,10 +1438,17 @@
     document.getElementById('customDialogModal').classList.add('active');
   }
 
-  /* Theme Management */
+  /* Theme Management with Dynamic iOS Safari Status Bar Sync & Vivid Gradient Fade */
   function applyTheme(theme) {
     currentTheme = theme;
     localStorage.setItem('solo_theme', theme);
+    
+    const themeColor = theme === 'light' ? '#f0f3f8' : '#0d111d';
+    document.documentElement.style.backgroundColor = themeColor;
+
+    const metaTheme = document.getElementById('themeColorMeta');
+    if (metaTheme) metaTheme.setAttribute('content', themeColor);
+
     if (theme === 'light') {
       document.body.classList.add('light-theme');
       document.getElementById('themeLightBtn').classList.add('active');
@@ -1942,7 +1997,7 @@
     sheet.addRow([]);
     sheet.addRow([]);
 
-    // Table 3: Receipts with Auto-Oriented Images
+    // Table 3: Receipts
     const recHeader = sheet.addRow(['קבלות טיפים באשראי', 'תמונת הקבלה']);
     recHeader.getCell(1).fill = headerFill;
     recHeader.getCell(1).font = fontHeader;
@@ -1979,7 +2034,7 @@
     sheet.addRow([]);
     sheet.addRow([]);
 
-    // Table 4: Dropoffs with Auto-Oriented Images
+    // Table 4: Dropoffs
     const dropHeader = sheet.addRow(['תיעודי מסירה בדלת', 'תאריך ושעה', 'הערה / מס\' דירה', 'תמונת מסירה']);
     dropHeader.eachCell(c => {
       c.fill = headerFill;
@@ -2012,12 +2067,10 @@
       }
     }
 
-    // Adjust Columns Width
     sheet.columns.forEach((col, i) => {
       col.width = i === 1 || i === 3 ? 22 : 15;
     });
 
-    // Save File
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
@@ -2029,7 +2082,7 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showCustomAlert("ייצוא לאקסל", `הדוח החודשי המלא (${monthNameStr}) הורד בהצלחה עם תמונות ישרות ומיושרות!`);
+    showCustomAlert("ייצוא לאקסל", `הדוח החודשי המלא (${monthNameStr}) הורד בהצלחה!`);
   }
 
   /* IndexedDB Setup for Receipts & Drop-off Photos */
@@ -2221,8 +2274,8 @@
     }
 
     document.getElementById('mBigNet').innerText = `${monthlyNetProfit.toFixed(2)} ₪`;
-    document.getElementById('mCompanySalary').innerHTML = `${monthlyBaseSalary.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyHours.toFixed(2)} שעות)</small>`;
-    document.getElementById('mCreditTips').innerHTML = `${monthlyCreditTipsNet.toFixed(2)} ₪ <small style="font-size:0.75rem; color:var(--text-secondary);">(${monthlyCreditTipsGross.toFixed(2)} ₪ לפני מע"מ)</small>`;
+    document.getElementById('mCompanySalary').innerHTML = `${monthlyBaseSalary.toFixed(2)} ₪ <small style="font-size:0.82rem; color:var(--text-secondary); font-weight:600;">(${monthlyHours.toFixed(2)} שעות)</small>`;
+    document.getElementById('mCreditTips').innerHTML = `${monthlyCreditTipsNet.toFixed(2)} ₪ <small style="font-size:0.82rem; color:var(--text-secondary); font-weight:600;">(${monthlyCreditTipsGross.toFixed(2)} ₪ לפני מע"מ)</small>`;
     document.getElementById('mTotalKm').innerText = `${monthlyKm} ק"מ`;
 
     if (db) {
@@ -2386,10 +2439,8 @@
       const dateToUpdate = pendingReceiptDate;
       const recIdToUpdate = pendingReceiptId;
 
-      // Immediately update shiftsData & re-render calendar
       addCreditTipToDate(dateToUpdate, tipVal);
 
-      // Save tip amount to receipt in IndexedDB
       if (db) {
         const tx = db.transaction("receipts", "readwrite");
         const store = tx.objectStore("receipts");
@@ -2488,7 +2539,7 @@
     };
   }
 
-  /* Door Drop-off Photos Logic */
+  /* Door Drop-off Photos Logic (Location Red Pin Emoji Matching Cash Page) */
   function handleDropoffCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -2547,7 +2598,7 @@
           <button class="btn-del-photo" onclick="deleteDropoff(${d.id})">✕</button>
           <img src="${d.imageData}" class="photo-img" onclick="previewImage('${d.imageData}')">
           <div class="photo-time-tag">${d.date} | ${d.time || ''}</div>
-          ${d.note ? `<div class="photo-note-tag" style="color:var(--accent-blue);">${d.note}</div>` : ''}
+          ${d.note ? `<div class="photo-note-tag" style="color:var(--accent-blue);">📍 ${d.note}</div>` : ''}
         `;
         grid.appendChild(item);
       });
@@ -2613,13 +2664,11 @@
         const currentMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
         const currentMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 
-        // Zoom Handling
         if (lastTouchDist > 0) {
           const factor = dist / lastTouchDist;
           imgScale = Math.min(Math.max(1, imgScale * factor), 5);
         }
 
-        // Parallel Two-finger Pan / Move Handling
         if (lastMidX !== 0 || lastMidY !== 0) {
           const deltaX = currentMidX - lastMidX;
           const deltaY = currentMidY - lastMidY;
