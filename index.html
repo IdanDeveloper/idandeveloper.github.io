@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" style="background-color: #2B2F3A;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -8,6 +8,10 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+
+  <!-- iOS Theme Color & Background to Prevent White Flash on Launch -->
+  <meta name="theme-color" content="#2B2F3A">
+  <meta name="msapplication-TileColor" content="#2B2F3A">
 
   <!-- iOS Home Screen Icon & PWA WebClip Settings -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,6 +38,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 
   <style>
+    /* Immediate Root Background Color to Eliminate iOS PWA White Flash */
+    html {
+      background-color: #2B2F3A !important;
+    }
+
     :root {
       --bg-main: #141824;
       --card-bg: rgba(255, 255, 255, 0.07);
