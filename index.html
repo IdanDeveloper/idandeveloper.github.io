@@ -25,22 +25,22 @@
 
   <style>
     :root {
-      --bg-main: #07090e;
-      --card-bg: rgba(255, 255, 255, 0.04);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-inner: rgba(0, 0, 0, 0.28);
+      --bg-main: #141824;
+      --card-bg: rgba(255, 255, 255, 0.07);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --card-inner: rgba(0, 0, 0, 0.22);
       --accent-blue: #0a84ff;
       --accent-green: #30d158;
       --accent-red: #ff453a;
       --accent-orange: #ff9f0a;
       --accent-purple: #bf5af2;
       --text-primary: #ffffff;
-      --text-secondary: #8e8e93;
-      --text-tertiary: #636366;
+      --text-secondary: #9ea4b5;
+      --text-tertiary: #6e7382;
       --shadow-ios: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --nav-bg: rgba(28, 28, 30, 0.8);
-      --modal-bg: #1c1c1e;
-      --input-bg: rgba(255, 255, 255, 0.06);
+      --nav-bg: rgba(30, 35, 48, 0.88);
+      --modal-bg: #212636;
+      --input-bg: rgba(255, 255, 255, 0.08);
     }
 
     body.light-theme {
@@ -93,8 +93,8 @@
       padding-left: 14px;
       padding-right: 14px;
       background-image: 
-        radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.06) 0%, transparent 40%);
+        radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.08) 0%, transparent 40%);
       background-attachment: fixed;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
@@ -175,12 +175,12 @@
 
     /* Compact Top Action Buttons */
     .top-btn {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text-primary);
       border: 1px solid var(--card-border);
-      padding: 4px 9px;
+      padding: 5px 10px;
       border-radius: 16px;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 600;
       cursor: pointer;
       backdrop-filter: blur(10px);
@@ -197,9 +197,9 @@
 
     .top-btn:active { transform: scale(0.95); opacity: 0.8; }
 
-    .top-btn.cloud { background: rgba(10, 132, 255, 0.12); color: var(--accent-blue); border-color: rgba(10, 132, 255, 0.3); }
-    .top-btn.excel { background: rgba(48, 209, 88, 0.12); color: var(--accent-green); border-color: rgba(48, 209, 88, 0.3); }
-    .top-btn.danger { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); border-color: rgba(255, 69, 58, 0.3); }
+    .top-btn.cloud { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); border-color: rgba(10, 132, 255, 0.35); }
+    .top-btn.excel { background: rgba(48, 209, 88, 0.15); color: var(--accent-green); border-color: rgba(48, 209, 88, 0.35); }
+    .top-btn.danger { background: rgba(255, 69, 58, 0.15); color: var(--accent-red); border-color: rgba(255, 69, 58, 0.35); }
 
     /* iOS Glass Cards */
     .card {
@@ -229,7 +229,7 @@
     }
 
     .cal-nav button {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
       color: var(--text-primary);
       border: 1px solid var(--card-border);
       width: 34px;
@@ -279,7 +279,7 @@
       justify-content: space-between;
       padding: 5px;
       font-size: 0.85rem;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -287,9 +287,9 @@
     .day-cell:active { transform: scale(0.94); }
 
     .day-cell.today {
-      background: rgba(48, 209, 88, 0.15) !important;
+      background: rgba(48, 209, 88, 0.18) !important;
       border: 1.5px solid var(--accent-green) !important;
-      box-shadow: 0 0 12px rgba(48, 209, 88, 0.2);
+      box-shadow: 0 0 12px rgba(48, 209, 88, 0.25);
     }
 
     .day-cell.today > span:first-child { color: var(--accent-green); font-weight: 800; }
@@ -300,8 +300,8 @@
 
     /* Monthly Summary Box */
     .big-net-box {
-      background: linear-gradient(135deg, rgba(48, 209, 88, 0.15) 0%, rgba(10, 132, 255, 0.08) 100%);
-      border: 1px solid rgba(48, 209, 88, 0.3);
+      background: linear-gradient(135deg, rgba(48, 209, 88, 0.18) 0%, rgba(10, 132, 255, 0.1) 100%);
+      border: 1px solid rgba(48, 209, 88, 0.35);
       border-radius: 20px;
       padding: 16px;
       text-align: center;
@@ -333,7 +333,7 @@
 
     /* Cash Tracking List Items */
     .cash-order-item {
-      background: rgba(255, 69, 58, 0.12);
+      background: rgba(255, 69, 58, 0.14);
       border: 1.5px solid var(--accent-red);
       border-radius: 18px;
       padding: 14px;
@@ -398,18 +398,19 @@
       position: relative;
       overflow: hidden;
     }
-    .photo-img { width: 100%; height: 130px; object-fit: cover; border-radius: 12px; }
+    .photo-img { width: 100%; height: 130px; object-fit: cover; border-radius: 12px; cursor: pointer; }
     .photo-time-tag { font-size: 0.72rem; color: var(--text-secondary); font-weight: 600; text-align: center; }
-    .photo-note-tag { font-size: 0.72rem; color: var(--accent-blue); font-weight: 700; text-align: center; word-break: break-all; }
+    .photo-note-tag { font-size: 0.75rem; color: var(--accent-orange); font-weight: 800; text-align: center; word-break: break-all; }
 
     .btn-del-photo {
       position: absolute; top: 12px; left: 12px;
-      background: rgba(0, 0, 0, 0.6); color: #fff;
+      background: rgba(0, 0, 0, 0.65); color: #fff;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2); 
+      border: 1px solid rgba(255,255,255,0.25); 
       width: 28px; height: 28px; border-radius: 50%;
       font-weight: bold; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
+      z-index: 5;
     }
 
     .btn-share-whatsapp {
@@ -495,7 +496,7 @@
 
     .nav-item.active { 
       color: var(--accent-blue);
-      background: rgba(10, 132, 255, 0.12);
+      background: rgba(10, 132, 255, 0.15);
     }
 
     .nav-item .app-icon {
@@ -506,7 +507,7 @@
     /* iOS Bottom Sheets (Modals) */
     .modal-overlay {
       position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(12px);
       display: none; 
       justify-content: flex-end; 
@@ -974,6 +975,43 @@
   </div>
 </div>
 
+<!-- Modal Receipt Tip Prompt (הזנת טיפ באשראי בעת צילום קבלה) -->
+<div class="modal-overlay" id="receiptTipModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" style="color:var(--accent-orange);">💳 טיפ בקבלה באשראי</span>
+      <button class="close-btn" onclick="skipReceiptTip()">✕</button>
+    </div>
+
+    <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">
+      הזן את סכום הטיפ באשראי (ברוטו) הרשום בקבלה שצולמה. הסכום יתווסף אוטומטית למאזן הטיפים היומי (לאחר ניכוי 18% מע"מ).
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>סכום הטיפ (ברוטו) ₪:</label>
+      <input type="number" id="receiptTipInput" inputmode="decimal" placeholder="0.00" style="font-size:1.5rem; text-align:center; padding:12px; font-weight:800; height:auto;">
+    </div>
+
+    <div class="sheet-actions" style="margin-top:8px;">
+      <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="confirmReceiptTip()">שמור טיפ ועדכן מאזן</button>
+      <button class="btn-delete" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:none;" onclick="skipReceiptTip()">ללא טיפ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Full-Screen Image Preview (חלון תצוגת תמונה עם כפתור חזור וזום בצביטה) -->
+<div class="modal-overlay" id="imagePreviewModal" style="z-index: 1000; background: rgba(0, 0, 0, 0.94);">
+  <div style="position: absolute; top: max(16px, env(safe-area-inset-top)); left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 1001;">
+    <button class="top-btn" style="padding: 10px 18px; font-size: 0.95rem; font-weight: 800; background: rgba(255,255,255,0.22); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 20px; backdrop-filter: blur(15px);" onclick="closeModal('imagePreviewModal')">
+      ✕ חזור
+    </button>
+  </div>
+  <div id="imagePreviewContainer" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box;">
+    <img id="previewImg" src="" style="max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: 12px; transform-origin: center; touch-action: none; transition: transform 0.05s ease-out;">
+  </div>
+</div>
+
 <!-- Modal Shift Edit (iOS Sheet) -->
 <div class="modal-overlay" id="formModal">
   <div class="modal-sheet">
@@ -1208,6 +1246,9 @@
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
   let kmPerLiter = parseFloat(localStorage.getItem('solo_km_per_liter')) || 11.65;
   let currentTheme = localStorage.getItem('solo_theme') || 'dark';
+
+  let pendingReceiptId = null;
+  let pendingReceiptDate = null;
 
   /* Helper for Shift Date with Night Cutoff (before 05:00 AM = yesterday's shift) */
   function getShiftDate() {
@@ -1519,6 +1560,92 @@
     renderCalendar();
   }
 
+  /* Helper to Add Credit Tip to Date (after 18% VAT deduction) */
+  function addCreditTipToDate(targetDateKey, tipAmount) {
+    if (!tipAmount || tipAmount <= 0) return;
+
+    if (!shiftsData[targetDateKey]) {
+      shiftsData[targetDateKey] = {
+        startTime: '',
+        endTime: '',
+        totalHours: 0,
+        baseSalary: 0,
+        cashTips: 0,
+        creditTips: 0,
+        creditTipsNet: 0,
+        km: 0,
+        fuelExpense: 0,
+        grossEarnings: 0,
+        netProfit: 0,
+        effectiveHourlyNet: 0,
+        location: 'כרמיאל',
+        fuelPriceUsed: currentFuelPrice,
+        kmPerLiterUsed: kmPerLiter
+      };
+    }
+
+    const shift = shiftsData[targetDateKey];
+    shift.creditTips = (parseFloat(shift.creditTips) || 0) + tipAmount;
+
+    const totalHours = parseFloat(shift.totalHours) || 0;
+    const baseSalary = totalHours * HOURLY_RATE;
+    const creditTips = parseFloat(shift.creditTips) || 0;
+    const creditTipsNet = creditTips * (1 - VAT_RATE);
+    const cashTips = parseFloat(shift.cashTips) || 0;
+    const grossEarnings = baseSalary + cashTips + creditTipsNet;
+
+    const km = parseFloat(shift.km) || 0;
+    const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
+    const fuelExpense = litersUsed * (shift.fuelPriceUsed || currentFuelPrice);
+
+    const netProfit = grossEarnings - fuelExpense;
+    const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
+
+    shift.baseSalary = parseFloat(baseSalary.toFixed(2));
+    shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
+    shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+    shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
+    shift.netProfit = parseFloat(netProfit.toFixed(2));
+    shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+
+    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    syncWithCloud();
+    renderCalendar();
+  }
+
+  /* Helper to Deduct Credit Tip if receipt deleted */
+  function deductCreditTipFromDate(targetDateKey, tipAmount) {
+    if (!tipAmount || tipAmount <= 0 || !shiftsData[targetDateKey]) return;
+
+    const shift = shiftsData[targetDateKey];
+    shift.creditTips = Math.max(0, (parseFloat(shift.creditTips) || 0) - tipAmount);
+
+    const totalHours = parseFloat(shift.totalHours) || 0;
+    const baseSalary = totalHours * HOURLY_RATE;
+    const creditTips = parseFloat(shift.creditTips) || 0;
+    const creditTipsNet = creditTips * (1 - VAT_RATE);
+    const cashTips = parseFloat(shift.cashTips) || 0;
+    const grossEarnings = baseSalary + cashTips + creditTipsNet;
+
+    const km = parseFloat(shift.km) || 0;
+    const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
+    const fuelExpense = litersUsed * (shift.fuelPriceUsed || currentFuelPrice);
+
+    const netProfit = grossEarnings - fuelExpense;
+    const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
+
+    shift.baseSalary = parseFloat(baseSalary.toFixed(2));
+    shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
+    shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+    shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
+    shift.netProfit = parseFloat(netProfit.toFixed(2));
+    shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+
+    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    syncWithCloud();
+    renderCalendar();
+  }
+
   function confirmCashPayment() {
     const orderIndex = activeCashOrders.findIndex(o => o.id === selectedCashOrderId);
     if (orderIndex === -1) return;
@@ -1552,7 +1679,7 @@
 
     let alertMsg = "";
     if (change < 0) {
-      alertMsg = `המשלוח נשמר בהיסטוריה! ⚠️ שים לב שנרשם חוסר בתשלום של ${Math.abs(change).toFixed(2)} ₪.`;
+      alertMsg = `המשלוח נשמר בהיסטוריה! ⚠️️ שים לב שנרשם חוסר בתשלום של ${Math.abs(change).toFixed(2)} ₪.`;
     } else if (keepAsTip) {
       alertMsg = `התשלום אושר! עודף בסך ${change.toFixed(2)} ₪ התווסף אוטומטית לטיפים במזומן של היום, והלוח שנה והסיכום החודשי עודכנו!`;
     } else {
@@ -1775,7 +1902,8 @@
       sheet.addRow(['אין קבלות שמורות בחודש זה', '']);
     } else {
       for (let r of monthReceipts) {
-        const row = sheet.addRow([`תאריך: ${r.date}`, '']);
+        const tipStr = r.tipAmount ? ` | טיפ: ${parseFloat(r.tipAmount).toFixed(2)} ₪` : '';
+        const row = sheet.addRow([`תאריך: ${r.date}${tipStr}`, '']);
         row.height = 120;
         row.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' };
         row.getCell(1).font = { bold: true };
@@ -1882,6 +2010,7 @@
     initFirebaseIfAvailable();
     renderCalendar();
     renderActiveCashOrders();
+    initPinchToZoom();
   }
 
   document.addEventListener("visibilitychange", () => {
@@ -2154,7 +2283,7 @@
 
   function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-  /* Photo Receipts Logic */
+  /* Photo Receipts Logic with Automatic Tip Prompt */
   function handlePhotoCapture(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -2165,14 +2294,61 @@
     reader.onload = function(event) {
       const base64Img = event.target.result;
       const tx = db.transaction("receipts", "readwrite");
-      tx.objectStore("receipts").add({
+      const store = tx.objectStore("receipts");
+      
+      const addReq = store.add({
         date: targetDate,
         imageData: base64Img,
+        tipAmount: 0,
         createdAt: new Date().toISOString()
       });
-      tx.oncomplete = () => loadMonthReceipts();
+
+      addReq.onsuccess = (evt) => {
+        pendingReceiptId = evt.target.result;
+        pendingReceiptDate = targetDate;
+        loadMonthReceipts();
+
+        // Trigger automatic tip entry modal
+        document.getElementById('receiptTipInput').value = '';
+        document.getElementById('receiptTipModal').classList.add('active');
+        setTimeout(() => document.getElementById('receiptTipInput').focus(), 300);
+      };
     };
     reader.readAsDataURL(file);
+    e.target.value = '';
+  }
+
+  function confirmReceiptTip() {
+    const tipVal = parseFloat(document.getElementById('receiptTipInput').value);
+
+    if (tipVal && tipVal > 0 && pendingReceiptId) {
+      const tx = db.transaction("receipts", "readwrite");
+      const store = tx.objectStore("receipts");
+      const getReq = store.get(pendingReceiptId);
+
+      getReq.onsuccess = () => {
+        const rec = getReq.result;
+        if (rec) {
+          rec.tipAmount = tipVal;
+          store.put(rec);
+        }
+      };
+
+      tx.oncomplete = () => {
+        addCreditTipToDate(pendingReceiptDate, tipVal);
+        loadMonthReceipts();
+      };
+    }
+
+    closeModal('receiptTipModal');
+    pendingReceiptId = null;
+    pendingReceiptDate = null;
+  }
+
+  function skipReceiptTip() {
+    closeModal('receiptTipModal');
+    pendingReceiptId = null;
+    pendingReceiptDate = null;
   }
 
   function loadMonthReceipts() {
@@ -2200,10 +2376,12 @@
       monthReceipts.forEach(r => {
         const item = document.createElement('div');
         item.className = 'photo-card';
+        const tipTagHtml = r.tipAmount ? `<div class="photo-note-tag">📍 טיפ: ${parseFloat(r.tipAmount).toFixed(2)} ₪</div>` : '';
         item.innerHTML = `
           <button class="btn-del-photo" onclick="deleteReceipt(${r.id})">✕</button>
           <img src="${r.imageData}" class="photo-img" onclick="previewImage('${r.imageData}')">
           <div class="photo-time-tag">תאריך: ${r.date}</div>
+          ${tipTagHtml}
         `;
         grid.appendChild(item);
       });
@@ -2211,17 +2389,34 @@
   }
 
   function deleteReceipt(id) {
-    showCustomConfirm(
-      "מחיקת קבלה",
-      "האם אתה בטוח שברצונך למחוק קבלה זו?",
-      () => {
-        const tx = db.transaction("receipts", "readwrite");
-        tx.objectStore("receipts").delete(id);
-        tx.oncomplete = () => loadMonthReceipts();
-      },
-      "מחק קבלה",
-      true
-    );
+    if (!db) return;
+    const tx = db.transaction("receipts", "readonly");
+    const store = tx.objectStore("receipts");
+    const req = store.get(id);
+
+    req.onsuccess = () => {
+      const rec = req.result;
+      if (!rec) return;
+
+      const confirmMsg = rec.tipAmount && rec.tipAmount > 0 
+        ? `האם אתה בטוח שברצונך למחוק קבלה זו (ואת הטיפ בסך ${rec.tipAmount.toFixed(2)} ₪ שמשויך אליה)?`
+        : "האם אתה בטוח שברצונך למחוק קבלה זו?";
+
+      showCustomConfirm(
+        "מחיקת קבלה",
+        confirmMsg,
+        () => {
+          if (rec.tipAmount && rec.tipAmount > 0) {
+            deductCreditTipFromDate(rec.date, rec.tipAmount);
+          }
+          const delTx = db.transaction("receipts", "readwrite");
+          delTx.objectStore("receipts").delete(id);
+          delTx.oncomplete = () => loadMonthReceipts();
+        },
+        "מחק קבלה",
+        true
+      );
+    };
   }
 
   /* Door Drop-off Photos Logic */
@@ -2251,6 +2446,7 @@
       };
     };
     reader.readAsDataURL(file);
+    e.target.value = '';
   }
 
   function loadMonthDropoffs() {
@@ -2282,7 +2478,7 @@
           <button class="btn-del-photo" onclick="deleteDropoff(${d.id})">✕</button>
           <img src="${d.imageData}" class="photo-img" onclick="previewImage('${d.imageData}')">
           <div class="photo-time-tag">📅 ${d.date} | ⏰ ${d.time || ''}</div>
-          ${d.note ? `<div class="photo-note-tag">📍 ${d.note}</div>` : ''}
+          ${d.note ? `<div class="photo-note-tag" style="color:var(--accent-blue);">📍 ${d.note}</div>` : ''}
         `;
         grid.appendChild(item);
       });
@@ -2303,9 +2499,63 @@
     );
   }
 
+  /* Full-Screen Image Preview Modal with Return Button & Touch Pinch-to-Zoom */
+  let imgScale = 1;
+  let startX = 0, startY = 0, translateX = 0, translateY = 0;
+  let lastTouchDist = 0;
+  let isDragging = false;
+
   function previewImage(src) {
-    const w = window.open("");
-    w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+    const img = document.getElementById('previewImg');
+    img.src = src;
+    imgScale = 1;
+    translateX = 0;
+    translateY = 0;
+    img.style.transform = `translate(0px, 0px) scale(1)`;
+    document.getElementById('imagePreviewModal').classList.add('active');
+  }
+
+  function initPinchToZoom() {
+    const imgEl = document.getElementById('previewImg');
+
+    imgEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        lastTouchDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+      } else if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+      }
+    });
+
+    imgEl.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        if (lastTouchDist > 0) {
+          const factor = dist / lastTouchDist;
+          imgScale = Math.min(Math.max(1, imgScale * factor), 4);
+        }
+        lastTouchDist = dist;
+        imgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${imgScale})`;
+      } else if (e.touches.length === 1 && isDragging && imgScale > 1) {
+        e.preventDefault();
+        translateX = e.touches[0].clientX - startX;
+        translateY = e.touches[0].clientY - startY;
+        imgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${imgScale})`;
+      }
+    });
+
+    imgEl.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) lastTouchDist = 0;
+      if (e.touches.length === 0) isDragging = false;
+    });
   }
 
   async function shareMonthReceiptsWhatsApp() {
