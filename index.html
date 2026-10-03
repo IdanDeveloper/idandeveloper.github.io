@@ -940,7 +940,7 @@
           <input type="file" accept="image/*" capture="environment" id="dropoffFileInput" onchange="handleDropoffCapture(event)" style="display:none;">
         </label>
         <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-          <input type="text" id="dropoffNoteInput" placeholder="מספר דירה / שם לקוח (רשות)" style="padding:10px; font-size:0.85rem; height:auto;">
+          <input type="text" id="dropoffNoteInput" placeholder="📍 מספר דירה / שם לקוח / מיקום" style="padding:10px; font-size:0.85rem; height:auto;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-size:0.8rem; color:var(--text-secondary);">תאריך המסירה:</label>
             <input type="date" id="dropoffTargetDate" style="width:160px; padding:8px; height:auto;">
@@ -1996,7 +1996,7 @@
       sheet.addRow(['אין תמונות מסירה שמורות בחודש זה', '', '', '']);
     } else {
       for (let d of monthDropoffs) {
-        const row = sheet.addRow(['תיעוד מסירה', `${d.date} ${d.time || ''}`, d.note || '-', '']);
+        const row = sheet.addRow(['תיעוד מסירה', `${d.date} ${d.time || ''}`, d.note ? `📍 ${d.note}` : '-', '']);
         row.height = 120;
         row.eachCell(c => c.alignment = { vertical: 'middle', horizontal: 'center' });
 
@@ -2092,7 +2092,7 @@
   function parseFirebaseInput(input) {
     if (!input) return null;
     let str = input.trim();
-    str = str.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+    str = str.replace(/[“”]/g, '"').replace(/[’’]/g, "'");
 
     try {
       return JSON.parse(str);
@@ -2552,7 +2552,7 @@
           <button class="btn-del-photo" onclick="deleteDropoff(${d.id})">✕</button>
           <img src="${d.imageData}" class="photo-img" onclick="previewImage('${d.imageData}')">
           <div class="photo-time-tag">${d.date} | ${d.time || ''}</div>
-          ${d.note ? `<div class="photo-note-tag" style="color:var(--accent-blue);">${d.note}</div>` : ''}
+          ${d.note ? `<div class="photo-note-tag" style="color:var(--accent-blue);">📍 ${d.note}</div>` : ''}
         `;
         grid.appendChild(item);
       });
