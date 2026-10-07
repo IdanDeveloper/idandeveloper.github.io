@@ -464,6 +464,17 @@
       z-index: 5;
     }
 
+    .btn-share-photo {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(0, 0, 0, 0.65); color: var(--accent-green);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25); 
+      width: 28px; height: 28px; border-radius: 50%;
+      font-weight: bold; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+    }
+
     .btn-share-whatsapp {
       background: linear-gradient(135deg, var(--accent-green) 0%, #1eb047 100%);
       color: #fff;
@@ -1114,6 +1125,10 @@
           <option value="חיפה">חיפה</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>7. מחיר דלק (₪/ליטר)</label>
+        <input type="number" step="0.01" id="fuelPriceInput" inputmode="decimal" placeholder="8.25" oninput="calculateShift()">
+      </div>
     </div>
 
     <div class="breakdown-box">
@@ -1599,7 +1614,7 @@
 
     const km = parseFloat(shift.km) || 0;
     const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
-    const fuelExpense = litersUsed * (shift.fuelPriceUsed || currentFuelPrice);
+    const fuelExpense = litersUsed * (shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice);
 
     const netProfit = grossEarnings - fuelExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
@@ -1652,7 +1667,7 @@
 
     const km = parseFloat(shift.km) || 0;
     const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
-    const fuelExpense = litersUsed * (shift.fuelPriceUsed || currentFuelPrice);
+    const fuelExpense = litersUsed * (shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice);
 
     const netProfit = grossEarnings - fuelExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
@@ -1685,7 +1700,7 @@
 
     const km = parseFloat(shift.km) || 0;
     const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
-    const fuelExpense = litersUsed * (shift.fuelPriceUsed || currentFuelPrice);
+    const fuelExpense = litersUsed * (shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice);
 
     const netProfit = grossEarnings - fuelExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
@@ -2252,6 +2267,7 @@
     document.getElementById('creditTipsInput').value = existing.creditTips !== undefined ? existing.creditTips : '';
     document.getElementById('kmInput').value = existing.km !== undefined ? existing.km : '';
     document.getElementById('locationSelect').value = existing.location || 'כרמיאל';
+    document.getElementById('fuelPriceInput').value = existing.fuelPriceUsed !== undefined ? existing.fuelPriceUsed : currentFuelPrice;
 
     calculateShift();
     document.getElementById('formModal').classList.add('active');
@@ -2263,6 +2279,7 @@
     const cashTips = parseFloat(document.getElementById('cashTipsInput').value) || 0;
     const creditTips = parseFloat(document.getElementById('creditTipsInput').value) || 0;
     const km = parseFloat(document.getElementById('kmInput').value) || 0;
+    const fuelPrice = parseFloat(document.getElementById('fuelPriceInput').value) || currentFuelPrice;
 
     let totalHours = 0;
     if (startVal && endVal) {
@@ -2279,7 +2296,7 @@
     const grossEarnings = baseSalary + cashTips + creditTipsNet;
 
     const litersUsed = km / kmPerLiter;
-    const fuelExpense = litersUsed * currentFuelPrice;
+    const fuelExpense = litersUsed * fuelPrice;
 
     const netProfit = grossEarnings - fuelExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
@@ -2295,7 +2312,8 @@
       baseSalary: parseFloat(baseSalary.toFixed(2)), cashTips, creditTips,
       creditTipsNet: parseFloat(creditTipsNet.toFixed(2)), km,
       fuelExpense: parseFloat(fuelExpense.toFixed(2)), grossEarnings: parseFloat(grossEarnings.toFixed(2)),
-      netProfit: parseFloat(netProfit.toFixed(2)), effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2))
+      netProfit: parseFloat(netProfit.toFixed(2)), effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2)),
+      fuelPriceUsed: fuelPrice, kmPerLiterUsed: kmPerLiter
     };
   }
 
@@ -2324,7 +2342,10 @@
 
   function saveShiftData() {
     const calc = calculateShift();
-    shiftsData[selectedDateKey] = { ...calc, location: document.getElementById('locationSelect').value, fuelPriceUsed: currentFuelPrice, kmPerLiterUsed: kmPerLiter };
+    shiftsData[selectedDateKey] = { 
+      ...calc, 
+      location: document.getElementById('locationSelect').value 
+    };
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
     syncWithCloud();
     closeModal('formModal');
@@ -2453,6 +2474,9 @@
         const tipTagHtml = r.tipAmount ? `<div class="photo-note-tag">טיפ: ${parseFloat(r.tipAmount).toFixed(2)} ₪</div>` : '';
         item.innerHTML = `
           <button class="btn-del-photo" onclick="deleteReceipt(${r.id})">✕</button>
+          <button class="btn-share-photo" onclick="shareSinglePhotoWhatsApp('${r.imageData}', 'קבלה - ${r.date}')" title="שתף בוואטסאפ">
+            <svg class="app-icon" style="width:14px; height:14px;"><use href="#icon-whatsapp"/></svg>
+          </button>
           <img src="${r.imageData}" class="photo-img" onclick="previewImage('${r.imageData}')">
           <div class="photo-time-tag">תאריך: ${r.date}</div>
           ${tipTagHtml}
@@ -2550,6 +2574,9 @@
         item.className = 'photo-card';
         item.innerHTML = `
           <button class="btn-del-photo" onclick="deleteDropoff(${d.id})">✕</button>
+          <button class="btn-share-photo" onclick="shareSinglePhotoWhatsApp('${d.imageData}', 'מסירה - ${d.date} ${d.time || ''} ${d.note ? '📍 ' + d.note : ''}')" title="שתף בוואטסאפ">
+            <svg class="app-icon" style="width:14px; height:14px;"><use href="#icon-whatsapp"/></svg>
+          </button>
           <img src="${d.imageData}" class="photo-img" onclick="previewImage('${d.imageData}')">
           <div class="photo-time-tag">${d.date} | ${d.time || ''}</div>
           ${d.note ? `<div class="photo-note-tag" style="color:var(--accent-blue);">📍 ${d.note}</div>` : ''}
@@ -2571,6 +2598,32 @@
       "מחק תמונה",
       true
     );
+  }
+
+  /* Share Single Photo directly via WhatsApp / Web Share API */
+  async function shareSinglePhotoWhatsApp(base64Data, caption) {
+    try {
+      const res = await fetch(base64Data);
+      const blob = await res.blob();
+      const file = new File([blob], `neto_courier_${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: caption || 'תמונת מסירה - Neto Courier',
+          text: caption || '',
+          files: [file]
+        });
+      } else {
+        const a = document.createElement('a');
+        a.href = base64Data;
+        a.download = `neto_courier_${Date.now()}.jpg`;
+        a.click();
+        showCustomAlert("שתף תמונה", "התמונה הורדה למכשירך. כעת תוכל לשלוח אותה בוואטסאפ.");
+      }
+    } catch (err) {
+      console.error("Single photo share error:", err);
+      showCustomAlert("שגיאה", "שגיאה בשיתוף התמונה.");
+    }
   }
 
   /* Full-Screen Image Preview Modal with Multi-Touch Pinch Zoom & 2-Finger Parallel Panning */
