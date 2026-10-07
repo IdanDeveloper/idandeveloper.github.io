@@ -764,7 +764,7 @@
     <circle cx="18" cy="6" r="1" fill="currentColor"/>
   </symbol>
 
-  <!-- 4. Banknote / Cash Icon (שטר כסף מודרני) -->
+  <!-- 4. Banknote / Cash Icon -->
   <symbol id="icon-cash" viewBox="0 0 24 24">
     <rect x="2" y="6" width="20" height="12" rx="2.5"/>
     <circle cx="12" cy="12" r="3"/>
@@ -787,7 +787,7 @@
     <path d="M7 10l5 6M12 10l-5 6M15 11h3M15 15h3"/>
   </symbol>
 
-  <!-- 8. Cloud Sync Icon (Clean Rounded Cloud) -->
+  <!-- 8. Cloud Sync Icon -->
   <symbol id="icon-cloud" viewBox="0 0 24 24">
     <path d="M18 10h-1.26A8 8 0 1 0 3 16.3 4 4 0 0 0 6.5 18h11.5a4.5 4.5 0 0 0 0-9z"/>
   </symbol>
@@ -803,7 +803,7 @@
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
   </symbol>
 
-  <!-- 11. WhatsApp Icon (Line-Art) -->
+  <!-- 11. WhatsApp Icon -->
   <symbol id="icon-whatsapp" viewBox="0 0 24 24">
     <path d="M3 21l1.65-3.8A9 9 0 1 1 12 21a8.9 8.9 0 0 1-4.6-1.3L3 21z"/>
     <path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5"/>
@@ -879,7 +879,7 @@
     </div>
   </div>
 
-  <!-- TAB 2: CASH TRACKING (מעקב מזומן) -->
+  <!-- TAB 2: CASH TRACKING -->
   <div id="tabCash" class="tab-view">
     <div class="card">
       <div class="card-title">הוספת משלוח מזומן חדש</div>
@@ -991,7 +991,7 @@
   </button>
 </div>
 
-<!-- Modal Cash Order Calculator (קופה רושמת) -->
+<!-- Modal Cash Order Calculator -->
 <div class="modal-overlay" id="cashCalcModal">
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
@@ -1042,7 +1042,7 @@
   </div>
 </div>
 
-<!-- Modal Receipt Tip Prompt (הזנת טיפ באשראי בעת צילום קבלה) -->
+<!-- Modal Receipt Tip Prompt -->
 <div class="modal-overlay" id="receiptTipModal">
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
@@ -1067,7 +1067,7 @@
   </div>
 </div>
 
-<!-- Modal Full-Screen Image Preview (חלון תצוגת תמונה עם כפתור חזור, זום וגרירה בשתי אצבעות) -->
+<!-- Modal Full-Screen Image Preview -->
 <div class="modal-overlay" id="imagePreviewModal" style="z-index: 1000; background: rgba(0, 0, 0, 0.94);">
   <div style="position: absolute; top: max(16px, env(safe-area-inset-top)); left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 1001;">
     <button class="top-btn" style="padding: 10px 18px; font-size: 0.95rem; font-weight: 800; background: rgba(255,255,255,0.22); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 20px; backdrop-filter: blur(15px);" onclick="closeModal('imagePreviewModal')">
@@ -1125,7 +1125,7 @@
           <option value="חיפה">חיפה</option>
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group" style="grid-column: span 2;">
         <label>7. מחיר דלק (₪/ליטר)</label>
         <input type="number" step="0.01" id="fuelPriceInput" inputmode="decimal" placeholder="8.25" oninput="calculateShift()">
       </div>
@@ -1135,6 +1135,13 @@
       <div class="b-row"><span>שעות עבודה מדויקות:</span><span id="resHoursDisplay" style="color:var(--text-primary);">0.00 שעות</span></div>
       <div class="b-row gross"><span>כמה הרווחתי (ברוטו):</span><span id="resGrossDisplay">0.00 ₪</span></div>
       <div class="b-row expense"><span>כמה בזבזתי (עלות דלק):</span><span id="resFuelExpenseDisplay">- 0.00 ₪</span></div>
+      
+      <!-- Conditional Wear Expense Breakdown Row -->
+      <div class="b-row expense" id="resWearRow" style="display:none;">
+        <span>ניקוי בלאי:</span>
+        <span id="resWearExpenseDisplay">- 0.00 ₪</span>
+      </div>
+
       <div class="b-row"><span>רווח שעתי נקי אפקטיבי:</span><span id="resHourlyNetDisplay" style="color:var(--accent-orange); font-weight:700;">0.00 ₪ / שעה</span></div>
       <div class="b-row net-main"><span>כמה נשאר לי (רווח נקי):</span><span id="resNetDisplay">0.00 ₪</span></div>
     </div>
@@ -1176,21 +1183,26 @@
     </div>
 
     <div class="form-group" style="margin-top:6px;">
-      <label>4. היסטוריית מזומן:</label>
+      <label>4. מקדם בלאי לרכב (₪ לק"מ - מעדכן רטרואקטיבית):</label>
+      <input type="number" step="0.01" id="settingsWearFactorInput" inputmode="decimal" placeholder="0.00" style="font-weight:bold;">
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label>5. היסטוריית מזומן:</label>
       <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px; background:rgba(10,132,255,0.12); color:var(--accent-blue);" onclick="openCashHistoryModal()">
         <svg class="app-icon"><use href="#icon-cash"/></svg> היסטוריית תשלומי מזומן
       </button>
     </div>
 
     <div class="form-group" style="margin-top:6px;">
-      <label>5. עדכון גרסת אפליקציה:</label>
+      <label>6. עדכון גרסת אפליקציה:</label>
       <button class="top-btn" style="width:100%; justify-content:center; padding:12px; font-size:0.85rem; font-weight:700; border-radius:14px;" onclick="forceAppRefresh()">
         🔄 רענן וטען קוד עדכני מ-GitHub
       </button>
     </div>
 
     <div class="sheet-actions" style="margin-top:10px;">
-      <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="saveSettings()">שמור הגדרות</button>
+      <button class="btn-save" style="padding:16px; font-size:1rem;" onclick="saveSettings()">שמור הגדרות ועדכן רטרואקטיבית</button>
     </div>
   </div>
 </div>
@@ -1316,6 +1328,7 @@
 
   let currentFuelPrice = parseFloat(localStorage.getItem('solo_fuel_price')) || 8.25;
   let kmPerLiter = parseFloat(localStorage.getItem('solo_km_per_liter')) || 11.65;
+  let wearFactor = parseFloat(localStorage.getItem('solo_wear_factor')) || 0.0;
   let currentTheme = localStorage.getItem('solo_theme') || 'dark';
 
   let pendingReceiptId = null;
@@ -1432,13 +1445,17 @@
   function openSettingsModal() {
     document.getElementById('settingsKmPerLiterInput').value = kmPerLiter;
     document.getElementById('settingsFuelPriceInput').value = currentFuelPrice;
+    document.getElementById('settingsWearFactorInput').value = wearFactor;
     applyTheme(currentTheme);
     document.getElementById('settingsModal').classList.add('active');
   }
 
+  /* Global Settings Save with Full Retroactive Update across All Past Shifts */
   function saveSettings() {
     const kpl = parseFloat(document.getElementById('settingsKmPerLiterInput').value);
     const fp = parseFloat(document.getElementById('settingsFuelPriceInput').value);
+    const wfInput = document.getElementById('settingsWearFactorInput').value;
+    const wf = parseFloat(wfInput);
 
     if (kpl && kpl > 0) {
       kmPerLiter = kpl;
@@ -1450,8 +1467,47 @@
       localStorage.setItem('solo_fuel_price', currentFuelPrice);
     }
 
+    if (!isNaN(wf) && wf >= 0) {
+      wearFactor = wf;
+      localStorage.setItem('solo_wear_factor', wearFactor);
+    }
+
+    // Retroactively recalculate all historical shifts with the new global wear factor
+    for (let dateKey in shiftsData) {
+      let shift = shiftsData[dateKey];
+      let km = parseFloat(shift.km) || 0;
+      let totalHours = parseFloat(shift.totalHours) || 0;
+      let baseSalary = totalHours * HOURLY_RATE;
+      let cashTips = parseFloat(shift.cashTips) || 0;
+      let creditTips = parseFloat(shift.creditTips) || 0;
+      let creditTipsNet = creditTips * (1 - VAT_RATE);
+      let grossEarnings = baseSalary + cashTips + creditTipsNet;
+
+      let shiftFuelPrice = shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice;
+      let shiftKpl = shift.kmPerLiterUsed !== undefined ? shift.kmPerLiterUsed : kmPerLiter;
+
+      let litersUsed = km / shiftKpl;
+      let fuelExpense = litersUsed * shiftFuelPrice;
+      let wearExpense = km * wearFactor;
+
+      let netProfit = grossEarnings - fuelExpense - wearExpense;
+      let effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
+
+      shift.baseSalary = parseFloat(baseSalary.toFixed(2));
+      shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
+      shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+      shift.wearExpense = parseFloat(wearExpense.toFixed(2));
+      shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
+      shift.netProfit = parseFloat(netProfit.toFixed(2));
+      shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+      shift.wearFactorUsed = wearFactor;
+    }
+
+    localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
+    syncWithCloud();
+
     closeModal('settingsModal');
-    showCustomAlert("הגדרות", "ההגדרות נשמרו בהצלחה!");
+    showCustomAlert("הגדרות עודכנו", "ההגדרות נשמרו ומקדם הבלאי עודכן רטרואקטיבית לכל המשמרות בענן ובלוח השנה!");
     renderCalendar();
   }
 
@@ -1465,7 +1521,7 @@
     window.location.href = window.location.pathname + '?v=' + Date.now();
   }
 
-  /* CASH TRACKING LOGIC (מעקב מזומן) */
+  /* CASH TRACKING LOGIC */
   function renderActiveCashOrders() {
     const listContainer = document.getElementById('activeCashOrdersList');
     const badge = document.getElementById('activeCashCountBadge');
@@ -1592,12 +1648,14 @@
         creditTipsNet: 0,
         km: 0,
         fuelExpense: 0,
+        wearExpense: 0,
         grossEarnings: 0,
         netProfit: 0,
         effectiveHourlyNet: 0,
         location: 'כרמיאל',
         fuelPriceUsed: currentFuelPrice,
-        kmPerLiterUsed: kmPerLiter
+        kmPerLiterUsed: kmPerLiter,
+        wearFactorUsed: wearFactor
       };
     }
 
@@ -1615,23 +1673,25 @@
     const km = parseFloat(shift.km) || 0;
     const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
     const fuelExpense = litersUsed * (shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice);
+    const wearExpense = km * wearFactor;
 
-    const netProfit = grossEarnings - fuelExpense;
+    const netProfit = grossEarnings - fuelExpense - wearExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
 
     shift.baseSalary = parseFloat(baseSalary.toFixed(2));
     shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
     shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+    shift.wearExpense = parseFloat(wearExpense.toFixed(2));
     shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
     shift.netProfit = parseFloat(netProfit.toFixed(2));
     shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+    shift.wearFactorUsed = wearFactor;
 
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
     syncWithCloud();
     renderCalendar();
   }
 
-  /* Helper to Add Credit Tip to Date (after 18% VAT deduction) */
   function addCreditTipToDate(targetDateKey, tipAmount) {
     if (!tipAmount || tipAmount <= 0 || !targetDateKey) return;
 
@@ -1646,12 +1706,14 @@
         creditTipsNet: 0,
         km: 0,
         fuelExpense: 0,
+        wearExpense: 0,
         grossEarnings: 0,
         netProfit: 0,
         effectiveHourlyNet: 0,
         location: 'כרמיאל',
         fuelPriceUsed: currentFuelPrice,
-        kmPerLiterUsed: kmPerLiter
+        kmPerLiterUsed: kmPerLiter,
+        wearFactorUsed: wearFactor
       };
     }
 
@@ -1668,23 +1730,25 @@
     const km = parseFloat(shift.km) || 0;
     const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
     const fuelExpense = litersUsed * (shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice);
+    const wearExpense = km * wearFactor;
 
-    const netProfit = grossEarnings - fuelExpense;
+    const netProfit = grossEarnings - fuelExpense - wearExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
 
     shift.baseSalary = parseFloat(baseSalary.toFixed(2));
     shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
     shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+    shift.wearExpense = parseFloat(wearExpense.toFixed(2));
     shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
     shift.netProfit = parseFloat(netProfit.toFixed(2));
     shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+    shift.wearFactorUsed = wearFactor;
 
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
     syncWithCloud();
     renderCalendar();
   }
 
-  /* Helper to Deduct Credit Tip if receipt deleted */
   function deductCreditTipFromDate(targetDateKey, tipAmount) {
     if (!tipAmount || tipAmount <= 0 || !targetDateKey || !shiftsData[targetDateKey]) return;
 
@@ -1701,16 +1765,19 @@
     const km = parseFloat(shift.km) || 0;
     const litersUsed = km / (shift.kmPerLiterUsed || kmPerLiter);
     const fuelExpense = litersUsed * (shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice);
+    const wearExpense = km * wearFactor;
 
-    const netProfit = grossEarnings - fuelExpense;
+    const netProfit = grossEarnings - fuelExpense - wearExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
 
     shift.baseSalary = parseFloat(baseSalary.toFixed(2));
     shift.creditTipsNet = parseFloat(creditTipsNet.toFixed(2));
     shift.fuelExpense = parseFloat(fuelExpense.toFixed(2));
+    shift.wearExpense = parseFloat(wearExpense.toFixed(2));
     shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
     shift.netProfit = parseFloat(netProfit.toFixed(2));
     shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+    shift.wearFactorUsed = wearFactor;
 
     localStorage.setItem('solo_shifts_data', JSON.stringify(shiftsData));
     syncWithCloud();
@@ -1839,7 +1906,7 @@
     );
   }
 
-  /* Export Native XLSX Report with Auto-Oriented Embedded Images */
+  /* Export Native XLSX Report */
   async function exportToExcel() {
     if (typeof ExcelJS === 'undefined') {
       showCustomAlert("אקסל", "ספריית האקסל טרם נטענה, ודא שיש חיבור לאינטרנט ונסה שוב בעוד רגע.");
@@ -1871,7 +1938,7 @@
 
     const monthShiftsKeys = Object.keys(shiftsData).filter(k => k.startsWith(monthPrefix)).sort();
 
-    let mHours = 0, mBaseSalary = 0, mCash = 0, mCreditGross = 0, mCreditNet = 0, mKm = 0, mFuel = 0, mNet = 0;
+    let mHours = 0, mBaseSalary = 0, mCash = 0, mCreditGross = 0, mCreditNet = 0, mKm = 0, mVehicleExpenses = 0, mNet = 0;
 
     monthShiftsKeys.forEach(k => {
       const s = shiftsData[k];
@@ -1881,14 +1948,13 @@
       mCreditGross += s.creditTips || 0;
       mCreditNet += s.creditTipsNet || 0;
       mKm += s.km || 0;
-      mFuel += s.fuelExpense || 0;
+      mVehicleExpenses += (s.fuelExpense || 0) + (s.wearExpense || 0);
       mNet += s.netProfit || 0;
     });
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('דוח חודשי', { views: [{ rtl: true }] });
 
-    // Styles
     const headerFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1C2541' } };
     const summaryFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '10B981' } };
     const fontHeader = { name: 'Arial', bold: true, color: { argb: 'FFFFFF' } };
@@ -1899,7 +1965,6 @@
       right: { style: 'thin', color: { argb: 'CCCCCC' } }
     };
 
-    // Table 1: Summary Title
     sheet.mergeCells('A1:B1');
     const sumTitle = sheet.getCell('A1');
     sumTitle.value = `סיכום חודשי - ${monthNameStr}`;
@@ -1912,7 +1977,7 @@
       [`שכר בסיס מהחברה (${mHours.toFixed(2)} שעות):`, `${mBaseSalary.toFixed(2)} ₪`],
       ['טיפים במזומן:', `${mCash.toFixed(2)} ₪`],
       ['טיפים באשראי (נטו):', `${mCreditNet.toFixed(2)} ₪ (${mCreditGross.toFixed(2)} ₪ ברוטו)`],
-      ['הוצאות דלק שנרשמו:', `- ${mFuel.toFixed(2)} ₪`],
+      ['הוצאות רכב (דלק+בלאי):', `- ${mVehicleExpenses.toFixed(2)} ₪`],
       ['סה"כ ק"מ נסיעה:', `${mKm} ק"מ`]
     ];
 
@@ -1926,8 +1991,7 @@
 
     sheet.addRow([]);
 
-    // Table 2: Daily Shifts
-    const shiftHeaders = ['תאריך', 'מיקום', 'התחלה', 'סיום', 'שעות', 'שכר בסיס', 'טיפ מזומן', 'טיפ אשראי (ברוטו)', 'טיפ אשראי (נטו)', 'ק"מ', 'עלות דלק', 'רווח נקי', 'שעתי נקי'];
+    const shiftHeaders = ['תאריך', 'מיקום', 'התחלה', 'סיום', 'שעות', 'שכר בסיס', 'טיפ מזומן', 'טיפ אשראי (ברוטו)', 'טיפ אשראי (נטו)', 'ק"מ', 'הוצאות רכב (דלק+בלאי)', 'רווח נקי', 'שעתי נקי'];
     const shiftHeaderRow = sheet.addRow(shiftHeaders);
     shiftHeaderRow.eachCell(cell => {
       cell.fill = headerFill;
@@ -1942,12 +2006,13 @@
     } else {
       monthShiftsKeys.forEach(k => {
         const s = shiftsData[k];
+        const shiftVehicleExp = (s.fuelExpense || 0) + (s.wearExpense || 0);
         const rData = [
           k, s.location || '', s.startTime || '', s.endTime || '',
           (s.totalHours || 0).toFixed(2), `${(s.baseSalary || 0).toFixed(2)} ₪`,
           `${(s.cashTips || 0).toFixed(2)} ₪`, `${(s.creditTips || 0).toFixed(2)} ₪`,
           `${(s.creditTipsNet || 0).toFixed(2)} ₪`, s.km || 0,
-          `- ${(s.fuelExpense || 0).toFixed(2)} ₪`, `${(s.netProfit || 0).toFixed(2)} ₪`,
+          `- ${shiftVehicleExp.toFixed(2)} ₪`, `${(s.netProfit || 0).toFixed(2)} ₪`,
           `${(s.effectiveHourlyNet || 0).toFixed(2)} ₪`
         ];
         const row = sheet.addRow(rData);
@@ -1962,7 +2027,6 @@
     sheet.addRow([]);
     sheet.addRow([]);
 
-    // Table 3: Receipts with Auto-Oriented Images
     const recHeader = sheet.addRow(['קבלות טיפים באשראי', 'תמונת הקבלה']);
     recHeader.getCell(1).fill = headerFill;
     recHeader.getCell(1).font = fontHeader;
@@ -1999,7 +2063,6 @@
     sheet.addRow([]);
     sheet.addRow([]);
 
-    // Table 4: Dropoffs with Auto-Oriented Images
     const dropHeader = sheet.addRow(['תיעודי מסירה בדלת', 'תאריך ושעה', 'הערה / מס\' דירה', 'תמונת מסירה']);
     dropHeader.eachCell(c => {
       c.fill = headerFill;
@@ -2032,12 +2095,10 @@
       }
     }
 
-    // Adjust Columns Width
     sheet.columns.forEach((col, i) => {
       col.width = i === 1 || i === 3 ? 22 : 15;
     });
 
-    // Save File
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
@@ -2049,10 +2110,10 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showCustomAlert("ייצוא לאקסל", `הדוח החודשי המלא (${monthNameStr}) הורד בהצלחה עם תמונות ישרות ומיושרות!`);
+    showCustomAlert("ייצוא לאקסל", `הדוח החודשי המלא (${monthNameStr}) הורד בהצלחה!`);
   }
 
-  /* IndexedDB Setup for Receipts & Drop-off Photos */
+  /* IndexedDB Setup */
   let db;
   const dbReq = indexedDB.open("SoloAppDB", 2);
   dbReq.onupgradeneeded = (e) => {
@@ -2083,7 +2144,6 @@
     renderActiveCashOrders();
     initPinchToZoom();
 
-    // Smoothly remove Splash Screen Overlay after initialization
     setTimeout(() => {
       const splash = document.getElementById('appSplashOverlay');
       if (splash) {
@@ -2297,23 +2357,46 @@
 
     const litersUsed = km / kmPerLiter;
     const fuelExpense = litersUsed * fuelPrice;
+    const wearExpense = km * wearFactor;
 
-    const netProfit = grossEarnings - fuelExpense;
+    const totalVehicleExpense = fuelExpense + wearExpense;
+    const netProfit = grossEarnings - totalVehicleExpense;
     const effectiveHourlyNet = totalHours > 0 ? (netProfit / totalHours) : 0;
 
     document.getElementById('resHoursDisplay').innerText = `${totalHours.toFixed(2)} שעות`;
     document.getElementById('resGrossDisplay').innerText = `${grossEarnings.toFixed(2)} ₪`;
     document.getElementById('resFuelExpenseDisplay').innerText = `- ${fuelExpense.toFixed(2)} ₪`;
+
+    // Display "ניקוי בלאי" row conditionally
+    const resWearRow = document.getElementById('resWearRow');
+    const resWearExpenseDisplay = document.getElementById('resWearExpenseDisplay');
+    if (wearExpense > 0) {
+      resWearRow.style.display = 'flex';
+      resWearExpenseDisplay.innerText = `- ${wearExpense.toFixed(2)} ₪`;
+    } else {
+      resWearRow.style.display = 'none';
+    }
+
     document.getElementById('resHourlyNetDisplay').innerText = `${effectiveHourlyNet.toFixed(2)} ₪ / שעה`;
     document.getElementById('resNetDisplay').innerText = `${netProfit.toFixed(2)} ₪`;
 
     return {
-      startTime: startVal, endTime: endVal, totalHours: parseFloat(totalHours.toFixed(2)),
-      baseSalary: parseFloat(baseSalary.toFixed(2)), cashTips, creditTips,
-      creditTipsNet: parseFloat(creditTipsNet.toFixed(2)), km,
-      fuelExpense: parseFloat(fuelExpense.toFixed(2)), grossEarnings: parseFloat(grossEarnings.toFixed(2)),
-      netProfit: parseFloat(netProfit.toFixed(2)), effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2)),
-      fuelPriceUsed: fuelPrice, kmPerLiterUsed: kmPerLiter
+      startTime: startVal,
+      endTime: endVal,
+      totalHours: parseFloat(totalHours.toFixed(2)),
+      baseSalary: parseFloat(baseSalary.toFixed(2)),
+      cashTips,
+      creditTips,
+      creditTipsNet: parseFloat(creditTipsNet.toFixed(2)),
+      km,
+      fuelExpense: parseFloat(fuelExpense.toFixed(2)),
+      wearExpense: parseFloat(wearExpense.toFixed(2)),
+      grossEarnings: parseFloat(grossEarnings.toFixed(2)),
+      netProfit: parseFloat(netProfit.toFixed(2)),
+      effectiveHourlyNet: parseFloat(effectiveHourlyNet.toFixed(2)),
+      fuelPriceUsed: fuelPrice,
+      kmPerLiterUsed: kmPerLiter,
+      wearFactorUsed: wearFactor
     };
   }
 
@@ -2395,7 +2478,6 @@
         pendingReceiptDate = targetDate;
         loadMonthReceipts();
 
-        // Trigger automatic tip entry modal
         document.getElementById('receiptTipInput').value = '';
         document.getElementById('receiptTipModal').classList.add('active');
         setTimeout(() => document.getElementById('receiptTipInput').focus(), 300);
@@ -2412,10 +2494,8 @@
       const dateToUpdate = pendingReceiptDate;
       const recIdToUpdate = pendingReceiptId;
 
-      // Immediately update shiftsData & re-render calendar
       addCreditTipToDate(dateToUpdate, tipVal);
 
-      // Save tip amount to receipt in IndexedDB
       if (db) {
         const tx = db.transaction("receipts", "readwrite");
         const store = tx.objectStore("receipts");
@@ -2626,7 +2706,7 @@
     }
   }
 
-  /* Full-Screen Image Preview Modal with Multi-Touch Pinch Zoom & 2-Finger Parallel Panning */
+  /* Full-Screen Image Preview Modal */
   let imgScale = 1;
   let startX = 0, startY = 0, translateX = 0, translateY = 0;
   let lastTouchDist = 0;
@@ -2671,13 +2751,11 @@
         const currentMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
         const currentMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 
-        // Zoom Handling
         if (lastTouchDist > 0) {
           const factor = dist / lastTouchDist;
           imgScale = Math.min(Math.max(1, imgScale * factor), 5);
         }
 
-        // Parallel Two-finger Pan / Move Handling
         if (lastMidX !== 0 || lastMidY !== 0) {
           const deltaX = currentMidX - lastMidX;
           const deltaY = currentMidY - lastMidY;
@@ -2820,7 +2898,7 @@
     );
   }
 
-  /* Fixed iOS Safari JSON Download Bug via ObjectURL Blob */
+  /* Full Backup & Restore Logic */
   async function exportFullData() {
     if (!db) {
       showCustomAlert("גיבוי", "מסד הנתונים טרם נטען, אנא נסה שוב בעוד רגע.");
@@ -2834,10 +2912,11 @@
 
       tx.oncomplete = () => {
         const backupObject = {
-          version: 4,
+          version: 5,
           exportDate: new Date().toISOString(),
           fuelPrice: currentFuelPrice,
           kmPerLiter: kmPerLiter,
+          wearFactor: wearFactor,
           theme: currentTheme,
           shiftsData: shiftsData,
           activeCashOrders: activeCashOrders,
@@ -2906,6 +2985,11 @@
             if (backupObj.kmPerLiter) {
               kmPerLiter = backupObj.kmPerLiter;
               localStorage.setItem('solo_km_per_liter', kmPerLiter);
+            }
+
+            if (backupObj.wearFactor !== undefined) {
+              wearFactor = backupObj.wearFactor;
+              localStorage.setItem('solo_wear_factor', wearFactor);
             }
 
             if (backupObj.theme) {
