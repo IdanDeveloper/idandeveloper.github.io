@@ -123,10 +123,16 @@
       z-index: -1;
     }
 
-    /* Inline Splash Overlay Screen */
+    /* Inline Splash Overlay Screen - Full-screen iOS Viewport Fix */
     #appSplashOverlay {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       background-color: #2B2F3A;
       display: flex;
       justify-content: center;
