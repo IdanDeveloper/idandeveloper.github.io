@@ -1458,14 +1458,12 @@
     document.getElementById('settingsModal').classList.add('active');
   }
 
-  /* Global Settings Save with Full Retroactive Update across All Past Shifts */
+  /* Global Settings Save */
   function saveSettings() {
     const kpl = parseFloat(document.getElementById('settingsKmPerLiterInput').value);
     const fp = parseFloat(document.getElementById('settingsFuelPriceInput').value);
     const wfInput = document.getElementById('settingsWearFactorInput').value;
     const wf = parseFloat(wfInput);
-
-    const oldFuelPrice = currentFuelPrice;
 
     if (kpl && kpl > 0) {
       kmPerLiter = kpl;
@@ -1482,7 +1480,8 @@
       localStorage.setItem('solo_wear_factor', wearFactor);
     }
 
-    // Retroactively recalculate all historical shifts with updated global vehicle settings
+    // Retroactively recalculate all historical shifts with global kmPerLiter and wearFactor,
+    // while PRESERVING each shift's individual historical fuelPriceUsed!
     for (let dateKey in shiftsData) {
       let shift = shiftsData[dateKey];
       let km = parseFloat(shift.km) || 0;
@@ -1493,13 +1492,11 @@
       let creditTipsNet = creditTips * (1 - VAT_RATE);
       let grossEarnings = baseSalary + cashTips + creditTipsNet;
 
-      // Always force global kmPerLiter vehicle consumption
+      // Global car consumption and wear factor
       let shiftKpl = kmPerLiter;
 
-      // If fuel price was updated in settings, update default shift fuel prices
-      let shiftFuelPrice = (shift.fuelPriceUsed !== undefined && shift.fuelPriceUsed !== oldFuelPrice) 
-        ? shift.fuelPriceUsed 
-        : currentFuelPrice;
+      // Retain individual historical shift fuel price
+      let shiftFuelPrice = shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice;
 
       let litersUsed = km / shiftKpl;
       let fuelExpense = litersUsed * shiftFuelPrice;
@@ -1524,7 +1521,7 @@
     syncWithCloud();
 
     closeModal('settingsModal');
-    showCustomAlert("הגדרות עודכנו", "ההגדרות נשמרו וכל המשמרות, לוח השנה והסיכום החודשי עודכנו רטרואקטיבית!");
+    showCustomAlert("הגדרות עודכנו", "מחיר הדלק החדש ייכנס לתוקף עבור משמרות עתידיות. צריכת הדלק ומקדם הבלאי עודכנו רטרואקטיבית ולוח השנה התרענן!");
     renderCalendar();
   }
 
