@@ -1123,6 +1123,7 @@
         <select id="locationSelect">
           <option value="כרמיאל">כרמיאל</option>
           <option value="חיפה">חיפה</option>
+          <option value="העמקים">העמקים</option>
         </select>
       </div>
       <div class="form-group" style="grid-column: span 2;">
@@ -1539,16 +1540,33 @@
       const item = document.createElement('div');
       item.className = 'cash-order-item';
       item.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:2px;">
+        <div style="display:flex; flex-direction:column; gap:2px; flex:1; cursor:pointer;" onclick="openCashCalcModal(${order.id})">
           <div class="cash-order-price">${parseFloat(order.price).toFixed(2)} ₪</div>
           <div class="cash-order-status">ממתין לתשלום במזומן</div>
           ${order.note ? `<div class="cash-order-note">📍 ${order.note}</div>` : ''}
         </div>
-        <button class="btn-save" style="flex:none; padding:8px 14px; font-size:0.8rem; border-radius:12px;">חשב עודף</button>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn-save" style="flex:none; padding:8px 14px; font-size:0.8rem; border-radius:12px;" onclick="openCashCalcModal(${order.id})">חשב עודף</button>
+          <button class="btn-del-photo" style="position:relative; top:auto; left:auto; flex-shrink:0;" onclick="deleteActiveCashOrderById(event, ${order.id})">✕</button>
+        </div>
       `;
-      item.onclick = () => openCashCalcModal(order.id);
       listContainer.appendChild(item);
     });
+  }
+
+  function deleteActiveCashOrderById(e, orderId) {
+    if (e) e.stopPropagation();
+    showCustomConfirm(
+      "מחיקת משלוח מזומן",
+      "האם אתה בטוח שברצונך למחוק משלוח מזומן זה מהרשימה?",
+      () => {
+        activeCashOrders = activeCashOrders.filter(o => o.id !== orderId);
+        localStorage.setItem('solo_active_cash_orders', JSON.stringify(activeCashOrders));
+        renderActiveCashOrders();
+      },
+      "מחק משלוח",
+      true
+    );
   }
 
   function addNewCashOrder() {
@@ -1877,7 +1895,10 @@
         item.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:800; color:${isShortfall ? 'var(--accent-red)' : 'var(--accent-green)'}; font-size:1.05rem;">${parseFloat(h.price).toFixed(2)} ₪</span>
-            <span style="font-size:0.75rem; color:var(--text-secondary);">${dateStr} | ${timeStr}</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:0.75rem; color:var(--text-secondary);">${dateStr} | ${timeStr}</span>
+              <button class="btn-del-photo" style="position:relative; top:auto; left:auto; width:24px; height:24px; font-size:0.75rem; flex-shrink:0;" onclick="deleteCashHistoryItemById(event, ${h.id})">✕</button>
+            </div>
           </div>
           <div style="font-size:0.8rem; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center;">
             <span>התקבל: ${parseFloat(h.received || 0).toFixed(2)} ₪</span>
@@ -1890,6 +1911,21 @@
     }
 
     document.getElementById('cashHistoryModal').classList.add('active');
+  }
+
+  function deleteCashHistoryItemById(e, historyId) {
+    if (e) e.stopPropagation();
+    showCustomConfirm(
+      "מחיקת תשלום מזומן מההיסטוריה",
+      "האם אתה בטוח שברצונך למחוק תשלום מזומן זה מההיסטוריה?",
+      () => {
+        cashHistory = cashHistory.filter(h => h.id !== historyId);
+        localStorage.setItem('solo_cash_history', JSON.stringify(cashHistory));
+        openCashHistoryModal();
+      },
+      "מחק תשלום",
+      true
+    );
   }
 
   function confirmPurgeCashHistory() {
