@@ -83,11 +83,6 @@
       height: 0 !important;
     }
 
-    html {
-      height: 100%;
-      overscroll-behavior-y: none;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -100,8 +95,7 @@
     body {
       background-color: var(--bg-main);
       color: var(--text-primary);
-      min-height: 100%;
-      min-height: -webkit-fill-available;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       padding-top: max(14px, env(safe-area-inset-top));
@@ -110,17 +104,18 @@
       padding-right: 14px;
       position: relative;
       transition: background-color 0.3s ease, color 0.3s ease;
-      overscroll-behavior-y: none;
-      -webkit-text-size-adjust: 100%;
     }
 
     /* Fixed Seamless Gradient Backdrop Layer for iOS Safari/PWA */
     body::before {
       content: '';
       position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
       background-image: 
         radial-gradient(circle at 10% 10%, rgba(10, 132, 255, 0.12) 0%, transparent 45%),
         radial-gradient(circle at 90% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 45%);
@@ -131,9 +126,13 @@
     /* Inline Splash Overlay Screen - Full-screen iOS Viewport Fix */
     #appSplashOverlay {
       position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       background-color: #2B2F3A;
       display: flex;
       justify-content: center;
@@ -1328,11 +1327,6 @@
 </div>
 
 <script>
-  // Prevent iOS WebKit automatic scroll restoration on load/launch
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-
   const HOURLY_RATE = 50;
   const VAT_RATE = 0.18;
 
@@ -2181,7 +2175,6 @@
   };
 
   function init() {
-    window.scrollTo(0, 0);
     applyTheme(currentTheme);
 
     viewDate = getShiftDate();
@@ -2199,17 +2192,13 @@
       if (splash) {
         splash.style.opacity = '0';
         splash.style.visibility = 'hidden';
-        setTimeout(() => {
-          splash.remove();
-          window.scrollTo(0, 0);
-        }, 450);
+        setTimeout(() => splash.remove(), 450);
       }
     }, 350);
   }
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
-      window.scrollTo(0, 0);
       const todayStr = getLocalDateStr();
       document.getElementById('receiptTargetDate').value = todayStr;
       document.getElementById('dropoffTargetDate').value = todayStr;
