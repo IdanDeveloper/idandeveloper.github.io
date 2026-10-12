@@ -1465,6 +1465,8 @@
     const wfInput = document.getElementById('settingsWearFactorInput').value;
     const wf = parseFloat(wfInput);
 
+    const oldFuelPrice = currentFuelPrice;
+
     if (kpl && kpl > 0) {
       kmPerLiter = kpl;
       localStorage.setItem('solo_km_per_liter', kmPerLiter);
@@ -1480,7 +1482,7 @@
       localStorage.setItem('solo_wear_factor', wearFactor);
     }
 
-    // Retroactively recalculate all historical shifts with the new global wear factor
+    // Retroactively recalculate all historical shifts with updated global vehicle settings
     for (let dateKey in shiftsData) {
       let shift = shiftsData[dateKey];
       let km = parseFloat(shift.km) || 0;
@@ -1491,8 +1493,13 @@
       let creditTipsNet = creditTips * (1 - VAT_RATE);
       let grossEarnings = baseSalary + cashTips + creditTipsNet;
 
-      let shiftFuelPrice = shift.fuelPriceUsed !== undefined ? shift.fuelPriceUsed : currentFuelPrice;
-      let shiftKpl = shift.kmPerLiterUsed !== undefined ? shift.kmPerLiterUsed : kmPerLiter;
+      // Always force global kmPerLiter vehicle consumption
+      let shiftKpl = kmPerLiter;
+
+      // If fuel price was updated in settings, update default shift fuel prices
+      let shiftFuelPrice = (shift.fuelPriceUsed !== undefined && shift.fuelPriceUsed !== oldFuelPrice) 
+        ? shift.fuelPriceUsed 
+        : currentFuelPrice;
 
       let litersUsed = km / shiftKpl;
       let fuelExpense = litersUsed * shiftFuelPrice;
@@ -1508,6 +1515,8 @@
       shift.grossEarnings = parseFloat(grossEarnings.toFixed(2));
       shift.netProfit = parseFloat(netProfit.toFixed(2));
       shift.effectiveHourlyNet = parseFloat(effectiveHourlyNet.toFixed(2));
+      shift.kmPerLiterUsed = kmPerLiter;
+      shift.fuelPriceUsed = shiftFuelPrice;
       shift.wearFactorUsed = wearFactor;
     }
 
@@ -1515,7 +1524,7 @@
     syncWithCloud();
 
     closeModal('settingsModal');
-    showCustomAlert("הגדרות עודכנו", "ההגדרות נשמרו ומקדם הבלאי עודכן רטרואקטיבית לכל המשמרות בענן ובלוח השנה!");
+    showCustomAlert("הגדרות עודכנו", "ההגדרות נשמרו וכל המשמרות, לוח השנה והסיכום החודשי עודכנו רטרואקטיבית!");
     renderCalendar();
   }
 
